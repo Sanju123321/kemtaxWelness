@@ -1,5 +1,18 @@
 <?php
 
+use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\PageController;
+use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
+use App\Http\Controllers\Frontend\CartController;
+use App\Http\Controllers\Frontend\WishlistController;
+use App\Http\Controllers\Frontend\BlogController;
+use App\Http\Controllers\Frontend\AuthController;
+use App\Http\Controllers\Frontend\MemberController;
+use App\Http\Controllers\Backend\DashboardController;
+use App\Http\Controllers\Backend\UserController;
+use App\Http\Controllers\Backend\ProductController as BackendProductController;
+use App\Http\Controllers\Backend\AdminAuthController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -7,60 +20,146 @@ use Illuminate\Support\Facades\Route;
 | Frontend Routes
 |--------------------------------------------------------------------------
 */
-Route::prefix('/')->name('')->group(function () {
+Route::group([], function () {
 
     // Home
-    Route::get('/', fn() => view('frontend.home.index'))->name('home');
+    Route::get('/', [HomeController::class, 'index'])->name('home');
 
     // About
-    Route::get('/about', fn() => view('frontend.about.index'))->name('about');
+    Route::get('/about', [PageController::class, 'about'])->name('about');
 
     // Products
-    Route::get('/products', fn() => view('frontend.products.index'))->name('products');
+    Route::get('/products', [FrontendProductController::class, 'index'])->name('products');
+    Route::get('/products/{slug}', [FrontendProductController::class, 'show'])->name('products.show');
 
+    // Cart & Wishlist — require auth (AJAX/API-style JSON responses)
+    Route::middleware('auth')->group(function () {
+        Route::get('/cart',           [CartController::class, 'index'])->name('cart.index');
+        Route::post('/cart/add',      [CartController::class, 'add'])->name('cart.add');
+        Route::post('/cart/update',   [CartController::class, 'update'])->name('cart.update');
+        Route::post('/cart/remove',   [CartController::class, 'remove'])->name('cart.remove');
+
+        Route::get('/wishlist',           [WishlistController::class, 'index'])->name('wishlist.index');
+        Route::post('/wishlist/toggle',   [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+        Route::post('/wishlist/remove',   [WishlistController::class, 'remove'])->name('wishlist.remove');
+    });
     // Services
-    Route::get('/services', fn() => view('frontend.services.index'))->name('services');
+    Route::get('/services', [PageController::class, 'services'])->name('services');
 
     // Blog
-    Route::get('/blog', fn() => view('frontend.blog.index'))->name('blog');
+    Route::get('/blog', [BlogController::class, 'index'])->name('blog');
+    Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
     // Contact
-    Route::get('/contact', fn() => view('frontend.contact.index'))->name('contact');
-    Route::post('/contact', fn() => back()->with('success', 'Your message has been sent! We will get back to you shortly.'))->name('contact.send');
+    Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+    Route::post('/contact', [PageController::class, 'contactSend'])->name('contact.send');
+
+    // Pricing
+    Route::get('/pricing', [PageController::class, 'pricing'])->name('pricing');
+
+    // Portfolio
+    Route::get('/portfolio', fn() => view('frontend.portfolio.index'))->name('portfolio');
 
 });
 
 /*
 |--------------------------------------------------------------------------
-| Backend / Admin Routes
+| Frontend Auth Routes (Member Login/Register)
+|--------------------------------------------------------------------------
+*/
+// Guest-only routes (redirect logged-in users to dashboard)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+
+    Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+});
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Member Portal Routes — Protected by auth middleware
+|--------------------------------------------------------------------------
+*/
+Route::prefix('member')
+    ->name('member.')
+    ->middleware(['auth'])
+    ->group(function () {
+
+        Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
+        Route::get('/setup', [MemberController::class, 'setup'])->name('setup');
+        Route::get('/wallet', [MemberController::class, 'wallet'])->name('wallet');
+        Route::get('/profile', [MemberController::class, 'profile'])->name('profile');
+        Route::get('/credentials', [MemberController::class, 'credentials'])->name('credentials');
+
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Admin Redirect - Redirect /admin to /admin/login
+|--------------------------------------------------------------------------
+*/
+Route::get('/admin', function () {
+    if (Auth::check()) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('admin.login');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Backend / Admin Auth Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->group(function () {
+    
+    Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
 
-    // Dashboard
-    Route::get('/', fn() => view('backend.dashboard.index'))->name('dashboard');
-    Route::get('/dashboard', fn() => view('backend.dashboard.index'))->name('dashboard.alt');
-
-    // Users (resource stubs)
-    Route::get('/users', fn() => view('backend.dashboard.index'))->name('users.index');
-    Route::get('/users/create', fn() => view('backend.dashboard.index'))->name('users.create');
-    Route::get('/users/{id}/edit', fn() => view('backend.dashboard.index'))->name('users.edit');
-
-    // Products (resource stubs)
-    Route::get('/products', fn() => view('backend.dashboard.index'))->name('products.index');
-    Route::get('/products/create', fn() => view('backend.dashboard.index'))->name('products.create');
-    Route::get('/products/{id}/edit', fn() => view('backend.dashboard.index'))->name('products.edit');
-
-    // Logout (stub — replace with Auth::logout() logic when auth is set up)
-    Route::get('/logout', fn() => redirect()->route('home'))->name('logout');
-    Route::post('/logout', fn() => redirect()->route('home'))->name('logout.post');
+    Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
 
 });
 
 /*
 |--------------------------------------------------------------------------
-| Auth Routes (stubs — replace with Laravel Breeze / Jetstream as needed)
+| Backend / Admin Routes  — Protected by admin.auth middleware
 |--------------------------------------------------------------------------
 */
-Route::get('/login', fn() => redirect()->route('admin.dashboard'))->name('login');
-Route::get('/register', fn() => redirect()->route('home'))->name('register');
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['admin.auth'])
+    ->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+        // Users
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+        // Products
+        Route::get('/products', [BackendProductController::class, 'index'])->name('products.index');
+        Route::get('/products/create', [BackendProductController::class, 'create'])->name('products.create');
+        Route::post('/products', [BackendProductController::class, 'store'])->name('products.store');
+        Route::get('/products/{id}/edit', [BackendProductController::class, 'edit'])->name('products.edit');
+        Route::put('/products/{id}', [BackendProductController::class, 'update'])->name('products.update');
+        Route::delete('/products/{id}', [BackendProductController::class, 'destroy'])->name('products.destroy');
+
+        // Charts & Tables
+        Route::get('/charts', fn() => view('backend.charts.index'))->name('charts');
+        Route::get('/tables', fn() => view('backend.tables.index'))->name('tables');
+
+        // Logout
+        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+
+    });

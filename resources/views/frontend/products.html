@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+
+<!--
+ // WEBSITE: https://themefisher.com
+ // TWITTER: https://twitter.com/themefisher
+ // FACEBOOK: https://www.facebook.com/themefisher
+ // GITHUB: https://github.com/themefisher/
+-->
+
+<html lang="zxx">
+<head>
+
+  <!-- ** Basic Page Needs ** -->
+  <meta charset="utf-8">
+  <title>Wellness Products - Kemtex Wellness</title>
+
+  <!-- ** Mobile Specific Metas ** -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Premium wellness products from Kemtex Wellness">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Themefisher Html5 Agency Template v1.0">
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/bootstrap.min.css">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="plugins/themify/css/themify-icons.css">
+  <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="plugins/magnific-popup/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick/slick-theme.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!--Favicon-->
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+
+  <!-- Razorpay Payment Gateway -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    /* ── Filter & Sort Sidebar ── */
+    .sidebar-filter {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .filter-group {
+      margin-bottom: 25px;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 15px;
+    }
+
+    .filter-group:last-child {
+      border-bottom: none;
+    }
+
+    .filter-group h6 {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .filter-group input[type="checkbox"],
+    .filter-group input[type="radio"] {
+      cursor: pointer;
+      width: 16px;
+      height: 16px;
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #28a745;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .product-badge.sale {
+      background: #dc3545;
+    }
+
+    /* ── Product Card ── */
+    .product-card {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 240px;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      font-size: 80px;
+    }
+
+    .product-card:hover .add-to-cart-btn {
+      opacity: 1;
+      bottom: 15px;
+    }
+
+    .add-to-cart-btn {
+      position: absolute;
+      bottom: -50px;
+      left: 15px;
+      right: 15px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .add-to-cart-btn:hover {
+      background: #1e7e34;
+    }
+
+    .product-info {
+      padding: 18px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-category {
+      color: #666;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+
+    .product-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .product-description {
+      font-size: 0.85rem;
+      color: #777;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .product-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .product-rating i {
+      color: #ffc107;
+      font-size: 0.85rem;
+    }
+
+    .product-rating .rating-count {
+      font-size: 0.8rem;
+      color: #999;
+    }
+
+    .product-pricing {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .product-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .price-current {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #28a745;
+    }
+
+    .price-original {
+      font-size: 0.95rem;
+      color: #999;
+      text-decoration: line-through;
+    }
+
+    .product-discount {
+      background: #e8f5e9;
+      color: #28a745;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* ── Shopping Cart & Checkout ── */
+    .cart-sidebar {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 20px;
+      position: sticky;
+      top: 20px;
+    }
+
+    .cart-header {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-count-badge {
+      background: #28a745;
+      color: white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .cart-items-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #e9ecef;
+      padding-bottom: 15px;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      align-items: flex-start;
+    }
+
+    .cart-item-img {
+      width: 50px;
+      height: 50px;
+      background: #f0f4ff;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .cart-item-details {
+      flex-grow: 1;
+    }
+
+    .cart-item-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-qty {
+      font-size: 0.8rem;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-price {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #28a745;
+    }
+
+    .cart-item-remove {
+      width: 24px;
+      height: 24px;
+      border: none;
+      background: #f8f9fa;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #999;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .cart-item-remove:hover {
+      background: #ff6b6b;
+      color: white;
+    }
+
+    .cart-empty {
+      text-align: center;
+      padding: 20px 10px;
+      color: #999;
+      font-size: 0.9rem;
+    }
+
+    .cart-summary {
+      margin-bottom: 15px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+
+    .summary-row.total {
+      border-top: 2px solid #e9ecef;
+      padding-top: 10px;
+      font-weight: 700;
+      color: #333;
+      font-size: 1.1rem;
+    }
+
+    .checkout-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-checkout {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-checkout-primary {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-checkout-primary:hover {
+      background: #1e7e34;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(40,167,69,0.3);
+    }
+
+    .btn-checkout-secondary {
+      background: #f8f9fa;
+      color: #333;
+      border: 1px solid #dee2e6;
+    }
+
+    .btn-checkout-secondary:hover {
+      background: #e9ecef;
+    }
+
+    /* ── Payment Modal ── */
+    .payment-method-group {
+      margin-bottom: 20px;
+    }
+
+    .payment-method {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .payment-method:hover {
+      border-color: #28a745;
+      background: #f8f9fa;
+    }
+
+    .payment-method input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin-right: 15px;
+    }
+
+    .payment-method.selected {
+      border-color: #28a745;
+      background: #e8f5e9;
+    }
+
+    .payment-info {
+      flex-grow: 1;
+    }
+
+    .payment-label {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .payment-desc {
+      font-size: 0.85rem;
+      color: #999;
+    }
+
+    .payment-icon {
+      font-size: 1.8rem;
+      color: #28a745;
+      margin-right: 15px;
+      width: 40px;
+      text-align: center;
+    }
+
+    .wallet-balance {
+      background: #f0f4ff;
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .wallet-balance-label {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .wallet-balance-amount {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #28a745;
+    }
+
+    .no-products {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+
+    .no-products i {
+      font-size: 4rem;
+      color: #ddd;
+      margin-bottom: 20px;
+    }
+
+    .no-products p {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .cart-sidebar {
+        position: static;
+      }
+
+      .product-image {
+        height: 200px;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+<!-- Header Start -->
+<header class="navigation">
+  <div class="header-top ">
+    <div class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col-lg-2 col-md-4">
+          <div class="header-top-socials text-center text-lg-left text-md-left">
+            <a href="https://www.facebook.com/themefisher" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com/themefisher" aria-label="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://github.com/themefisher/" aria-label="github"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-10 col-md-8 text-center text-lg-right text-md-right">
+          <div class="header-top-info mb-2 mb-md-0">
+            <a href="tel:+91-345-67890">Call Us : <span>+91-345-67890</span></a>
+            <a href="mailto:kemtextwellness@gmail.com"><i class="fas fa-envelope mr-2"></i><span>kemtextwellness@gmail.com</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navbar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <nav class="navbar navbar-expand-lg px-0 py-4">
+            <a class="navbar-brand" href="index.html">
+              kemtext<span>Wellness.</span>
+            </a>
+      
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample09"
+              aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="fa fa-bars"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse text-center" id="navbarsExample09">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="wallet.html">Your Wallet</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="products.html">Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="contact.html">Contact</a>
+                </li>
+              </ul>
+          
+              <div class="my-2 my-md-0 ml-lg-4 text-center">
+                <a href="profile.html" class="btn btn-main btn-round-full mr-2">Profile</a>
+                <a href="index.html" class="btn btn-solid-border btn-round-full">Logout</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Header Close -->
+
+<!-- Products Section -->
+<section class="py-5">
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 col-md-4 mb-4 mb-lg-0">
+        <div class="sidebar-filter">
+          <h6 style="margin-bottom: 20px; color: #333; font-weight: 700;">Filters</h6>
+
+          <!-- Category Filter -->
+          <div class="filter-group">
+            <h6>Category</h6>
+            <label>
+              <input type="checkbox" class="category-filter" value="supplements" checked> All Categories
+            </label>
+            <label>
+              <input type="checkbox" class="category-filter" value="supplements"> Supplements
+            </label>
+            <label>
+              <input type="checkbox" class="category-filter" value="skincare"> Skincare
+            </label>
+            <label>
+              <input type="checkbox" class="category-filter" value="fitness"> Fitness
+            </label>
+            <label>
+              <input type="checkbox" class="category-filter" value="nutrition"> Nutrition
+            </label>
+          </div>
+
+          <!-- Price Range -->
+          <div class="filter-group">
+            <h6>Price Range</h6>
+            <label>
+              <input type="radio" name="priceRange" value="all" checked> All Prices
+            </label>
+            <label>
+              <input type="radio" name="priceRange" value="0-500"> ₹0 - ₹500
+            </label>
+            <label>
+              <input type="radio" name="priceRange" value="500-1000"> ₹500 - ₹1,000
+            </label>
+            <label>
+              <input type="radio" name="priceRange" value="1000-2000"> ₹1,000 - ₹2,000
+            </label>
+            <label>
+              <input type="radio" name="priceRange" value="2000-plus"> ₹2,000+
+            </label>
+          </div>
+
+          <!-- Availability -->
+          <div class="filter-group">
+            <h6>Availability</h6>
+            <label>
+              <input type="checkbox" class="availability-filter" value="in-stock" checked> In Stock
+            </label>
+            <label>
+              <input type="checkbox" class="availability-filter" value="sale"> On Sale
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="col-lg-6 col-md-8">
+        <div class="row" id="products-grid">
+          <!-- Products will be rendered here -->
+        </div>
+        <div id="no-products" class="no-products" style="display: none;">
+          <i class="fas fa-search"></i>
+          <p>No products found matching your criteria</p>
+          <button class="btn btn-main btn-round-full" onclick="resetFilters()">
+            <i class="fas fa-redo mr-2"></i> Reset Filters
+          </button>
+        </div>
+      </div>
+
+      <!-- Cart Sidebar -->
+      <div class="col-lg-3">
+        <div class="cart-sidebar">
+          <div class="cart-header">
+            <i class="fas fa-shopping-cart"></i>
+            Shopping Cart
+            <span class="cart-count-badge" id="cart-badge">0</span>
+          </div>
+
+          <!-- Wallet Balance -->
+          <div class="wallet-balance">
+            <span class="wallet-balance-label">Wallet Balance:</span>
+            <span class="wallet-balance-amount" id="wallet-balance">₹5,000</span>
+          </div>
+
+          <div class="cart-items-list" id="cart-items-container">
+            <div class="cart-empty" id="cart-empty-msg">Your cart is empty</div>
+          </div>
+
+          <div class="cart-summary">
+            <div class="summary-row">
+              <span>Subtotal:</span>
+              <span id="subtotal">₹0</span>
+            </div>
+            <div class="summary-row">
+              <span>Discount:</span>
+              <span id="discount" style="color: #28a745;">-₹0</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span id="total-amount">₹0</span>
+            </div>
+          </div>
+
+          <div class="checkout-buttons">
+            <button class="btn-checkout btn-checkout-primary" onclick="openCheckoutModal()" id="checkout-btn" disabled>
+              <i class="fas fa-lock"></i> Proceed to Checkout
+            </button>
+            <button class="btn-checkout btn-checkout-secondary" onclick="continueShopping()">
+              <i class="fas fa-arrow-left"></i> Continue Shopping
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Checkout Modal -->
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="checkoutModalLabel">Complete Your Purchase</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Order Summary -->
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 25px;">
+          <h6 style="margin-bottom: 12px; font-weight: 700;">Order Summary</h6>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+            <span>Items (<span id="summary-item-count">0</span>)</span>
+            <span id="summary-subtotal">₹0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #28a745;">
+            <span>Discount</span>
+            <span id="summary-discount">-₹0</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-weight: 700; padding-top: 8px; border-top: 1px solid #dee2e6;">
+            <span>Total Amount</span>
+            <span id="summary-total" style="font-size: 1.2rem; color: #28a745;">₹0</span>
+          </div>
+        </div>
+
+        <!-- Payment Methods -->
+        <h6 style="margin-bottom: 15px; font-weight: 700;">Select Payment Method</h6>
+
+        <div class="payment-method-group">
+          <!-- Wallet Payment -->
+          <div class="payment-method" onclick="selectPaymentMethod('wallet')">
+            <div class="payment-icon">
+              <i class="fas fa-wallet"></i>
+            </div>
+            <div class="payment-info">
+              <div class="payment-label">Pay from Wallet</div>
+              <div class="payment-desc">
+                Balance: <strong id="wallet-balance-checkout">₹5,000</strong>
+              </div>
+            </div>
+            <input type="radio" name="paymentMethod" value="wallet" class="payment-radio">
+          </div>
+
+          <!-- Card Payment (Razorpay) -->
+          <div class="payment-method" onclick="selectPaymentMethod('card')">
+            <div class="payment-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="payment-info">
+              <div class="payment-label">Credit/Debit Card</div>
+              <div class="payment-desc">Visa, Mastercard, American Express</div>
+            </div>
+            <input type="radio" name="paymentMethod" value="card" class="payment-radio">
+          </div>
+
+          <!-- UPI Payment (Razorpay) -->
+          <div class="payment-method" onclick="selectPaymentMethod('upi')">
+            <div class="payment-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <div class="payment-info">
+              <div class="payment-label">UPI Payment</div>
+              <div class="payment-desc">Google Pay, PhonePe, Paytm</div>
+            </div>
+            <input type="radio" name="paymentMethod" value="upi" class="payment-radio">
+          </div>
+        </div>
+
+        <!-- Wallet Insufficient Warning -->
+        <div id="wallet-warning" style="display: none; background: #fff3cd; border: 1px solid #ffc107; padding: 12px; border-radius: 6px; margin-top: 15px;">
+          <i class="fas fa-exclamation-triangle" style="color: #ff6b00; margin-right: 8px;"></i>
+          <span style="color: #333;">Insufficient wallet balance. Please use card or UPI payment.</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-solid-border btn-round-full" data-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-main btn-round-full" onclick="processPayment()" id="pay-btn">
+          <i class="fas fa-lock"></i> Pay Now
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer Start -->
+<footer class="footer bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p class="mb-0">Copyright &copy; <script>
+            var CurrentYear = new Date().getFullYear()
+            document.write(CurrentYear)
+          </script> Kemtex Wellness. All Rights Reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Footer End -->
+
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/bootstrap/bootstrap.min.js"></script>
+
+<script>
+/* =================================================================
+   PRODUCTS DATA
+================================================================= */
+const products = [
+  {
+    id: 1,
+    name: 'Organic Turmeric Powder',
+    category: 'supplements',
+    price: 299,
+    originalPrice: 399,
+    emoji: '🌿',
+    description: 'Pure organic turmeric with curcumin',
+    rating: 4.8,
+    reviews: 156,
+    inStock: true,
+    onSale: true,
+    discount: 25
+  },
+  {
+    id: 2,
+    name: 'Vitamin D3 Capsules',
+    category: 'supplements',
+    price: 449,
+    originalPrice: 599,
+    emoji: '💊',
+    description: 'High potency vitamin D3 - 2000 IU per capsule',
+    rating: 4.9,
+    reviews: 243,
+    inStock: true,
+    onSale: true,
+    discount: 25
+  },
+  {
+    id: 3,
+    name: 'Green Tea Extract',
+    category: 'nutrition',
+    price: 599,
+    originalPrice: 799,
+    emoji: '🍵',
+    description: 'Antioxidant-rich green tea for energy & focus',
+    rating: 4.7,
+    reviews: 189,
+    inStock: true,
+    onSale: true,
+    discount: 25
+  },
+  {
+    id: 4,
+    name: 'Collagen Beauty Drink',
+    category: 'skincare',
+    price: 899,
+    originalPrice: 1299,
+    emoji: '✨',
+    description: 'Hydrolyzed collagen for skin, hair & nails',
+    rating: 4.8,
+    reviews: 312,
+    inStock: true,
+    onSale: true,
+    discount: 30
+  },
+  {
+    id: 5,
+    name: 'Protein Powder - Vanilla',
+    category: 'fitness',
+    price: 1299,
+    originalPrice: 1699,
+    emoji: '💪',
+    description: 'Whey protein isolate - 25g protein per serving',
+    rating: 4.9,
+    reviews: 428,
+    inStock: true,
+    onSale: false,
+    discount: 0
+  },
+  {
+    id: 6,
+    name: 'Ashwagandha Root Extract',
+    category: 'supplements',
+    price: 349,
+    originalPrice: 499,
+    emoji: '🌱',
+    description: 'Stress relief & sleep support supplement',
+    rating: 4.7,
+    reviews: 267,
+    inStock: true,
+    onSale: false,
+    discount: 0
+  },
+  {
+    id: 7,
+    name: 'Omega-3 Fish Oil',
+    category: 'supplements',
+    price: 599,
+    originalPrice: 899,
+    emoji: '🐟',
+    description: 'Premium fish oil - 1000mg EPA & DHA',
+    rating: 4.8,
+    reviews: 334,
+    inStock: true,
+    onSale: true,
+    discount: 33
+  },
+  {
+    id: 8,
+    name: 'Yoga Mat Premium',
+    category: 'fitness',
+    price: 1499,
+    originalPrice: 1999,
+    emoji: '🧘‍♀️',
+    description: 'Non-slip eco-friendly yoga mat - 6mm thickness',
+    rating: 4.9,
+    reviews: 156,
+    inStock: true,
+    onSale: true,
+    discount: 25
+  },
+  {
+    id: 9,
+    name: 'Water Bottle Insulated',
+    category: 'fitness',
+    price: 899,
+    originalPrice: 1299,
+    emoji: '💧',
+    description: 'Double-wall stainless steel - keeps cold for 24hrs',
+    rating: 4.8,
+    reviews: 189,
+    inStock: true,
+    onSale: true,
+    discount: 30
+  },
+  {
+    id: 10,
+    name: 'Multivitamin Complex',
+    category: 'supplements',
+    price: 799,
+    originalPrice: 1199,
+    emoji: '🏥',
+    description: 'Complete multivitamin with minerals & antioxidants',
+    rating: 4.9,
+    reviews: 412,
+    inStock: true,
+    onSale: true,
+    discount: 33
+  }
+];
+
+/* =================================================================
+   CART MANAGEMENT
+================================================================= */
+let cart = [];
+const walletBalance = 5000;
+
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  const existingItem = cart.find(item => item.id === productId);
+
+  if (existingItem) {
+    existingItem.quantity++;
+  } else {
+    cart.push({
+      ...product,
+      quantity: 1
+    });
+  }
+
+  updateCart();
+  showNotification(`${product.name} added to cart!`);
+}
+
+function removeFromCart(productId) {
+  cart = cart.filter(item => item.id !== productId);
+  updateCart();
+}
+
+function updateCart() {
+  renderCart();
+  updateCartSummary();
+}
+
+function renderCart() {
+  const container = document.getElementById('cart-items-container');
+  const badge = document.getElementById('cart-badge');
+
+  if (cart.length === 0) {
+    container.innerHTML = '<div class="cart-empty" id="cart-empty-msg">Your cart is empty</div>';
+    badge.textContent = '0';
+    document.getElementById('checkout-btn').disabled = true;
+    return;
+  }
+
+  document.getElementById('checkout-btn').disabled = false;
+  badge.textContent = cart.length;
+
+  container.innerHTML = cart.map(item => `
+    <div class="cart-item">
+      <div class="cart-item-img">${item.emoji}</div>
+      <div class="cart-item-details">
+        <div class="cart-item-name">${item.name}</div>
+        <div class="cart-item-qty">Qty: ${item.quantity}</div>
+        <div class="cart-item-price">₹${(item.price * item.quantity).toLocaleString('en-IN')}</div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart(${item.id})" title="Remove">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  `).join('');
+}
+
+function updateCartSummary() {
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const discount = cart.reduce((sum, item) => sum + (item.discount / 100 * item.price * item.quantity), 0);
+  const total = subtotal - discount;
+
+  document.getElementById('subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  document.getElementById('discount').textContent = `-₹${Math.round(discount).toLocaleString('en-IN')}`;
+  document.getElementById('total-amount').textContent = `₹${Math.round(total).toLocaleString('en-IN')}`;
+
+  // Update checkout modal summary
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  document.getElementById('summary-item-count').textContent = itemCount;
+  document.getElementById('summary-subtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  document.getElementById('summary-discount').textContent = `-₹${Math.round(discount).toLocaleString('en-IN')}`;
+  document.getElementById('summary-total').textContent = `₹${Math.round(total).toLocaleString('en-IN')}`;
+}
+
+/* =================================================================
+   PRODUCTS FILTERING & RENDERING
+================================================================= */
+function renderProducts(productsToShow = products) {
+  const grid = document.getElementById('products-grid');
+  const noProducts = document.getElementById('no-products');
+
+  if (productsToShow.length === 0) {
+    grid.innerHTML = '';
+    noProducts.style.display = 'block';
+    return;
+  }
+
+  noProducts.style.display = 'none';
+  grid.innerHTML = productsToShow.map(product => `
+    <div class="col-sm-6 col-lg-6 mb-4">
+      <div class="product-card">
+        <div class="product-image">
+          ${product.emoji}
+          ${product.onSale ? `<span class="product-badge sale">Sale</span>` : product.discount ? `<span class="product-badge">${product.discount}% OFF</span>` : ''}
+          <button class="add-to-cart-btn" onclick="addToCart(${product.id})">
+            <i class="fas fa-shopping-cart mr-2"></i> Add to Cart
+          </button>
+        </div>
+        <div class="product-info">
+          <div class="product-category">${product.category}</div>
+          <div class="product-title">${product.name}</div>
+          <div class="product-description">${product.description}</div>
+          <div class="product-rating">
+            <div>
+              ${Array(5).fill().map((_, i) => `<i class="fas fa-star"></i>`).join('')}
+            </div>
+            <span class="rating-count">(${product.reviews})</span>
+          </div>
+          <div class="product-pricing">
+            <div class="product-price">
+              <span class="price-current">₹${product.price}</span>
+              <span class="price-original">₹${product.originalPrice}</span>
+            </div>
+            ${product.discount ? `<span class="product-discount">${product.discount}% OFF</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProducts() {
+  let filtered = products;
+
+  // Category filter
+  const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked')).map(el => el.value);
+  if (selectedCategories.length > 0 && !selectedCategories.includes('supplements')) {
+    filtered = filtered.filter(p => selectedCategories.includes(p.category));
+  }
+
+  // Price range filter
+  const priceRange = document.querySelector('input[name="priceRange"]:checked').value;
+  if (priceRange !== 'all') {
+    const [min, max] = priceRange === '2000-plus' 
+      ? [2000, Infinity] 
+      : priceRange.split('-').map(Number);
+    filtered = filtered.filter(p => p.price >= min && p.price <= max);
+  }
+
+  // Availability filter
+  const selectedAvailability = Array.from(document.querySelectorAll('.availability-filter:checked')).map(el => el.value);
+  if (selectedAvailability.length > 0) {
+    filtered = filtered.filter(p => {
+      if (selectedAvailability.includes('in-stock') && !p.inStock) return false;
+      if (selectedAvailability.includes('sale') && !p.onSale) return false;
+      return true;
+    });
+  }
+
+  renderProducts(filtered);
+}
+
+function resetFilters() {
+  document.querySelectorAll('.category-filter').forEach((el, i) => {
+    el.checked = i === 0;
+  });
+  document.querySelector('input[name="priceRange"]').checked = true;
+  document.querySelectorAll('.availability-filter').forEach((el, i) => {
+    el.checked = i === 0;
+  });
+  filterProducts();
+}
+
+/* =================================================================
+   CHECKOUT & PAYMENT
+================================================================= */
+let selectedPaymentMethod = null;
+
+function openCheckoutModal() {
+  if (cart.length === 0) return;
+
+  document.getElementById('wallet-balance-checkout').textContent = `₹${walletBalance.toLocaleString('en-IN')}`;
+  
+  const totalAmount = cart.reduce((sum, item) => {
+    const itemTotal = item.price * item.quantity;
+    const discount = (item.discount / 100) * itemTotal;
+    return sum + (itemTotal - discount);
+  }, 0);
+
+  // Show warning if wallet insufficient
+  const walletWarning = document.getElementById('wallet-warning');
+  if (totalAmount > walletBalance) {
+    walletWarning.style.display = 'block';
+  } else {
+    walletWarning.style.display = 'none';
+  }
+
+  // Reset payment method
+  selectedPaymentMethod = null;
+  document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+  document.querySelectorAll('.payment-radio').forEach(el => el.checked = false);
+  document.getElementById('pay-btn').disabled = true;
+
+  $('#checkoutModal').modal('show');
+}
+
+function selectPaymentMethod(method) {
+  selectedPaymentMethod = method;
+  document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+  document.querySelector(`input[value="${method}"]`).checked = true;
+  document.getElementById('pay-btn').disabled = false;
+}
+
+function processPayment() {
+  if (!selectedPaymentMethod) return;
+
+  const totalAmount = cart.reduce((sum, item) => {
+    const itemTotal = item.price * item.quantity;
+    const discount = (item.discount / 100) * itemTotal;
+    return sum + (itemTotal - discount);
+  }, 0);
+
+  if (selectedPaymentMethod === 'wallet') {
+    if (totalAmount > walletBalance) {
+      showNotification('Insufficient wallet balance!', 'error');
+      return;
+    }
+    
+    // Simulate payment
+    $('#checkoutModal').modal('hide');
+    showNotification('Processing wallet payment...', 'info');
+    
+    setTimeout(() => {
+      completePayment(totalAmount, 'Wallet', 'WAL-' + Date.now());
+    }, 1500);
+  } else {
+    // Razorpay payment
+    openRazorpayPayment(totalAmount);
+  }
+}
+
+function openRazorpayPayment(amount) {
+  const options = {
+    key: 'rzp_test_1DP5Mmqt2wXn0d', // Test key - replace with your actual key
+    amount: Math.round(amount * 100), // Amount in paise
+    currency: 'INR',
+    name: 'Kemtex Wellness',
+    description: `Purchase of ${cart.length} wellness products`,
+    prefill: {
+      name: 'Customer',
+      email: 'customer@example.com',
+      contact: '9876543210'
+    },
+    theme: {
+      color: '#28a745'
+    },
+    handler: function(response) {
+      $('#checkoutModal').modal('hide');
+      completePayment(amount, selectedPaymentMethod.toUpperCase(), response.razorpay_payment_id);
+    },
+    modal: {
+      ondismiss: function() {
+        showNotification('Payment cancelled. Please try again.', 'error');
+      }
+    }
+  };
+
+  const razorpay = new Razorpay(options);
+  razorpay.open();
+}
+
+function completePayment(amount, method, transactionId) {
+  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  
+  showNotification(
+    `✓ Payment Successful!<br>
+    Amount: ₹${amount.toLocaleString('en-IN')}<br>
+    Method: ${method}<br>
+    Transaction ID: ${transactionId}`,
+    'success',
+    5000
+  );
+
+  // Clear cart and reset
+  cart = [];
+  updateCart();
+}
+
+/* =================================================================
+   UTILITIES
+================================================================= */
+function continueShopping() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showNotification(message, type = 'success', duration = 3000) {
+  const notification = document.createElement('div');
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    animation: slideIn 0.3s ease;
+    max-width: 400px;
+    word-wrap: break-word;
+    font-size: 0.95rem;
+  `;
+  
+  notification.innerHTML = message;
+  document.body.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, duration);
+}
+
+/* =================================================================
+   INITIALIZATION
+================================================================= */
+document.addEventListener('DOMContentLoaded', function() {
+  renderProducts();
+
+  // Add event listeners to filters
+  document.querySelectorAll('.category-filter, input[name="priceRange"], .availability-filter').forEach(el => {
+    el.addEventListener('change', filterProducts);
+  });
+
+  // Add CSS for notifications animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+});
+</script>
+
+</body>
+</html>

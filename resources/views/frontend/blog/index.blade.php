@@ -1,97 +1,117 @@
 @extends('frontend.layouts.master')
 
-@section('title', 'Blog')
-@section('meta_description', 'Health tips, wellness articles and news from KemtexWellness.')
+@section('title', 'Blog - KemtexWellness')
 
 @section('content')
 
-    <section class="py-5 bg-success text-white">
-        <div class="container text-center">
-            <h1 class="fw-bold">Wellness Blog</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb justify-content-center mb-0">
-                    <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-white-75">Home</a></li>
-                    <li class="breadcrumb-item active text-white">Blog</li>
-                </ol>
-            </nav>
+    <section class="page-title bg-1">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="block text-center">
+                        <span class="text-white">📝 Latest Updates</span>
+                        <h1 class="text-capitalize mb-4 text-lg">News &amp; Insights</h1>
+                        <ul class="list-inline">
+                            <li class="list-inline-item"><a href="{{ route('home') }}" class="text-white">Home</a></li>
+                            <li class="list-inline-item"><span class="text-white">/</span></li>
+                            <li class="list-inline-item text-white-50">Blog</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
-    <section class="py-5">
+    <section class="section latest-blog">
         <div class="container">
-            <div class="row g-4">
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-7 text-center">
+                    <div class="section-title">
+                        <span class="h6 text-color">📣 Stay Informed</span>
+                        <h2 class="mt-3 content-title">Tips, Success Stories &amp; Wellness Insights</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
                 @php
                     $posts = [
                         [
-                            'title' => 'Top 10 Natural Supplements for Energy',
+                            'title' => 'How to Build a 1000-Person Network in 90 Days',
+                            'date' => 'January 15, 2026',
+                            'cat' => 'Network Building',
                             'excerpt' =>
-                                'Discover the best nature-derived supplements that can sustainably boost your daily energy levels without the crash.',
-                            'date' => 'Feb 20, 2026',
-                            'cat' => 'Supplements',
-                            'img' => 'post1',
+                                'Discover the proven strategies our top distributors use to rapidly expand their networks while maintaining quality relationships.',
+                            'img' => 'blog-1.jpg',
                         ],
                         [
-                            'title' => 'The Benefits of Herbal Detox Teas',
+                            'title' => 'Top 5 Wellness Products That Sell Themselves',
+                            'date' => 'January 10, 2026',
+                            'cat' => 'Products',
                             'excerpt' =>
-                                'Herbal teas have been used for centuries to cleanse the body. Learn which blends work best for detoxification.',
-                            'date' => 'Feb 14, 2026',
-                            'cat' => 'Herbal',
-                            'img' => 'post2',
+                                'Learn which products generate the most repeat orders and why customers love them. Your commission income depends on product retention.',
+                            'img' => 'blog-2.jpg',
                         ],
                         [
-                            'title' => 'Understanding Omega-3 Fatty Acids',
+                            'title' => 'From ₹0 to ₹1L Monthly: A Distributor\'s Journey',
+                            'date' => 'January 5, 2026',
+                            'cat' => 'Success Stories',
                             'excerpt' =>
-                                'A deep dive into why Omega-3s are essential and how to choose the right supplement for your needs.',
-                            'date' => 'Feb 08, 2026',
-                            'cat' => 'Nutrition',
-                            'img' => 'post3',
+                                'Read how Anita went from a homemaker to earning ₹1 lakh per month using our step-by-step system and dedicated mentorship.',
+                            'img' => 'blog-3.jpg',
                         ],
                         [
-                            'title' => '5 Morning Wellness Rituals',
-                            'excerpt' =>
-                                'Start your day right with these science-backed morning habits that promote lasting health and mental clarity.',
-                            'date' => 'Jan 30, 2026',
-                            'cat' => 'Lifestyle',
-                            'img' => 'post4',
-                        ],
-                        [
-                            'title' => 'Vitamins vs Supplements: What\'s the Difference?',
-                            'excerpt' =>
-                                'Confused about whether to take vitamins or supplements? We break down the key differences for you.',
-                            'date' => 'Jan 22, 2026',
+                            'title' => 'Understanding the 20-Level Income Structure',
+                            'date' => 'December 28, 2025',
                             'cat' => 'Education',
-                            'img' => 'post5',
+                            'excerpt' =>
+                                'A detailed breakdown of how commissions flow through 20 levels in our compensation plan and strategies to maximize every level.',
+                            'img' => 'blog-4.jpg',
                         ],
                         [
-                            'title' => 'Gut Health: The Foundation of Wellness',
+                            'title' => 'Social Media Strategies for MLM Success in 2026',
+                            'date' => 'December 20, 2025',
+                            'cat' => 'Marketing',
                             'excerpt' =>
-                                'Your gut houses 70% of your immune system. Learn how probiotics and diet can transform your overall health.',
-                            'date' => 'Jan 15, 2026',
+                                'Master Instagram, WhatsApp, and YouTube to attract quality leads and build your network faster than ever before.',
+                            'img' => 'blog-5.jpg',
+                        ],
+                        [
+                            'title' => 'The Science Behind Our Immunity Booster Kit',
+                            'date' => 'December 15, 2025',
                             'cat' => 'Health',
-                            'img' => 'post6',
+                            'excerpt' =>
+                                'Explore the research and ingredients behind our best-selling immunity product and why customers reorder month after month.',
+                            'img' => 'blog-6.jpg',
                         ],
                     ];
                 @endphp
-                @foreach ($posts as $p)
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card border-0 shadow-sm h-100">
-                            <img src="{{ asset('frontend/images/' . $p['img'] . '.jpg') }}" class="card-img-top"
-                                style="height:200px;object-fit:cover;" alt="{{ $p['title'] }}"
-                                onerror="this.src='https://placehold.co/400x200/198754/white?text={{ urlencode($p['cat']) }}';" />
-                            <div class="card-body">
-                                <div class="d-flex align-items-center gap-2 mb-2">
-                                    <span class="badge bg-success">{{ $p['cat'] }}</span>
-                                    <small class="text-muted">{{ $p['date'] }}</small>
-                                </div>
-                                <h6 class="fw-semibold">{{ $p['title'] }}</h6>
-                                <p class="text-muted small">{{ $p['excerpt'] }}</p>
+                @foreach ($posts as $post)
+                    <div class="col-lg-4 col-md-6 mb-5">
+                        <div class="post-item">
+                            <div class="post-thumb mb-3"
+                                style="height:200px;background:#f0f4f8;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                <i class="ti-write text-color" style="font-size:4rem;opacity:.3;"></i>
                             </div>
-                            <div class="card-footer bg-white border-0 pt-0 pb-3">
-                                <a href="#" class="btn btn-outline-success btn-sm">Read More</a>
+                            <div class="post-content">
+                                <div class="post-meta mb-2">
+                                    <span class="badge badge-light text-color mr-2">{{ $post['cat'] }}</span>
+                                    <span class="text-muted small">{{ $post['date'] }}</span>
+                                </div>
+                                <h5 class="mb-3"><a href="{{ route('blog') }}" class="text-dark">{{ $post['title'] }}</a>
+                                </h5>
+                                <p class="text-muted">{{ $post['excerpt'] }}</p>
+                                <a href="{{ route('blog') }}"
+                                    class="btn btn-small btn-solid-border btn-round-full mt-2">Read More</a>
                             </div>
                         </div>
                     </div>
                 @endforeach
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted">Ready to start your own success story?</p>
+                <a href="{{ route('pricing') }}" class="btn btn-main btn-round-full">Join Now</a>
             </div>
         </div>
     </section>
