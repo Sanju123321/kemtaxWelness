@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+
+<!--
+ // WEBSITE: https://themefisher.com
+ // TWITTER: https://twitter.com/themefisher
+ // FACEBOOK: https://www.facebook.com/themefisher
+ // GITHUB: https://github.com/themefisher/
+-->
+
+<html lang="zxx">
+<head>
+
+  <!-- ** Basic Page Needs ** -->
+  <meta charset="utf-8">
+  <title>Dashboard - Kemtex Wellness</title>
+
+  <!-- ** Mobile Specific Metas ** -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Kemtex Wellness Dashboard">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Themefisher Html5 Agency Template v1.0">
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/bootstrap.min.css">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="plugins/themify/css/themify-icons.css">
+  <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="plugins/magnific-popup/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick/slick-theme.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!--Favicon-->
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+
+  <!-- Razorpay Payment Gateway -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    .dashboard-header {
+      background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+      padding: 20px 0;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    /* ── Stat Cards ── */
+    .stat-cards-wrapper {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .stat-card {
+      background: white;
+      padding: 22px 24px;
+      border-left: 4px solid #28a745;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    /* Right divider between stat cards on md+ */
+    @media (min-width: 768px) {
+      .stat-card-col:not(:last-child) .stat-card {
+        border-right: 1px solid #e9ecef;
+      }
+    }
+    .stat-card h6 {
+      color: #888;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: 10px;
+    }
+    .stat-card .stat-inner {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stat-card .stat-icon {
+      font-size: 1.5rem;
+      color: #6c757d;
+      flex-shrink: 0;
+    }
+    .stat-card .amount {
+      font-size: 1.7rem;
+      font-weight: 800;
+      color: #28a745;
+      line-height: 1.1;
+    }
+    
+    .team-table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .team-table table {
+      margin-bottom: 0;
+    }
+    
+    .team-member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 10px;
+    }
+    
+    .member-name {
+      display: flex;
+      align-items: center;
+    }
+    
+    .level-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+    }
+    
+    .level-1 {  color: white; }
+    .level-2 { color: black; }
+    .level-3 {  color: white; }
+    
+    .top-performer-item {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .top-performer-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      margin: 0 auto 10px;
+    }
+    
+    .performer-earning {
+      color: #28a745;
+      font-weight: bold;
+      font-size: 16px;
+    }
+    
+    /* Hierarchy Styles */
+    .hierarchy-indent-0 { padding-left: 20px; }
+    .hierarchy-indent-1 { padding-left: 50px; }
+    .hierarchy-indent-2 { padding-left: 80px; }
+    .hierarchy-indent-3 { padding-left: 110px; }
+    
+    tr.level-0 { background-color: #f8f9fa; font-weight: bold; }
+    tr.level-0 td:first-child {
+      border-left: 0;
+      padding-left: 20px !important;
+    }
+    
+    tr.level-1 td:first-child {
+      padding-left: 50px !important;
+      position: relative;
+      border-left: 2px solid #28a745;
+    }
+    
+    tr.level-1 td:first-child::before {
+      content: '├─';
+      position: absolute;
+      left: 22px;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    tr.level-2 td:first-child {
+      padding-left: 80px !important;
+      position: relative;
+      border-left: 2px solid #FFD700;
+    }
+    
+    tr.level-2 td:first-child::before {
+      content: '├─';
+      position: absolute;
+      left: 52px;
+      color: #FFD700;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    tr.level-3 td:first-child {
+      padding-left: 110px !important;
+      position: relative;
+      border-left: 2px solid #999;
+    }
+    
+    tr.level-3 td:first-child::before {
+      content: '└─';
+      position: absolute;
+      left: 82px;
+      color: #999;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    /* Vertical connectors */
+    tr.level-1:first-of-type td:first-child {
+      border-left: 2px solid #28a745;
+      border-top: 2px solid #28a745;
+      border-top-left-radius: 0;
+    }
+    
+    tr.level-1:last-of-type td:first-child {
+      border-left: 2px solid #28a745;
+      border-bottom: 2px solid #28a745;
+      border-bottom-left-radius: 0;
+    }
+    
+    /* Show connector lines above and below groups */
+    .hierarchy-section-header {
+      display: none;
+    }
+
+      /* ── Genealogy Tree – connector-line styles ── */
+      .tree {
+        overflow-x: auto;
+        overflow-y: auto;
+        text-align: center;
+        -webkit-overflow-scrolling: touch;
+        min-height: 250px;
+        background-color: #fafbfc;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+      }
+      .tree, .tree ul, .tree li { margin: 0; padding: 0; list-style: none; }
+
+      /* Root ul: inline-block to allow centering; no top-padding (nothing to connect above root) */
+      .tree > ul { display: inline-block; padding-top: 0; }
+
+      /* Every nested ul sits 32px below the parent node so we have room for the vertical drop */
+      .tree ul {
+        padding-top: 32px;
+        position: relative;
+        text-align: center;
+        white-space: nowrap; /* prevents wrapping that breaks connector lines */
+      }
+
+      /* Each li is inline-block so siblings stay on one row (scrolls horizontally if needed) */
+      .tree li {
+        display: inline-block;
+        vertical-align: top;
+        text-align: center;
+        position: relative;
+        padding: 32px 16px 0 16px;
+        white-space: normal;
+      }
+
+      @media (max-width: 576px) {
+        .tree li { padding: 28px 10px 0 10px; }
+        .tree .node img { width: 72px; height: 72px; }
+        .tree .person-name { font-size: 0.82rem; }
+      }
+
+      /*
+       * HOW CONNECTOR LINES WORK:
+       *  ::before  = LEFT half of horizontal bar   (left:0   → right:50%, border-top)
+       *  ::after   = RIGHT half of bar + vertical drop
+       *              (left:50% → right:0,  border-top + border-left = inverted-L)
+       *
+       * For FIRST child (leftmost):  hide ::before  → no leftward overshoot
+       * For LAST  child (rightmost): shrink ::after to 0 width (left:50% right:50%)
+       *                               so only border-left (vertical drop) remains
+       * Both rules together give a T/L-shaped join for every node with no stray overhangs.
+       */
+      .tree li::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 50%;
+        height: 32px;
+        border-top: 2px solid #ced4da;
+      }
+      .tree li::after {
+        content: '';
+        position: absolute;
+        top: 0; left: 50%; right: 0;
+        height: 32px;
+        border-top: 2px solid #ced4da; /* right half of horizontal bar  */
+        border-left: 2px solid #ced4da; /* vertical drop down to node    */
+      }
+      /* First child: no leftward extension */
+      .tree li:first-child::before { display: none; }
+      /* First child ::after already draws the right-half bar + vertical drop – round the corner */
+      .tree li:first-child::after  { border-radius: 6px 0 0 0; }
+
+      /* Last child: collapse right extension to nothing, keep only the vertical drop */
+      .tree li:last-child::after  { right: 50%; border-top: none; border-radius: 0 6px 0 0; }
+      /* Last child still needs the left half bar */
+      .tree li:last-child::before { border-radius: 0 0 0 0; }
+
+      /* Single-child (root “You”): no horizontal bar at all, no top padding */
+      .tree li:only-child::before,
+      .tree li:only-child::after  { display: none; }
+      .tree li:only-child { padding-top: 0; }
+
+      /* Vertical drop FROM parent node DOWN to the horizontal bar */
+      .tree ul ul::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 50%;
+        width: 0; height: 32px;
+        border-left: 2px solid #ced4da;
+      }
+
+      /* ── Node (photo bubble) ── */
+      .tree .node {
+        display: inline-block;
+        text-align: center;
+        cursor: default;
+      }
+      .tree .node img {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        border: none;
+        /* Double-ring effect: white gap + colored outer ring + soft drop shadow */
+        box-shadow:
+          0 0 0 3px #fff,          /* white gap between photo and ring  */
+          0 0 0 6px #dee2e6,       /* default outer ring colour         */
+          0 4px 12px rgba(0,0,0,0.12); /* ambient shadow                */
+        transition: box-shadow .2s, transform .2s;
+      }
+      .tree .node img:hover {
+        transform: scale(1.06);
+        box-shadow:
+          0 0 0 3px #fff,
+          0 0 0 6px #adb5bd,
+          0 6px 18px rgba(0,0,0,0.20);
+      }
+
+      /* Level-based plan ring colours (override the default #dee2e6 ring) */
+      .tree .node.level-0 img {   /* You – Owner / Admin  → Blue  */
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #4e73df, 0 4px 12px rgba(78,115,223,0.25);
+      }
+      .tree .node.level-0 img:hover {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 7px #2e59d9, 0 6px 18px rgba(78,115,223,0.35);
+      }
+      .tree .node.level-1 img {   /* L1 – Gold plan       → Green */
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1cc88a, 0 4px 12px rgba(28,200,138,0.25);
+      }
+      .tree .node.level-1 img:hover {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 7px #17a673, 0 6px 18px rgba(28,200,138,0.35);
+      }
+      .tree .node.level-2 img {   /* L2 – Silver plan     → Amber */
+        box-shadow: 0 0 0 3px #fff, 0 0 0 6px #f6c23e, 0 4px 12px rgba(246,194,62,0.25);
+      }
+      .tree .node.level-2 img:hover {
+        box-shadow: 0 0 0 3px #fff, 0 0 0 7px #dda20a, 0 6px 18px rgba(246,194,62,0.35);
+      }
+
+      .tree .person-name {
+        margin-top: 10px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.88rem;
+        white-space: nowrap;
+      }
+
+      /* Clickable node hover */
+      .tree-node-clickable { cursor: pointer; }
+      .tree-node-clickable:hover img {
+        transform: scale(1.10);
+        transition: transform .18s;
+      }
+      .tree-node-clickable.no-children { cursor: default; }
+      .tree-node-clickable.no-children:hover img { transform: none; }
+      .node.expanded { opacity: .92; }
+
+      /* "+N more" badge on truncated nodes */
+      .tree-more-badge {
+        position: absolute;
+        bottom: -4px; right: -6px;
+        background: #495057;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 5px;
+        border-radius: 20px;
+        pointer-events: none;
+        box-shadow: 0 1px 4px rgba(0,0,0,.25);
+      }
+      .tree .node { position: relative; } /* needed for badge positioning */
+
+      /* Downline table rows clickable */
+      #downline-body tr:hover { background: #f8f9fa; }
+
+      /* Level Label Badge in Tree */
+      .tree .level-label {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%);
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        border: 2px solid white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 28px;
+        height: 28px;
+        letter-spacing: 0.5px;
+      }
+
+      .tree .node.level-0 ~ .level-label { background: linear-gradient(135deg, #4e73df 0%, #2e59d9 100%); }
+      .tree .node.level-1 ~ .level-label { background: linear-gradient(135deg, #1cc88a 0%, #13855c 100%); }
+      .tree .node.level-2 ~ .level-label { background: linear-gradient(135deg, #f6c23e 0%, #dda20a 100%); }
+      .tree .node.level-3 ~ .level-label { background: linear-gradient(135deg, #e74a3b 0%, #c23030 100%); }
+      .tree .node.level-4 ~ .level-label { background: linear-gradient(135deg, #858796 0%, #5a5c6d 100%); }
+  </style>
+
+</head>
+
+<body>
+
+<!-- Header Start -->
+<header class="navigation">
+  <div class="header-top ">
+    <div class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col-lg-2 col-md-4">
+          <div class="header-top-socials text-center text-lg-left text-md-left">
+            <a href="https://www.facebook.com/themefisher" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com/themefisher" aria-label="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://github.com/themefisher/" aria-label="github"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-10 col-md-8 text-center text-lg-right text-md-right">
+          <div class="header-top-info mb-2 mb-md-0">
+            <a href="tel:+91-345-67890">Call Us : <span>+91-345-67890</span></a>
+            <a href="mailto:kemtextwellness@gmail.com"><i class="fas fa-envelope mr-2"></i><span>kemtextwellness@gmail.com</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navbar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <nav class="navbar navbar-expand-lg px-0 py-4">
+            <a class="navbar-brand" href="index.html">
+              kemtext<span>Wellness.</span>
+            </a>
+      
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample09"
+              aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="fa fa-bars"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse text-center" id="navbarsExample09">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="products.html">Products</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="wallet.html">Your Wallet</a>
+                </li>
+                <li class="nav-item active">
+                  <a class="nav-link" href="dashboard.html">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="pricing.html">Pricing</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="contact.html">Contact</a>
+                </li>
+              </ul>
+          
+              <div class="my-2 my-md-0 ml-lg-4 text-center">
+                <a href="profile.html" class="btn btn-main btn-round-full mr-2">Profile</a>
+                <a href="index.html" class="btn btn-solid-border btn-round-full">Logout</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Header Close -->
+
+
+<!-- Dashboard Start -->
+<section class="dashboard container my-5">
+  <!-- Stat Cards -->
+  <div class="stat-cards-wrapper mb-4">
+    <div class="row g-0">
+      <div class="col-12 col-md-3 stat-card-col">
+        <div class="stat-card">
+          <h6>Date</h6>
+          <div class="stat-inner">
+            <i class="fas fa-calendar-alt stat-icon"></i>
+            <div class="amount">Feb 22,2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 stat-card-col">
+        <div class="stat-card">
+          <h6>Total Earnings</h6>
+          <div class="stat-inner">
+            <i class="fas fa-rupee-sign stat-icon"></i>
+            <div class="amount">₹9,250.00</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 stat-card-col">
+        <div class="stat-card">
+          <h6>Today Earnings</h6>
+          <div class="stat-inner">
+            <i class="fas fa-user-circle stat-icon"></i>
+            <div class="amount">₹900.00</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-3 stat-card-col">
+        <div class="stat-card">
+          <h6>Current Plan</h6>
+          <div class="stat-inner">
+            <i class="fas fa-chart-bar stat-icon"></i>
+            <div class="amount" style="color: #0066cc;"><i class="fas fa-rupee-sign"></i>1000</div>
+          </div>
+          <button type="button" class="btn btn-sm btn-main mt-2" style="width: 100%;" data-toggle="modal" data-target="#upgradeModal">
+            <i class="fas fa-arrow-up mr-1"></i>Upgrade
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-4 g-4">
+    <div class="col-lg-8">
+      <div class="team-table p-4">
+        <div class="d-flex align-items-center justify-content-between flex-wrap mb-2" style="gap:10px;">
+          <h4 class="mb-0">Genealogy Tree</h4>
+          <div class="d-flex gap-2">
+            <button type="button" class="btn btn-info btn-round-full btn-sm" data-toggle="modal" data-target="#levelOpeningModal" title="View Level Opening Conditions">
+              <i class="fas fa-info-circle mr-1"></i> Levels Info
+            </button>
+            <button type="button" class="btn btn-main btn-round-full btn-sm" data-toggle="modal" data-target="#inviteModal" id="invite-btn">
+              <i class="fas fa-user-plus mr-1"></i> Invite
+            </button>
+          </div>
+        </div>
+        <p class="text-muted small mb-3">
+          <strong>Click any photo</strong> to expand or collapse their downline. Each node shows the member's level (L1, L2, L3, etc.).
+        </p>
+        <div style="overflow-x:auto;">
+          <div class="tree" id="tree-root"></div>
+        </div>
+      </div>
+
+      <div class="team-table mt-4 p-3">
+        <h5 class="mb-3">Recent Payouts</h5>
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nov 22, 2025</td>
+                <td>₹ 200.00</td>
+                <td>Completed</td>
+              </tr>
+              <tr>
+                <td>Dec 15, 2025</td>
+                <td>₹ 150.00</td>
+                <td>Completed</td>
+              </tr>
+              <tr>
+                <td>Jan 08, 2026</td>
+                <td>₹ 300.00</td>
+                <td>Completed</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="team-table p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0 fw-bold">Downline Members</h5>
+          <span id="downline-badge" class="badge bg-success rounded-pill">0</span>
+        </div>
+        <!-- Search -->
+        <div class="input-group input-group-sm mb-3">
+          <span class="input-group-text"><i class="fas fa-search"></i></span>
+          <input type="text" id="downline-search" class="form-control"
+                 placeholder="Search name or sponsor…">
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th class="text-center">Level</th>
+                <th>Sponsor</th>
+              </tr>
+            </thead>
+            <tbody id="downline-body">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <small id="downline-count" class="text-muted"></small>
+          <nav><ul id="downline-pagination" class="pagination pagination-sm mb-0"></ul></nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Dashboard End -->
+
+<!-- Invite / Referral Modal -->
+<div class="modal fade" id="inviteModal" tabindex="-1" role="dialog" aria-labelledby="inviteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="inviteModalLabel">Invite &amp; Earn</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted mb-3">Share your referral with friends using the code/link below.</p>
+
+        <div class="form-group">
+          <label class="small font-weight-bold mb-1">Referral Code</label>
+          <div class="input-group">
+            <input id="referralCodeInput" type="text" class="form-control" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="copyReferralBtn">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mb-0">
+          <label class="small font-weight-bold mb-1">Referral Link</label>
+          <input id="referralLinkInput" type="text" class="form-control" readonly>
+        </div>
+
+        <small id="inviteStatus" class="text-success d-block mt-2" style="display:none"></small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-main btn-round-full btn-sm" id="sendReferralBtn">
+          <i class="fas fa-paper-plane mr-1"></i> Send Referral
+        </button>
+        <button type="button" class="btn btn-solid-border btn-round-full btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Invite Modal -->
+
+<!-- Upgrade / Packages Modal -->
+<div class="modal fade" id="upgradeModal" tabindex="-1" role="dialog" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="upgradeModalLabel">Choose Your Plan</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Upgrade Error Message -->
+        <div id="upgradeErrorMessage" class="alert alert-warning alert-dismissible fade" role="alert" style="display: none; margin-bottom: 20px;">
+          <strong>Upgrade Restriction!</strong> <span id="errorText"></span>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="row">
+          <!-- Package 1 - 1000 Blue -->
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card text-center h-100" style="border-top: 4px solid #0066cc;">
+              <div class="card-body">
+                <div style="display: inline-block; background-color: #0066cc; color: white; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; margin-bottom: 10px;">CURRENT PLAN</div>
+                <h5 class="card-title">Starter</h5>
+                <p class="card-text" style="color: #0066cc; font-size: 28px; font-weight: bold;"><i class="fas fa-rupee-sign"></i>1000</p>
+                <ul class="list-unstyled text-left small mb-3">
+                  <li><i class="fas fa-check text-success mr-2"></i>Basic Features</li>
+                  <li><i class="fas fa-check text-success mr-2"></i>Support</li>
+                </ul>
+                <button type="button" class="btn btn-sm" style="background-color: #0066cc; color: white; width: 100%;" disabled>
+                  <i class="fas fa-check mr-1"></i>Current Plan
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Package 2 - 2500 Yellow -->
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card text-center h-100" style="border-top: 4px solid #FFC107;">
+              <div class="card-body">
+                <h5 class="card-title">Professional</h5>
+                <p class="card-text" style="color: #FFC107; font-size: 28px; font-weight: bold;"><i class="fas fa-rupee-sign"></i>2500</p>
+                <ul class="list-unstyled text-left small mb-3">
+                  <li><i class="fas fa-check text-success mr-2"></i>Advanced Features</li>
+                  <li><i class="fas fa-check text-success mr-2"></i>Priority Support</li>
+                </ul>
+                <button type="button" class="btn btn-sm upgrade-btn upgrade-btn-professional" data-level="2" style="background-color: #FFC107; color: black; width: 100%;">
+                  <i class="fas fa-arrow-up mr-1"></i>Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Package 3 - 5000 Green -->
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card text-center h-100" style="border-top: 4px solid #28a745;">
+              <div class="card-body">
+                <h5 class="card-title">Premium</h5>
+                <p class="card-text" style="color: #28a745; font-size: 28px; font-weight: bold;"><i class="fas fa-rupee-sign"></i>5000</p>
+                <ul class="list-unstyled text-left small mb-3">
+                  <li><i class="fas fa-check text-success mr-2"></i>Premium Features</li>
+                  <li><i class="fas fa-check text-success mr-2"></i>24/7 Support</li>
+                </ul>
+                <button type="button" class="btn btn-sm upgrade-btn" data-level="3" style="background-color: #28a745; color: white; width: 100%;">
+                  <i class="fas fa-arrow-up mr-1"></i>Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Package 4 - 10000 Silver -->
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card text-center h-100" style="border-top: 4px solid #C0C0C0;">
+              <div class="card-body">
+                <h5 class="card-title">Elite</h5>
+                <p class="card-text" style="color: #C0C0C0; font-size: 28px; font-weight: bold;"><i class="fas fa-rupee-sign"></i>10,000</p>
+                <ul class="list-unstyled text-left small mb-3">
+                  <li><i class="fas fa-check text-success mr-2"></i>Elite Features</li>
+                  <li><i class="fas fa-check text-success mr-2"></i>Dedicated Support</li>
+                </ul>
+                <button type="button" class="btn btn-sm upgrade-btn" data-level="4" style="background-color: #C0C0C0; color: black; width: 100%;">
+                  <i class="fas fa-arrow-up mr-1"></i>Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Package 5 - 20000 Gold -->
+          <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card text-center h-100" style="border-top: 4px solid #FFD700;">
+              <div class="card-body">
+                <h5 class="card-title">Platinum</h5>
+                <p class="card-text" style="color: #FFD700; font-size: 28px; font-weight: bold;"><i class="fas fa-rupee-sign"></i>20,000</p>
+                <ul class="list-unstyled text-left small mb-3">
+                  <li><i class="fas fa-check text-success mr-2"></i>Platinum Features</li>
+                  <li><i class="fas fa-check text-success mr-2"></i>VIP Support</li>
+                </ul>
+                <button type="button" class="btn btn-sm upgrade-btn" data-level="5" style="background-color: #FFD700; color: black; width: 100%;">
+                  <i class="fas fa-arrow-up mr-1"></i>Upgrade
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-solid-border btn-round-full btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Upgrade Modal -->
+
+<!-- Member Genealogy Modal -->
+<div class="modal fade" id="memberGenealogyModal" tabindex="-1" role="dialog" aria-labelledby="memberGenealogyLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="memberGenealogyLabel">
+          <i class="fas fa-sitemap mr-2"></i><span id="memberGenealogyName">Member</span>'s Genealogy Tree
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <small class="text-muted">
+            <i class="fas fa-info-circle mr-1"></i>
+            Click any photo to expand or collapse their downline
+          </small>
+        </div>
+        <div style="overflow-x:auto;">
+          <div class="tree" id="member-tree-root"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-solid-border btn-round-full btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Member Genealogy Modal -->
+
+<!-- Level Opening Conditions Modal -->
+<div class="modal fade" id="levelOpeningModal" tabindex="-1" role="dialog" aria-labelledby="levelOpeningLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #0066cc 0%, #004a99 100%); color: white;">
+        <h5 class="modal-title" id="levelOpeningLabel" style="color: white;">
+          <i class="fas fa-layer-group mr-2"></i>Level Opening Conditions
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color: white;">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+          <i class="fas fa-info-circle mr-2"></i>
+          <strong>Direct Requirement Rule:</strong> To unlock deeper level income, you must maintain the required number of direct referrals. Each direct unlocks 2 additional levels of earning potential.
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered">
+            <thead style="background: linear-gradient(135deg, #f0f4ff 0%, #e8ecff 100%);">
+              <tr>
+                <th style="text-align: center; font-weight: 700;">Direct Active Referrals</th>
+                <th style="text-align: center; font-weight: 700;">Levels Open</th>
+                <th style="text-align: center; font-weight: 700;">Income Depth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="text-align: center;"><strong>1 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-primary">2 Levels</span></td>
+                <td style="text-align: center;"><small>L1, L2</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>2 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-primary">4 Levels</span></td>
+                <td style="text-align: center;"><small>L1, L2, L3, L4</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>3 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-primary">6 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L6</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>4 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-primary">8 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L8</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>5 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-primary">10 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L10</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>6 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-success">12 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L12</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>7 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-success">14 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L14</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>8 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-success">16 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L16</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>9 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-success">18 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L18</small></td>
+              </tr>
+              <tr>
+                <td style="text-align: center;"><strong>10 Direct</strong></td>
+                <td style="text-align: center;"><span class="badge badge-success">20 Levels</span></td>
+                <td style="text-align: center;"><small>L1-L20</small></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="alert alert-warning mt-4" role="alert">
+          <i class="fas fa-lightbulb mr-2"></i>
+          <strong>Example:</strong> If you have 5 direct referrals, you can earn from up to <strong>10 levels</strong> deep in your network. This means you earn income from your directs and their entire downline up to Level 10.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-solid-border btn-round-full btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- /Level Opening Conditions Modal -->
+
+<!-- Member Genealogy Modal -->
+<div class="modal fade" id="memberGenealogyModal" tabindex="-1" role="dialog" aria-labelledby="memberGenealogyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="memberGenealogyModalLabel">Genealogy Tree - <span id="memberGenealogyName"></span></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted small mb-3">
+          <strong>Click any photo</strong> to expand or collapse their downline.
+        </p>
+        <div style="overflow-x:auto; max-height: 500px; overflow-y: auto;">
+          <div class="tree" id="member-tree-root"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-solid-border btn-round-full btn-sm" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- /Member Genealogy Modal -->
+
+<!-- Footer Start -->
+<footer class="footer bg-light">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p class="mb-0">Copyright &copy; <script>
+            var CurrentYear = new Date().getFullYear()
+            document.write(CurrentYear)
+          </script> Kemtex Wellness. All Rights Reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- Footer End -->
+
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/bootstrap/bootstrap.min.js"></script>
+
+<script>
+/* =================================================================
+   MLM MEMBER DATA – replace with a fetch('/api/members') for live data
+   Each record: { id, name, parentId (null = root), img }
+================================================================= */
+const mlmData = [
+  { id:  0, name: 'Aarav Sharma',        parentId: null, img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-0' },
+  { id:  1, name: 'Priya Iyer',          parentId:  0,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-1' },
+  { id:  2, name: 'Vikram Singh',        parentId:  0,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-2' },
+  { id:  3, name: 'Ananya Rao',          parentId:  1,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-3' },
+  { id:  4, name: 'Rohit Mehta',         parentId:  1,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-4' },
+  { id:  5, name: 'Sneha Nair',          parentId:  2,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-5' },
+  { id:  6, name: 'Karan Patel',         parentId:  2,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-6' },
+  { id:  7, name: 'Meera Kapoor',        parentId:  3,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-7' },
+  { id:  8, name: 'Arjun Reddy',         parentId:  3,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-8' },
+  { id:  9, name: 'Neha Gupta',          parentId:  4,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-9' },
+  { id: 10, name: 'Siddharth Jain',      parentId:  4,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-10' },
+  { id: 11, name: 'Pooja Verma',         parentId:  5,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-11' },
+  { id: 12, name: 'Rahul Bose',          parentId:  5,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-12' },
+  { id: 13, name: 'Ishita Chatterjee',   parentId:  6,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-13' },
+  { id: 14, name: 'Manish Kumar',        parentId:  6,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-14' },
+  { id: 15, name: 'Kavya Menon',         parentId:  7,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-15' },
+  { id: 16, name: 'Aditya Kulkarni',     parentId:  7,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-16' },
+  { id: 17, name: 'Divya Bhat',          parentId:  8,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-17' },
+  { id: 18, name: 'Nikhil Shetty',       parentId:  8,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-18' },
+  { id: 19, name: 'Ritu Malhotra',       parentId:  9,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-19' },
+  { id: 20, name: 'Sanjay Tripathi',     parentId:  9,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-20' },
+  { id: 21, name: 'Aishwarya Pillai',    parentId: 10,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-21' },
+  { id: 22, name: 'Pranav Desai',        parentId: 10,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-22' },
+  { id: 23, name: 'Shreya Banerjee',     parentId: 11,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-23' },
+  { id: 24, name: 'Gautam Das',          parentId: 11,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-24' },
+  { id: 25, name: 'Sanya Oberoi',        parentId: 12,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-25' },
+  { id: 26, name: 'Harsh Vardhan',       parentId: 12,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-26' },
+  { id: 27, name: 'Tanya Bansal',        parentId: 13,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-27' },
+  { id: 28, name: 'Rakesh Yadav',        parentId: 13,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-28' },
+  { id: 29, name: 'Bhavna Joshi',        parentId: 14,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-29' },
+  { id: 30, name: 'Deepak Ghosh',        parentId: 14,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-30' },
+  { id: 31, name: 'Komal Saxena',        parentId: 15,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-31' },
+  { id: 32, name: 'Varun Khanna',        parentId: 15,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-32' },
+  { id: 33, name: 'Swati Mishra',        parentId: 16,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-33' },
+  { id: 34, name: 'Rajesh Agarwal',      parentId: 16,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-34' },
+  { id: 35, name: 'Nandini Sinha',       parentId: 17,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-35' },
+  { id: 36, name: 'Hemant Dubey',        parentId: 17,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-36' },
+  { id: 37, name: 'Jyoti Rani',          parentId: 18,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-37' },
+  { id: 38, name: 'Vivek Choudhary',     parentId: 18,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-38' },
+  { id: 39, name: 'Alka Pandey',         parentId: 19,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-39' },
+  { id: 40, name: 'Mohit Shukla',        parentId: 19,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-40' },
+  { id: 41, name: 'Payal Arora',         parentId: 20,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-41' },
+  { id: 42, name: 'Sameer Khan',         parentId: 20,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-42' },
+  { id: 43, name: 'Farah Siddiqui',      parentId: 21,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-43' },
+  { id: 44, name: 'Imran Qureshi',       parentId: 21,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-44' },
+  { id: 45, name: 'Tanvi Prasad',        parentId: 22,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-45' },
+  { id: 46, name: 'Raghav Bedi',         parentId: 22,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-46' },
+  { id: 47, name: 'Lakshmi Narayanan',   parentId: 23,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-47' },
+  { id: 48, name: 'Kriti Srivastava',    parentId: 23,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-48' },
+  { id: 49, name: 'Abhishek Roy',        parentId: 24,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-49' },
+  { id: 50, name: 'Madhuri Kulkarni',    parentId: 24,   img: 'https://api.dicebear.com/8.x/avataaars/svg?seed=mlm-50' },
+];
+
+/* =================================================================
+   HELPERS
+================================================================= */
+const byId = {};
+mlmData.forEach(m => byId[m.id] = m);
+
+function getLevel(id) {
+  let depth = 0, cur = byId[id];
+  while (cur && cur.parentId !== null) { depth++; cur = byId[cur.parentId]; }
+  return depth;
+}
+function getSponsorName(parentId) {
+  return (parentId !== null && byId[parentId]) ? byId[parentId].name : '—';
+}
+function countAllDownline(id) {
+  let count = 0;
+  const stack = mlmData.filter(m => m.parentId === id);
+  while (stack.length) {
+    const cur = stack.pop();
+    count++;
+    mlmData.filter(m => m.parentId === cur.id).forEach(c => stack.push(c));
+  }
+  return count;
+}
+
+const LEVEL_COLORS = ['#4e73df','#1cc88a','#f6c23e','#e74a3b','#858796','#36b9cc','#6f42c1'];
+function levelColor(lvl) { return LEVEL_COLORS[lvl % LEVEL_COLORS.length]; }
+function levelClass(lvl) {
+  const names = ['level-0','level-1','level-2','level-3','level-4'];
+  return names[Math.min(lvl, names.length - 1)];
+}
+
+/* Get level badge text (L0, L1, L2, etc.) */
+function getLevelLabel(lvl) {
+  return `L${lvl}`;
+}
+
+/* Count direct referrals for a member */
+function countDirectReferrals(id) {
+  return mlmData.filter(m => m.parentId === id).length;
+}
+
+/* Get allowed levels opening based on direct count */
+function getAllowedLevels(id) {
+  const directCount = countDirectReferrals(id);
+  // Mapping: 1 direct = 2 levels, 2 directs = 4 levels, etc.
+  const levelMap = {
+    0: 0,   // No directs = No levels open
+    1: 2,   // 1 direct = 2 levels
+    2: 4,   // 2 directs = 4 levels
+    3: 6,   // 3 directs = 6 levels
+    4: 8,   // 4 directs = 8 levels
+    5: 10,  // 5 directs = 10 levels
+    6: 12,  // 6 directs = 12 levels
+    7: 14,  // 7 directs = 14 levels
+    8: 16,  // 8 directs = 16 levels
+    9: 18,  // 9 directs = 18 levels
+    10: 20  // 10 directs = 20 levels
+  };
+  return levelMap[Math.min(directCount, 10)] || 20; // Maximum 20 levels
+}
+
+/* Check if a level is within allowed depth for a member */
+function isLevelAllowed(memberId, checkLevel, rootId) {
+  // Get the allowed level depth from the root member
+  const allowedLevels = getAllowedLevels(rootId);
+  // Calculate relative depth from root
+  const member = byId[memberId];
+  let depth = 0;
+  let cur = member;
+  while (cur && cur.id !== rootId) {
+    depth++;
+    cur = cur.parentId !== null ? byId[cur.parentId] : null;
+  }
+  return depth <= allowedLevels;
+}
+
+/* Breadcrumb path from overall root to a given id */
+function pathToRoot(id) {
+  const path = [];
+  let cur = byId[id];
+  while (cur) { path.unshift(cur); cur = cur.parentId !== null ? byId[cur.parentId] : null; }
+  return path;
+}
+
+/* =================================================================
+   INLINE EXPAND / COLLAPSE GENEALOGY TREE
+================================================================= */
+
+/**
+ * buildTreeUL(parentId, collapsed)
+ * Recursively builds a <ul> for all children of parentId.
+ * collapsed=true → hidden until clicked; collapsed=false → visible on load
+ */
+function buildTreeUL(parentId, collapsed) {
+  const children = mlmData.filter(m => m.parentId === parentId);
+  if (!children.length) {
+    console.log(`buildTreeUL(${parentId}, ${collapsed}): no children`);
+    return '';
+  }
+  console.log(`buildTreeUL(${parentId}, ${collapsed}): found ${children.length} children`);
+  const lis = children.map(child => {
+    const lvl      = getLevel(child.id);
+    const hasKids  = mlmData.some(m => m.parentId === child.id);
+    const kidCount = hasKids ? mlmData.filter(m => m.parentId === child.id).length : 0;
+    const badge    = hasKids
+      ? `<span class="tree-more-badge" id="badge-${child.id}">&#9654; ${kidCount}</span>`
+      : '';
+    const levelLabel = `<span class="level-label">${getLevelLabel(lvl)}</span>`;
+    return `<li>
+      <div class="node ${levelClass(lvl)} tree-node-clickable${hasKids ? '' : ' no-children'}"
+           id="node-${child.id}"
+           ${hasKids ? `onclick="toggleNode(${child.id})" title="Expand ${child.name}'s downline"` : `title="${child.name}"`}
+           style="position:relative;">
+        <img src="${child.img}" alt="${child.name}">
+        ${badge}
+        ${levelLabel}
+      </div>
+      <div class="person-name">${child.name}</div>
+      ${buildTreeUL(child.id, true)}
+    </li>`;
+  }).join('');
+  const styleAttr = collapsed ? ' style="display:none"' : '';
+  const result = `<ul${styleAttr}>${lis}</ul>`;
+  console.log(`buildTreeUL(${parentId}, ${collapsed}): returning HTML length ${result.length}`);
+  return result;
+}
+
+function renderTree() {
+  console.log('renderTree() called, mlmData.length:', mlmData.length);
+  const root = mlmData.find(m => m.parentId === null);
+  console.log('Root member:', root);
+  if (!root) {
+    console.error('No root member found');
+    return;
+  }
+  const rootLvl = getLevel(root.id);
+  const rootLevelLabel = `<span class="level-label">${getLevelLabel(rootLvl)}</span>`;
+  const treeRoot = document.getElementById('tree-root');
+  console.log('tree-root element:', treeRoot);
+  if (!treeRoot) {
+    console.error('tree-root element not found');
+    return;
+  }
+  const treeHTML = `<ul><li>
+    <div class="node ${levelClass(rootLvl)}" id="node-${root.id}" title="${root.name}" style="position:relative;">
+      <img src="${root.img}" alt="${root.name}">
+      ${rootLevelLabel}
+    </div>
+    <div class="person-name">${root.name}</div>
+    ${buildTreeUL(root.id, false)}
+  </li></ul>`;
+  console.log('Generated tree HTML length:', treeHTML.length);
+  treeRoot.innerHTML = treeHTML;
+  console.log('Tree rendered successfully');
+}
+
+/**
+ * Toggle the immediate child <ul> of a node.
+ * Updates the direction-arrow badge and .expanded class.
+ */
+function toggleNode(id) {
+  const nodeDiv = document.getElementById('node-' + id);
+  if (!nodeDiv) return;
+  const li      = nodeDiv.closest('li');
+  const childUL = li.querySelector(':scope > ul');
+  if (!childUL) return;
+  const isClosed = childUL.style.display === 'none';
+  childUL.style.display = isClosed ? 'block' : 'none';
+  const badge = document.getElementById('badge-' + id);
+  if (badge) {
+    const kids = mlmData.filter(m => m.parentId === id).length;
+    badge.innerHTML = isClosed ? `&#9660; ${kids}` : `&#9654; ${kids}`;
+  }
+  nodeDiv.classList.toggle('expanded', isClosed);
+  nodeDiv.title = isClosed
+    ? `Collapse ${byId[id].name}'s downline`
+    : `Expand ${byId[id].name}'s downline`;
+}
+
+/* =================================================================
+   DOWNLINE TABLE – search + pagination
+================================================================= */
+const ROWS_PER_PAGE = 8;
+let currentPage = 1;
+let filteredData = [];
+
+function getDownlineData() {
+  return mlmData
+    .filter(m => m.parentId !== null)
+    .map(m => ({ ...m, level: getLevel(m.id), sponsorName: getSponsorName(m.parentId) }));
+}
+
+function renderDownlineTable() {
+  const query = (document.getElementById('downline-search').value || '').toLowerCase();
+  const all   = getDownlineData();
+  filteredData = all.filter(m =>
+    m.name.toLowerCase().includes(query) || m.sponsorName.toLowerCase().includes(query));
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / ROWS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = 1;
+
+  const start = (currentPage - 1) * ROWS_PER_PAGE;
+  const slice = filteredData.slice(start, start + ROWS_PER_PAGE);
+
+  document.getElementById('downline-badge').textContent = all.length;
+  const end = Math.min(start + ROWS_PER_PAGE, filteredData.length);
+  document.getElementById('downline-count').textContent =
+    filteredData.length ? `Showing ${start + 1}–${end} of ${filteredData.length}` : 'No results';
+
+  document.getElementById('downline-body').innerHTML = slice.map(m => `
+    <tr>
+      <td>
+        <img src="${m.img}" class="rounded-circle me-2" width="32" height="32"
+             style="object-fit:cover;box-shadow:0 0 0 2px #fff,0 0 0 4px ${levelColor(m.level)}"
+             alt="${m.name}">
+        <a href="#" class="member-genealogy-link" data-member-id="${m.id}" data-member-name="${m.name}" style="color:${levelColor(m.level)};font-weight:600;text-decoration:none;cursor:pointer;">
+          ${m.name}
+        </a>
+      </td>
+      <td class="text-center">
+        <span class="badge rounded-pill" style="background:${levelColor(m.level)}">${m.level}</span>
+      </td>
+      <td class="text-muted small">${m.sponsorName}</td>
+    </tr>`).join('');
+
+  const pag = document.getElementById('downline-pagination');
+  const half  = 2;
+  let pStart  = Math.max(1, currentPage - half);
+  let pEnd    = Math.min(totalPages, currentPage + half);
+  if (pEnd - pStart < 4) { pStart = Math.max(1, pEnd - 4); pEnd = Math.min(totalPages, pStart + 4); }
+
+  pag.innerHTML =
+    `<li class="page-item ${currentPage===1?'disabled':''}"><a class="page-link" href="#" data-page="${currentPage-1}">&laquo;</a></li>`
+    + Array.from({length: pEnd - pStart + 1}, (_, i) => pStart + i).map(p =>
+        `<li class="page-item ${p===currentPage?'active':''}"><a class="page-link" href="#" data-page="${p}">${p}</a></li>`
+      ).join('')
+    + `<li class="page-item ${currentPage===totalPages?'disabled':''}"><a class="page-link" href="#" data-page="${currentPage+1}">&raquo;</a></li>`;
+
+  pag.querySelectorAll('a.page-link').forEach(a =>
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const p = parseInt(a.dataset.page);
+      if (p >= 1 && p <= totalPages) { currentPage = p; renderDownlineTable(); }
+    })
+  );
+}
+
+/* =================================================================
+   BOOT
+================================================================= */
+document.addEventListener('DOMContentLoaded', function () {
+  renderTree();
+  renderDownlineTable();
+  document.getElementById('downline-search').addEventListener('input', () => {
+    currentPage = 1;
+    renderDownlineTable();
+  });
+
+  /* ===============================
+     Invite / Referral
+  =============================== */
+  const statusEl = document.getElementById('inviteStatus');
+  const codeEl   = document.getElementById('referralCodeInput');
+  const linkEl   = document.getElementById('referralLinkInput');
+
+  function setStatus(msg) {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.style.display = msg ? 'block' : 'none';
+  }
+
+  function generateReferralCode() {
+    const prefix = 'KEM';
+    const timePart = Date.now().toString(36).toUpperCase();
+    let randPart = '';
+    if (window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint32Array(2);
+      window.crypto.getRandomValues(buf);
+      randPart = (buf[0].toString(36) + buf[1].toString(36)).toUpperCase();
+    } else {
+      randPart = Math.random().toString(36).slice(2).toUpperCase();
+    }
+    return (prefix + timePart + randPart).replace(/[^A-Z0-9]/g, '').slice(0, 12);
+  }
+
+  function getReferralLink(code) {
+    // Prefer absolute URL when hosted; fallback to relative file.
+    const origin = (location.origin && location.origin !== 'null') ? location.origin : '';
+    const registerPath = location.pathname.replace(/[^/]*$/, 'register.html');
+    const base = origin ? (origin + registerPath) : 'register.html';
+    return base + '?ref=' + encodeURIComponent(code);
+  }
+
+  async function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  function buildReferralMessage(code, link) {
+    return `Join Kemtex Wellness using my referral!\n\nReferral Code: ${code}\nLink: ${link}`;
+  }
+
+  function refreshReferral() {
+    const code = generateReferralCode();
+    const link = getReferralLink(code);
+    if (codeEl) codeEl.value = code;
+    if (linkEl) linkEl.value = link;
+    setStatus('');
+  }
+
+  // Generate a fresh code whenever modal opens
+  if (window.jQuery) {
+    jQuery('#inviteModal').on('show.bs.modal', function () {
+      refreshReferral();
+    });
+  }
+
+  const copyBtn = document.getElementById('copyReferralBtn');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', async () => {
+      try {
+        await copyToClipboard((codeEl ? codeEl.value : '') || '');
+        setStatus('Copied referral code.');
+      } catch (e) {
+        setStatus('Copy failed.');
+      }
+    });
+  }
+
+  const sendBtn = document.getElementById('sendReferralBtn');
+  if (sendBtn) {
+    sendBtn.addEventListener('click', async () => {
+      const code = (codeEl ? codeEl.value : '') || generateReferralCode();
+      const link = (linkEl ? linkEl.value : '') || getReferralLink(code);
+      const message = buildReferralMessage(code, link);
+
+      // Best experience on mobile: share sheet (WhatsApp + other apps)
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'Referral Invite',
+            text: message,
+            url: link
+          });
+          setStatus('Shared successfully.');
+          return;
+        } catch (e) {
+          // User cancelled or share not available; fall through to WhatsApp
+        }
+      }
+
+      // Fallback: open WhatsApp share and copy message for other apps
+      try {
+        await copyToClipboard(message);
+        setStatus('Opened WhatsApp. Message copied for other apps.');
+      } catch (e) {
+        setStatus('Opened WhatsApp.');
+      }
+      const waUrl = 'https://wa.me/?text=' + encodeURIComponent(message);
+      window.open(waUrl, '_blank');
+    });
+  }
+});
+
+/* ========================================
+   UPGRADE PLAN VALIDATION
+   Users can only upgrade step-by-step
+   ======================================== */
+$(document).ready(function() {
+  // Current user plan level (Starter = 1)
+  let currentPlanLevel = 1;
+
+  // Plan details
+  const planDetails = {
+    2: { name: 'Professional', price: 2500, description: 'Professional Plan - ₹2,500' },
+    3: { name: 'Premium', price: 5000, description: 'Premium Plan - ₹5,000' },
+    4: { name: 'Elite', price: 10000, description: 'Elite Plan - ₹10,000' },
+    5: { name: 'Platinum', price: 20000, description: 'Platinum Plan - ₹20,000' }
+  };
+
+  // Handle upgrade button clicks
+  $('.upgrade-btn').on('click', function(e) {
+    e.preventDefault();
+    const targetLevel = parseInt($(this).data('level'));
+    const nextAllowedLevel = currentPlanLevel + 1;
+
+    // Validation: can only upgrade to next level
+    if (targetLevel !== nextAllowedLevel) {
+      showUpgradeError(`You must upgrade to Plan ${nextAllowedLevel} first. Cannot skip plans!`);
+      return;
+    }
+
+    // Check if this is Professional plan and has Razorpay class
+    if ($(this).hasClass('upgrade-btn-professional')) {
+      openRazorpayPayment(targetLevel);
+    } else {
+      // For other plans, show placeholder alert
+      alert('Upgrading to Plan ' + targetLevel + '! Redirecting to payment...');
+    }
+  });
+
+  // Razorpay Payment Handler - Using Payment Link (simpler for demo)
+  function openRazorpayPayment(planLevel) {
+    const plan = planDetails[planLevel];
+    if (!plan) return;
+
+    // For demo purposes, show payment dialog and simulate success
+    showPaymentDialog(plan, planLevel);
+  }
+
+  // Simple payment dialog for demo
+  function showPaymentDialog(plan, planLevel) {
+    const testCards = `
+      <div style="background:#f0f0f0; padding:15px; border-radius:8px; margin:15px 0;">
+        <h6 style="margin-bottom:10px;">Test Card Details (Demo):</h6>
+        <p style="margin:5px 0; font-size:13px;"><strong>Card:</strong> 4111 1111 1111 1111</p>
+        <p style="margin:5px 0; font-size:13px;"><strong>Expiry:</strong> 12/25</p>
+        <p style="margin:5px 0; font-size:13px;"><strong>CVV:</strong> 123</p>
+        <p style="margin:5px 0; font-size:13px;"><strong>Name:</strong> Any name</p>
+      </div>
+    `;
+
+    const paymentHTML = `
+      <div style="text-align:center;">
+        <p style="font-size:16px; font-weight:bold; margin:20px 0; color:#28a745;">
+          Upgrading to <strong>${plan.name}</strong> Plan
+        </p>
+        <p style="font-size:24px; font-weight:bold; color:#0066cc; margin:10px 0;">
+          ₹${plan.price.toLocaleString('en-IN')}
+        </p>
+        <p style="color:#666; margin:20px 0;">Redirecting to Razorpay Payment Gateway...</p>
+        ${testCards}
+      </div>
+    `;
+
+    // Create a temporary modal-like dialog
+    const dialogId = 'paymentDialog-' + Date.now();
+    const backdrop = document.createElement('div');
+    backdrop.id = dialogId;
+    backdrop.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;';
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:white;padding:30px;border-radius:12px;max-width:500px;width:90%;box-shadow:0 5px 25px rgba(0,0,0,0.3);';
+    dialog.innerHTML = paymentHTML + `
+      <div style="margin-top:30px; display:flex; gap:10px; justify-content:center;">
+        <button id="btn-continue-payment" style="background:#28a745; color:white; border:none; padding:10px 30px; border-radius:6px; cursor:pointer; font-weight:bold;">
+          Continue to Razorpay
+        </button>
+        <button id="btn-cancel-payment" style="background:#ddd; color:#333; border:none; padding:10px 30px; border-radius:6px; cursor:pointer;">
+          Cancel
+        </button>
+      </div>
+    `;
+    
+    backdrop.appendChild(dialog);
+    document.body.appendChild(backdrop);
+
+    // Continue button - Simulate successful payment
+    document.getElementById('btn-continue-payment').addEventListener('click', () => {
+      document.body.removeChild(backdrop);
+      
+      // Simulate payment delay
+      const mockResponse = {
+        razorpay_payment_id: 'pay_' + Math.random().toString(36).substr(2, 14).toUpperCase(),
+        razorpay_order_id: 'order_' + Math.random().toString(36).substr(2, 14).toUpperCase(),
+        razorpay_signature: 'sign_' + Math.random().toString(36).substr(2, 14).toUpperCase()
+      };
+      
+      handlePaymentSuccess(mockResponse, planLevel);
+    });
+
+    // Cancel button
+    document.getElementById('btn-cancel-payment').addEventListener('click', () => {
+      document.body.removeChild(backdrop);
+    });
+  }
+
+  // Handle successful payment
+  function handlePaymentSuccess(response, planLevel) {
+    const plan = planDetails[planLevel];
+    
+    // You can send this data to your server to update the user's plan
+    const paymentData = {
+      planLevel: planLevel,
+      planName: plan.name,
+      amount: plan.price,
+      paymentId: response.razorpay_payment_id,
+      orderId: response.razorpay_order_id || 'N/A',
+      signature: response.razorpay_signature || 'N/A',
+      timestamp: new Date().toISOString()
+    };
+
+    console.log('Payment Successful:', paymentData);
+
+    // Show success message
+    alert(`✅ Payment Successful!\n\nPlan: ${plan.name}\nAmount: ₹${plan.price}\nPayment ID: ${response.razorpay_payment_id}\n\nYr plan has been upgraded!`);
+    
+    // In a real application, you would:
+    // 1. Send paymentData to your backend
+    // 2. Update user's plan in database
+    // 3. Close the modal
+    // $('#upgradeModal').modal('hide');
+    // currentPlanLevel = planLevel; // Update current plan
+    // updateUpgradeButtons();
+  }
+
+  // Show upgrade error message
+  function showUpgradeError(message) {
+    $('#errorText').text(message);
+    $('#upgradeErrorMessage').fadeIn();
+    
+    setTimeout(() => {
+      $('#upgradeErrorMessage').fadeOut();
+    }, 4000);
+  }
+
+  // Update button states based on current plan
+  function updateUpgradeButtons() {
+    $('.upgrade-btn').each(function() {
+      const level = parseInt($(this).data('level'));
+      const isNextLevel = (level === currentPlanLevel + 1);
+      
+      // Disable buttons that aren't the next sequential level
+      $(this).prop('disabled', !isNextLevel);
+      
+      if (!isNextLevel) {
+        $(this).css('opacity', '0.5').css('cursor', 'not-allowed');
+        $(this).attr('title', 'Complete Plan ' + (level - 1) + ' first');
+      } else {
+        $(this).css('opacity', '1').css('cursor', 'pointer');
+        $(this).attr('title', 'Upgrade to this plan');
+      }
+    });
+  }
+
+  // Initialize button states on modal open
+  $('#upgradeModal').on('show.bs.modal', function() {
+    updateUpgradeButtons();
+  });
+
+  // Initialize on page load
+  updateUpgradeButtons();
+});
+
+/* ========================================
+   MEMBER GENEALOGY TREE MODAL
+   ======================================== */
+
+// Function to build tree for a specific member as root
+function buildMemberTreeUL(memberId, collapsed) {
+  const children = mlmData.filter(m => m.parentId === memberId);
+  if (!children.length) return '';
+  const lis = children.map(child => {
+    const lvl      = getLevel(child.id);
+    const hasKids  = mlmData.some(m => m.parentId === child.id);
+    const kidCount = hasKids ? mlmData.filter(m => m.parentId === child.id).length : 0;
+    const badge    = hasKids
+      ? `<span class="tree-more-badge" id="badge-${child.id}">&#9654; ${kidCount}</span>`
+      : '';
+    const levelLabel = `<span class="level-label">${getLevelLabel(lvl)}</span>`;
+    return `<li>
+      <div class="node ${levelClass(lvl)} tree-node-clickable${hasKids ? '' : ' no-children'}"
+           id="node-${child.id}"
+           ${hasKids ? `onclick="toggleMemberNode(${child.id})" title="Expand ${child.name}'s downline"` : `title="${child.name}"`}
+           style="position:relative;">
+        <img src="${child.img}" alt="${child.name}">
+        ${badge}
+        ${levelLabel}
+      </div>
+      <div class="person-name">${child.name}</div>
+      ${buildMemberTreeUL(child.id, true)}
+    </li>`;
+  }).join('');
+  const styleAttr = collapsed ? ' style="display:none"' : '';
+  return `<ul${styleAttr}>${lis}</ul>`;
+}
+
+// Function to render member tree
+function renderMemberGenealogyTree(memberId) {
+  const member = byId[memberId];
+  if (!member) return;
+
+  document.getElementById('memberGenealogyName').textContent = member.name;
+  
+  const lvl = getLevel(memberId);
+  const memberLevelLabel = `<span class="level-label">${getLevelLabel(lvl)}</span>`;
+  document.getElementById('member-tree-root').innerHTML = `<ul><li>
+    <div class="node ${levelClass(lvl)}" id="node-${memberId}" title="${member.name}" style="position:relative;">
+      <img src="${member.img}" alt="${member.name}">
+      ${memberLevelLabel}
+    </div>
+    <div class="person-name">${member.name}</div>
+    ${buildMemberTreeUL(memberId, false)}
+  </li></ul>`;
+}
+
+// Function to toggle member node
+function toggleMemberNode(id) {
+  const nodeDiv = document.getElementById('node-' + id);
+  if (!nodeDiv) return;
+  const li      = nodeDiv.closest('li');
+  const childUL = li.querySelector(':scope > ul');
+  if (!childUL) return;
+  const isClosed = childUL.style.display === 'none';
+  childUL.style.display = isClosed ? 'block' : 'none';
+  const badge = document.getElementById('badge-' + id);
+  if (badge) {
+    const kids = mlmData.filter(m => m.parentId === id).length;
+    badge.innerHTML = isClosed 
+    ?`&#9660;${kids}`
+    :`&#9654;${kids}`;
+  }
+  nodeDiv.classList.toggle('expanded', isClosed);
+  nodeDiv.title = isClosed
+    ? `Collapse ${byId[id].name}'s downline`
+    : `Expand ${byId[id].name}'s downline`;
+}
+
+// Handle member genealogy link clicks
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('member-genealogy-link')) {
+    e.preventDefault();
+    const memberId = parseInt(e.target.dataset.memberId);
+    renderMemberGenealogyTree(memberId);
+    $('#memberGenealogyModal').modal('show');
+  }
+});
+</script>
+
+</body>
+</html>

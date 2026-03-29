@@ -2,89 +2,69 @@
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
             <div class="nav">
-
                 <div class="sb-sidenav-menu-heading">Core</div>
-
-                <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+                <a class="nav-link {{ request()->routeIs('admin.dashboard*') ? 'active' : '' }}"
                     href="{{ route('admin.dashboard') }}">
-                    <div class="sb-nav-link-icon"><i class="bi bi-speedometer2"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                     Dashboard
                 </a>
 
                 <div class="sb-sidenav-menu-heading">Management</div>
 
-                {{-- Users --}}
-                <a class="nav-link collapsed {{ request()->routeIs('admin.users.*') ? 'active' : '' }}"
-                    href="#collapseUsers" data-bs-toggle="collapse" data-bs-target="#collapseUsers"
-                    aria-expanded="{{ request()->routeIs('admin.users.*') ? 'true' : 'false' }}"
-                    aria-controls="collapseUsers">
-                    <div class="sb-nav-link-icon"><i class="bi bi-people"></i></div>
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers"
+                    aria-expanded="false" aria-controls="collapseUsers">
+                    <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                     Users
-                    <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-down"></i></div>
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse {{ request()->routeIs('admin.users.*') ? 'show' : '' }}" id="collapseUsers"
-                    aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                <div class="collapse {{ request()->routeIs('admin.users*') ? 'show' : '' }}" id="collapseUsers"
+                    aria-labelledby="headingUsers" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}"
-                            href="{{ route('admin.users.index') }}">
-                            <i class="bi bi-dot me-1"></i>All Users
-                        </a>
+                            href="{{ route('admin.users.index') }}">All Users</a>
                         <a class="nav-link {{ request()->routeIs('admin.users.create') ? 'active' : '' }}"
-                            href="{{ route('admin.users.create') }}">
-                            <i class="bi bi-dot me-1"></i>Add User
-                        </a>
+                            href="{{ route('admin.users.create') }}">Add User</a>
                     </nav>
                 </div>
 
-                {{-- Products --}}
-                <a class="nav-link collapsed {{ request()->routeIs('admin.products.*') ? 'active' : '' }}"
-                    href="#collapseProducts" data-bs-toggle="collapse" data-bs-target="#collapseProducts"
-                    aria-expanded="{{ request()->routeIs('admin.products.*') ? 'true' : 'false' }}"
-                    aria-controls="collapseProducts">
-                    <div class="sb-nav-link-icon"><i class="bi bi-box-seam"></i></div>
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
+                    data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                    <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                     Products
-                    <div class="sb-sidenav-collapse-arrow"><i class="bi bi-chevron-down"></i></div>
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                 </a>
-                <div class="collapse {{ request()->routeIs('admin.products.*') ? 'show' : '' }}" id="collapseProducts"
-                    aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                <div class="collapse {{ request()->routeIs('admin.products*') ? 'show' : '' }}" id="collapseProducts"
+                    aria-labelledby="headingProducts" data-bs-parent="#sidenavAccordion">
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link {{ request()->routeIs('admin.products.index') ? 'active' : '' }}"
-                            href="{{ route('admin.products.index') }}">
-                            <i class="bi bi-dot me-1"></i>All Products
-                        </a>
+                            href="{{ route('admin.products.index') }}">All Products</a>
                         <a class="nav-link {{ request()->routeIs('admin.products.create') ? 'active' : '' }}"
-                            href="{{ route('admin.products.create') }}">
-                            <i class="bi bi-dot me-1"></i>Add Product
-                        </a>
+                            href="{{ route('admin.products.create') }}">Add Product</a>
                     </nav>
                 </div>
 
-                {{-- Orders --}}
-                <a class="nav-link {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" href="#">
-                    <div class="sb-nav-link-icon"><i class="bi bi-cart3"></i></div>
-                    Orders
+                <div class="sb-sidenav-menu-heading">Reports</div>
+                <a class="nav-link {{ request()->routeIs('admin.charts') ? 'active' : '' }}"
+                    href="{{ route('admin.charts') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                    Charts
+                </a>
+                <a class="nav-link {{ request()->routeIs('admin.tables') ? 'active' : '' }}"
+                    href="{{ route('admin.tables') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    Tables
                 </a>
 
-                <div class="sb-sidenav-menu-heading">System</div>
-
-                {{-- Reports --}}
-                <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" href="#">
-                    <div class="sb-nav-link-icon"><i class="bi bi-bar-chart-line"></i></div>
-                    Reports
+                <div class="sb-sidenav-menu-heading">Frontend</div>
+                <a class="nav-link" href="{{ route('home') }}" target="_blank">
+                    <div class="sb-nav-link-icon"><i class="fas fa-globe"></i></div>
+                    View Website
                 </a>
-
-                {{-- Settings --}}
-                <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" href="#">
-                    <div class="sb-nav-link-icon"><i class="bi bi-gear"></i></div>
-                    Settings
-                </a>
-
             </div>
         </div>
-
         <div class="sb-sidenav-footer">
             <div class="small">Logged in as:</div>
-            {{ Auth::check() ? Auth::user()->name : 'Admin' }}
+            @auth {{ Auth::user()->name }} @endauth
         </div>
     </nav>
 </div>

@@ -1,106 +1,68 @@
-<footer class="bg-dark text-white pt-5 pb-3">
+<footer class="footer section">
     <div class="container">
-        <div class="row g-4 mb-4">
-
-            {{-- Brand & Description --}}
-            <div class="col-lg-4 col-md-6">
-                <h5 class="fw-bold text-white mb-3">
-                    Kemtex<span class="text-success">Wellness</span>
-                </h5>
-                <p class="text-white-50 small">
-                    KemtexWellness is your trusted partner in natural health and wellness.
-                    We provide premium quality supplements, herbal products, and wellness solutions
-                    to help you live a healthier, happier life.
-                </p>
-                <div class="d-flex gap-2 mt-3">
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle" style="width:36px;height:36px;">
-                        <i class="bi bi-facebook"></i>
-                    </a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle"
-                        style="width:36px;height:36px;">
-                        <i class="bi bi-instagram"></i>
-                    </a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle"
-                        style="width:36px;height:36px;">
-                        <i class="bi bi-twitter-x"></i>
-                    </a>
-                    <a href="#" class="btn btn-sm btn-outline-light rounded-circle"
-                        style="width:36px;height:36px;">
-                        <i class="bi bi-linkedin"></i>
-                    </a>
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="widget">
+                    <h4 class="text-capitalize mb-4">Company</h4>
+                    <ul class="list-unstyled footer-menu lh-35">
+                        <li><a href="{{ route('about') }}">Terms &amp; Conditions</a></li>
+                        <li><a href="{{ route('about') }}">Privacy Policy</a></li>
+                        <li><a href="{{ route('contact') }}">Support</a></li>
+                        <li><a href="{{ route('contact') }}">FAQ</a></li>
+                    </ul>
                 </div>
             </div>
-
-            {{-- Quick Links --}}
-            <div class="col-lg-2 col-md-6">
-                <h6 class="fw-bold text-white mb-3 text-uppercase small">Quick Links</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="{{ route('home') }}"
-                            class="text-white-50 text-decoration-none hover-text-white">Home</a></li>
-                    <li class="mb-2"><a href="{{ route('about') }}" class="text-white-50 text-decoration-none">About
-                            Us</a></li>
-                    <li class="mb-2"><a href="{{ route('products') }}"
-                            class="text-white-50 text-decoration-none">Products</a></li>
-                    <li class="mb-2"><a href="{{ route('services') }}"
-                            class="text-white-50 text-decoration-none">Services</a></li>
-                    <li class="mb-2"><a href="{{ route('blog') }}" class="text-white-50 text-decoration-none">Blog</a>
-                    </li>
-                    <li class="mb-2"><a href="{{ route('contact') }}"
-                            class="text-white-50 text-decoration-none">Contact</a></li>
-                </ul>
+            <div class="col-lg-2 col-md-6 col-sm-6">
+                <div class="widget">
+                    <h4 class="text-capitalize mb-4">Quick Links</h4>
+                    <ul class="list-unstyled footer-menu lh-35">
+                        <li><a href="{{ route('about') }}">About</a></li>
+                        <li><a href="{{ route('services') }}">Services</a></li>
+                        <li><a href="{{ route('pricing') }}">Pricing</a></li>
+                        <li><a href="{{ route('contact') }}">Contact</a></li>
+                    </ul>
+                </div>
             </div>
-
-            {{-- Categories --}}
-            <div class="col-lg-2 col-md-6">
-                <h6 class="fw-bold text-white mb-3 text-uppercase small">Categories</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Supplements</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Herbal Teas</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Vitamins</a></li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Wellness Kits</a>
-                    </li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Detox Products</a>
-                    </li>
-                    <li class="mb-2"><a href="#" class="text-white-50 text-decoration-none">Skincare</a></li>
-                </ul>
+            <div class="col-lg-3 col-md-6 col-sm-6 mx-auto">
+                <div class="widget">
+                    <h4 class="text-capitalize mb-4">Join Our Community</h4>
+                    <p>Subscribe to get exclusive training, success tips, and income opportunities delivered to your
+                        inbox</p>
+                    <form action="#" class="sub-form">
+                        <input type="email" class="form-control mb-3" placeholder="Enter your email...">
+                        <a href="#" class="btn btn-main btn-small">Sign Up</a>
+                    </form>
+                </div>
             </div>
-
-            {{-- Newsletter & Contact --}}
-            <div class="col-lg-4 col-md-6">
-                <h6 class="fw-bold text-white mb-3 text-uppercase small">Stay Updated</h6>
-                <p class="text-white-50 small mb-3">Subscribe to our newsletter for health tips and exclusive offers.
-                </p>
-                <form action="#" method="POST" class="mb-3">
-                    @csrf
-                    <div class="input-group input-group-sm">
-                        <input type="email" class="form-control" placeholder="Your email address" required />
-                        <button class="btn btn-success" type="submit">Subscribe</button>
+            <div class="col-lg-3 col-sm-6">
+                <div class="widget">
+                    <div class="logo mb-4">
+                        <h3>kemtex<span>Wellness.</span></h3>
                     </div>
-                </form>
-                <ul class="list-unstyled small text-white-50">
-                    <li class="mb-2"><i class="bi bi-geo-alt me-2 text-success"></i>123 Wellness St, Health City, HC
-                        00100</li>
-                    <li class="mb-2"><i class="bi bi-telephone me-2 text-success"></i>+1 800 KEMTEX</li>
-                    <li class="mb-2"><i class="bi bi-envelope me-2 text-success"></i>info@kemtexwellness.com</li>
-                </ul>
-            </div>
-
-        </div>{{-- /row --}}
-
-        <hr class="border-secondary" />
-
-        <div class="row align-items-center">
-            <div class="col-md-6 text-center text-md-start">
-                <p class="small text-white-50 mb-0">
-                    &copy; {{ date('Y') }} <strong class="text-white">KemtexWellness</strong>. All rights reserved.
-                </p>
-            </div>
-            <div class="col-md-6 text-center text-md-end">
-                <a href="#" class="text-white-50 text-decoration-none small me-3">Privacy Policy</a>
-                <a href="#" class="text-white-50 text-decoration-none small me-3">Terms of Service</a>
-                <a href="#" class="text-white-50 text-decoration-none small">Sitemap</a>
+                    <h6><a href="mailto:kemtexwellness@gmail.com">kemtexwellness@gmail.com</a></h6>
+                    <a href="tel:+91-456-6588"><span class="text-color h4">+91-456-6588</span></a>
+                </div>
             </div>
         </div>
 
+        <div class="footer-btm pt-4">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="copyright">
+                        Copyright &copy; {{ date('Y') }}, Designed &amp; Developed by <a href="#">Deepak</a>
+                    </div>
+                </div>
+                <div class="col-lg-6 text-left text-lg-right">
+                    <ul class="list-inline footer-socials">
+                        <li class="list-inline-item"><a href="https://www.facebook.com/"><i
+                                    class="fab fa-facebook-f mr-2"></i>Facebook</a></li>
+                        <li class="list-inline-item"><a href="https://twitter.com/"><i
+                                    class="fab fa-twitter mr-2"></i>Twitter</a></li>
+                        <li class="list-inline-item"><a href="https://www.pinterest.com/"><i
+                                    class="fab fa-pinterest-p mr-2"></i>Pinterest</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 </footer>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+
+<!--
+ // WEBSITE: https://themefisher.com
+ // TWITTER: https://twitter.com/themefisher
+ // FACEBOOK: https://www.facebook.com/themefisher
+ // GITHUB: https://github.com/themefisher/
+-->
+
+<html lang="zxx">
+<head>
+
+  <!-- ** Basic Page Needs ** -->
+  <meta charset="utf-8">
+  <title>Member Login - Kemtex Wellness</title>
+
+  <!-- ** Mobile Specific Metas ** -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Login to your Kemtex Wellness member account">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="author" content="Themefisher">
+  <meta name="generator" content="Themefisher Html5 Agency Template v1.0">
+
+  <!-- bootstrap.min css -->
+  <link rel="stylesheet" href="plugins/bootstrap/bootstrap.min.css">
+  <!-- Icon Font Css -->
+  <link rel="stylesheet" href="plugins/themify/css/themify-icons.css">
+  <link rel="stylesheet" href="plugins/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="plugins/magnific-popup/magnific-popup.css">
+  <!-- Owl Carousel CSS -->
+  <link rel="stylesheet" href="plugins/slick/slick.css">
+  <link rel="stylesheet" href="plugins/slick/slick-theme.css">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Loader Styles -->
+  <style>
+    .loader-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loader-overlay.active {
+      display: flex;
+    }
+
+    .loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .spinner {
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid #fff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      color: #fff;
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  </style>
+  
+  <!--Favicon-->
+  <link rel="icon" href="images/favicon.png" type="image/x-icon">
+
+</head>
+
+<body>
+
+<!-- Header Start -->
+<header class="navigation">
+  <div class="header-top ">
+    <div class="container">
+      <div class="row justify-content-between align-items-center">
+        <div class="col-lg-2 col-md-4">
+          <div class="header-top-socials text-center text-lg-left text-md-left">
+            <a href="https://www.facebook.com/themefisher" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com/themefisher" aria-label="twitter"><i class="fab fa-twitter"></i></a>
+            <a href="https://github.com/themefisher/" aria-label="github"><i class="fab fa-github"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-10 col-md-8 text-center text-lg-right text-md-right">
+          <div class="header-top-info mb-2 mb-md-0">
+            <a href="tel:+23-345-67890">Call Us : <span>+91-345-67890</span></a>
+            <a href="mailto:support@gmail.com"><i class="fas fa-envelope mr-2"></i><span>kemtextwellness@gmail.com</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="navbar">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <nav class="navbar navbar-expand-lg px-0 py-4">
+            <a class="navbar-brand" href="index.html">
+              Kemtex<span>Wellness.</span>
+            </a>
+      
+            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample09"
+              aria-controls="navbarsExample09" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="fa fa-bars"></span>
+            </button>
+      
+            <div class="collapse navbar-collapse text-center" id="navbarsExample09">
+              <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="index.html">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">About <i class="fas fa-chevron-down small"></i></a>
+                  <ul class="dropdown-menu" aria-labelledby="dropdown03">
+                    <li><a class="dropdown-item" href="about.html">Our company</a></li>
+                    <li><a class="dropdown-item" href="pricing.html">Pricing</a></li>
+                  </ul>
+                </li>
+                <li class="nav-item"><a class="nav-link" href="service.html">Services</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+              </ul>
+      
+              <div class="my-2 my-md-0 ml-lg-4 text-center">
+                <a href="register.html" class="btn btn-main btn-round-full mr-2">Join Now</a>
+                <a href="contact.html" class="btn btn-solid-border btn-round-full">Contact</a>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- Header Close -->
+
+<!-- Page Title Start -->
+<section class="page-title bg-1">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="block text-center">
+          <span class="text-white">🔐 Member Access</span>
+          <h1 class="text-capitalize mb-4 text-lg">Welcome Back</h1>
+          <ul class="list-inline">
+            <li class="list-inline-item"><a href="index.html" class="text-white">Home</a></li>
+            <li class="list-inline-item"><span class="text-white">/</span></li>
+            <li class="list-inline-item text-white-50">Login</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Page Title End -->
+
+<!-- Login Section Start -->
+<section class="section login-section py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <!-- Login Card -->
+        <div class="login-card">
+          <div class="login-header text-center mb-4">
+            <div class="login-icon mb-3">
+              <i class="fas fa-lock text-color" style="font-size: 3rem;"></i>
+            </div>
+            <h2 class="mb-2">Member Login</h2>
+            <p class="text-muted">Access your Kemtex Wellness account</p>
+          </div>
+
+          <!-- Login Form -->
+          <form id="loginForm" class="login-form" method="POST" action="#">
+            
+            <!-- Email or Phone -->
+            <div class="form-group mb-4">
+              <label for="emailOrPhone" class="form-label"><i class="fas fa-envelope text-color mr-2"></i>Email or Phone</label>
+              <input 
+                type="text" 
+                class="form-control form-control-lg" 
+                id="emailOrPhone" 
+                name="emailOrPhone"
+                placeholder="Enter your email or phone number"
+                required
+              >
+              <small class="form-text text-muted">Use the email/phone you registered with</small>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group mb-3">
+              <label for="password" class="form-label"><i class="fas fa-key text-color mr-2"></i>Password</label>
+              <input 
+                type="password" 
+                class="form-control form-control-lg" 
+                id="password" 
+                name="password"
+                placeholder="Enter your password"
+                required
+              >
+            </div>
+
+            <!-- Forgot Password Link -->
+            <div class="text-right mb-4">
+              <a href="#" class="text-color font-weight-600 small">Forgot password?</a>
+            </div>
+
+            <!-- Remember Me Checkbox -->
+            <div class="form-group mb-4">
+              <div class="custom-control custom-checkbox">
+                <input 
+                  type="checkbox" 
+                  class="custom-control-input" 
+                  id="rememberMe"
+                >
+                <label class="custom-control-label" for="rememberMe">
+                  Remember me for 30 days
+                </label>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-main btn-lg btn-block btn-round-full mb-3">
+              <i class="fas fa-sign-in-alt mr-2"></i>Login to Account
+            </button>
+
+            <!-- Or Divider -->
+            <div class="text-center mb-3">
+              <span class="text-muted small">or</span>
+            </div>
+
+            <!-- Social Login (Optional) -->
+            <div class="row mb-3">
+              <div class="col-6">
+                <button type="button" class="btn btn-outline-secondary btn-block btn-sm">
+                  <i class="fab fa-google mr-2"></i>Google
+                </button>
+              </div>
+              <div class="col-6">
+                <button type="button" class="btn btn-outline-secondary btn-block btn-sm">
+                  <i class="fab fa-facebook-f mr-2"></i>Facebook
+                </button>
+              </div>
+            </div>
+
+            <!-- Sign Up Link -->
+            <div class="text-center">
+              <p class="text-muted">Don't have an account? <a href="register.html" class="text-color font-weight-600">Sign up here</a></p>
+            </div>
+          </form>
+
+          <!-- Error Message (Hidden by default) -->
+          <div id="errorMessage" class="alert alert-danger alert-dismissible fade" role="alert" style="display: none;">
+            <strong>Login Failed!</strong> Please check your credentials and try again.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Loader Overlay -->
+        <div id="loaderOverlay" class="loader-overlay">
+          <div class="loader">
+            <div class="spinner"></div>
+            <p class="loader-text">Logging in...</p>
+          </div>
+        </div>
+
+        <!-- Additional Info Cards -->
+        <div class="row mt-5">
+          <div class="col-md-6 mb-3">
+            <div class="info-card text-center">
+              <i class="ti-help text-color mb-2" style="font-size: 1.8rem;"></i>
+              <h6 class="mt-2">Need Help?</h6>
+              <p class="text-muted small">Contact our support team</p>
+              <a href="contact.html" class="text-color small font-weight-600">Get Support</a>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <div class="info-card text-center">
+              <i class="ti-key text-color mb-2" style="font-size: 1.8rem;"></i>
+              <h6 class="mt-2">Account Issues?</h6>
+              <p class="text-muted small">Verify your credentials</p>
+              <a href="#" class="text-color small font-weight-600">Reset Password</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Login Section End -->
+
+<!-- CTA Section Start -->
+<section class="cta-2">
+  <div class="container">
+    <div class="cta-block p-5 rounded">
+      <div class="row justify-content-center align-items-center">
+        <div class="col-lg-8 text-center">
+          <span class="text-color">🚀 New to Kemtex Wellness?</span>
+          <h2 class="mt-2 text-white mb-3">Join Our Growing Community Today</h2>
+          <p class="text-white mb-4">Start your journey to financial freedom with our proven MLM opportunity</p>
+          <a href="register.html" class="btn btn-outline-light btn-round-full">Create Your Account</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- CTA Section End -->
+
+<footer class="footer section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="widget">
+          <h4 class="text-capitalize mb-4">Company</h4>
+
+          <ul class="list-unstyled footer-menu lh-35">
+            <li><a href="about.html">Terms & Conditions</a></li>
+            <li><a href="about.html">Privacy Policy</a></li>
+            <li><a href="contact.html">Support</a></li>
+            <li><a href="contact.html">FAQ</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-6 col-sm-6">
+        <div class="widget">
+          <h4 class="text-capitalize mb-4">Quick Links</h4>
+
+          <ul class="list-unstyled footer-menu lh-35">
+            <li><a href="about.html">About</a></li>
+            <li><a href="service.html">Services</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-6 col-sm-6 mx-auto">
+        <div class="widget">
+          <h4 class="text-capitalize mb-4">Join Our Community</h4>
+          <p>Subscribe to get exclusive training, success tips, and income opportunities</p>
+
+          <form action="#" class="sub-form">
+            <input type="text" class="form-control mb-3" placeholder="Enter your email...">
+            <a href="#" class="btn btn-main btn-small">Sign Up</a>
+          </form>
+        </div>
+      </div>
+
+      <div class="col-lg-3 col-sm-6">
+        <div class="widget">
+          <div class="logo mb-4">
+            <h3>kemtex<span>Wellness.</span></h3>
+          </div>
+          <h6><a href="mailto:support@gmail.com">kemtexwellness@gmail.com</a></h6>
+          <a href="tel:+23-345-67890"><span class="text-color h4">+91-456-6588</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-btm pt-4">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="copyright">
+            Copyright &copy; 2026, Designed &amp; Developed by <a href="https://themefisher.com/">Deepak</a>
+          </div>
+        </div>
+        <div class="col-lg-6 text-left text-lg-right">
+          <ul class="list-inline footer-socials">
+            <li class="list-inline-item"><a href="https://www.facebook.com/themefisher"><i class="fab fa-facebook-f mr-2"></i>Facebook</a></li>
+            <li class="list-inline-item"><a href="https://twitter.com/themefisher"><i class="fab fa-twitter mr-2"></i>Twitter</a></li>
+            <li class="list-inline-item"><a href="https://www.pinterest.com/themefisher/"><i class="fab fa-pinterest-p mr-2 "></i>Pinterest</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!--Scroll to top-->
+<div id="scroll-to-top" class="scroll-to-top">
+  <span class="icon fa fa-angle-up"></span>
+</div>
+
+<!-- 
+Essential Scripts
+=====================================-->
+<!-- Main jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- Bootstrap 4.3.1 -->
+<script src="plugins/bootstrap/bootstrap.min.js"></script>
+<!--  Magnific Popup-->
+<script src="plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+<!-- Slick Slider -->
+<script src="plugins/slick/slick.min.js"></script>
+<!-- Counterup -->
+<script src="plugins/counterup/jquery.waypoints.min.js"></script>
+<script src="plugins/counterup/jquery.counterup.min.js"></script>
+
+<!-- Google Map -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCcABaamniA6OL5YvYSpB3pFMNrXwXnLwU" defer></script>
+<script src="plugins/google-map/map.js" defer></script>
+
+<script src="js/script.js"></script>
+
+<!-- Login Form Validation -->
+<script>
+document.getElementById('loginForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+  
+  // Get form values
+  const emailOrPhone = document.getElementById('emailOrPhone').value.trim();
+  const password = document.getElementById('password').value;
+  const rememberMe = document.getElementById('rememberMe').checked;
+  
+  // Validation
+  if (!emailOrPhone) {
+    showError('Please enter your email or phone number');
+    return;
+  }
+  
+  if (!password) {
+    showError('Please enter your password');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showError('Password must be at least 6 characters long');
+    return;
+  }
+  
+  // If all validations pass - simulate login
+  performLogin(emailOrPhone, rememberMe);
+});
+
+function showError(message) {
+  document.getElementById('errorMessage').textContent = message;
+  document.getElementById('errorMessage').style.display = 'block';
+  
+  // Auto-hide after 5 seconds
+  setTimeout(() => {
+    document.getElementById('errorMessage').style.display = 'none';
+  }, 5000);
+}
+
+function performLogin(emailOrPhone, rememberMe) {
+  // Show loader
+  document.getElementById('loaderOverlay').classList.add('active');
+  
+  // Log the login (in real app, this would be sent to server)
+  console.log({
+    emailOrPhone,
+    rememberMe,
+    loginTime: new Date()
+  });
+  
+  // Redirect to new user dashboard after 2 seconds
+  // (In production, check if user has paid for plan, then redirect to regular dashboard)
+  setTimeout(() => {
+    window.location.href = 'new-user-dashboard.html';
+  }, 2000);
+}
+
+// Handle social login buttons
+document.querySelectorAll('.btn-outline-secondary').forEach(button => {
+  button.addEventListener('click', function(e) {
+    e.preventDefault();
+    const provider = this.textContent.trim().split('\n')[0];
+    alert('Social login via ' + provider + ' would be implemented here');
+  });
+});
+</script>
+
+</body>
+
+</html>
