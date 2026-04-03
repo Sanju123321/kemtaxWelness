@@ -214,8 +214,8 @@
                                     {{-- Guest buttons --}}
                                     <a href="{{ route('register') }}" class="btn btn-main btn-round-full mr-2">Join
                                         Now</a>
-                                    <a href="{{ route('contact') }}"
-                                        class="btn btn-solid-border btn-round-full">Contact</a>
+                                    <a href="{{ route('login') }}"
+                                        class="btn btn-solid-border btn-round-full">Login</a>
                                 @endif
 
                             </div>

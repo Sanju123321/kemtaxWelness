@@ -51,7 +51,7 @@
     <script src="{{ asset('frontend/plugins/counterup/jquery.waypoints.min.js') }}"></script>
     <script src="{{ asset('frontend/plugins/counterup/jquery.counterup.min.js') }}"></script>
 
-    @stack('scripts')
+    @yield('scripts')
 
     <script src="{{ asset('frontend/js/script.js') }}"></script>
 

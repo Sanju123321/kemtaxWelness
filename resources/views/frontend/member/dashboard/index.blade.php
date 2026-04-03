@@ -4,13 +4,30 @@
 
 @push('styles')
     <style>
+                .sidebar-nav a.disabled, .sidebar-nav a.disabled:hover {
+                    pointer-events: none;
+                    color: #bbb !important;
+                    background: #f8f9fa !important;
+                    border-left-color: #eee !important;
+                    opacity: 0.7;
+                }
         .dashboard-header {
             background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
             padding: 20px 0;
             color: white;
             margin-bottom: 30px;
         }
+.text-red {
+    color: #dc3545; /* Bootstrap red */
+}
 
+.text-green {
+    color: #28a745; /* Bootstrap green */
+}
+
+.text-grey {
+    color: #6c757d;
+}
         .stat-card {
             background: white;
             padding: 22px 24px;
@@ -485,43 +502,102 @@
 @section('content')
 
     {{-- Dashboard Header --}}
-    <div class="dashboard-header">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h4 class="mb-1"><i class="fas fa-tachometer-alt mr-2"></i>My Dashboard</h4>
-                    <p class="mb-0 small opacity-75">Welcome back, @auth {{ Auth::user()->name }}
-                        @else
-                        Member @endauth! Here's your network overview.</p>
-                </div>
-                <div class="d-flex align-items-center" style="gap:10px;">
-                    <span class="badge-plan">Active Member</span>
-                    <button class="btn btn-sm"
-                        style="background:white;color:#28a745;font-weight:700;border-radius:20px;border:2px solid white;"
-                        data-toggle="modal" data-target="#inviteModal">
-                        <i class="fas fa-share-alt mr-1"></i> Invite &amp; Earn
-                    </button>
-                </div>
+  <div class="dashboard-header">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h4 class="mb-1"><i class="fas fa-tachometer-alt mr-2"></i>My Dashboard</h4>
+                <p class="mb-0 small opacity-75">
+                    Welcome back, 
+                    @auth 
+                        {{ Auth::user()->name }}
+                    @else
+                        Member 
+                    @endauth!
+                    Here's your network overview.
+                </p>
+            </div>
+
+            <div class="d-flex align-items-center" style="gap:10px;">
+                
+                <span class="badge-plan"
+                    style="
+                    @auth
+                        {{ Auth::user()->status == 'active' ? 'background:#28a745;color:white;' : 'background:red;color:white;' }}
+                    @else
+                        background:gray;color:white;
+                    @endauth
+                    ">
+                    
+                    @auth 
+                        {{ ucfirst(Auth::user()->status) }} 
+                    @else 
+                        Inactive 
+                    @endauth Member
+                </span>
+
+                <button class="btn btn-sm"
+                    style="background:white;color:#28a745;font-weight:700;border-radius:20px;border:2px solid white;"
+                    data-toggle="modal" data-target="#inviteModal">
+                    <i class="fas fa-share-alt mr-1"></i> Invite &amp; Earn
+                </button>
+
             </div>
         </div>
     </div>
+</div>
 
     <div class="dash-layout">
 
         {{-- Sidebar --}}
         <aside class="dash-sidebar">
-            <div class="sidebar-user">
-                <div class="s-avatar">
-                    <i class="fas fa-user text-color" style="font-size:18px;"></i>
-                </div>
-                <div>
-                    <div class="u-name">@auth {{ Auth::user()->name }}
-                        @else
-                        Member @endauth
-                    </div>
-                    <div class="u-role"><i class="fas fa-circle" style="font-size:7px;margin-right:3px;"></i>Active</div>
-                </div>
-            </div>
+           <div class="sidebar-user">
+
+    @php
+        $isInactive = auth()->check() && auth()->user()->status == 'inactive';
+    @endphp
+
+    {{-- AVATAR --}}
+    <div class="s-avatar"
+        style="
+            background: {{ $isInactive ? '#f8d7da' : '#e9f7ef' }};
+            border:2px solid {{ $isInactive ? '#dc3545' : '#28a745' }};
+            border-radius:50%;
+            width:40px;height:40px;
+            display:flex;align-items:center;justify-content:center;
+        ">
+        <i class="fas fa-user 
+            {{ $isInactive ? 'text-danger' : 'text-success' }}"
+            style="font-size:18px;">
+        </i>
+    </div>
+
+    <div>
+        {{-- NAME --}}
+        <div class="u-name">
+            @auth {{ Auth::user()->name }}
+            @else Member
+            @endauth
+        </div>
+
+        {{-- STATUS --}}
+        <div class="u-role"
+            style="color: {{ $isInactive ? '#dc3545' : '#28a745' }};">
+
+            <i class="fas fa-circle"
+                style="font-size:7px;margin-right:3px;
+                       color: {{ $isInactive ? '#dc3545' : '#28a745' }};">
+            </i>
+
+            @auth 
+                {{ ucfirst(Auth::user()->status) }}
+            @else
+                Inactive 
+            @endauth
+        </div>
+    </div>
+
+</div>
 
             <nav class="sidebar-nav">
                 <div class="nav-label">Main Menu</div>
@@ -529,36 +605,38 @@
                     class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
                 </a>
-                <a href="{{ route('member.wallet') }}" class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}">
+                <a href="{{ route('member.wallet') }}" class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
                     <i class="fas fa-wallet nav-icon"></i> Wallet
                 </a>
                 <a href="{{ route('member.credentials') }}"
-                    class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}">
+                    class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
                     <i class="fas fa-award nav-icon"></i> Credentials
                 </a>
                 <div class="nav-label">More</div>
-                <a href="{{ route('pricing') }}">
+               
+                <a href="{{ route('pricing') }}" >
                     <i class="fas fa-tags nav-icon"></i> Pricing
                 </a>
+               
                 <a href="{{ route('contact') }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" data-toggle="modal" data-target="#inviteModal">
+                <a href="#" data-toggle="modal" data-target="#inviteModal" class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
                 <a href="#" id="sidebarCommissionLink"
-                    onclick="showSection('referralCommissionSection'); return false;">
+                    onclick="showSection('referralCommissionSection'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
                 </a>
                 <div class="nav-label">My Shopping</div>
-                <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;">
+                <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
                     @if (isset($wishlistItems) && $wishlistItems->count())
                         <span class="ml-auto"
                             style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
                     @endif
                 </a>
-                <a href="#cart" onclick="scrollToSection('cart'); return false;">
+                <a href="#cart" onclick="scrollToSection('cart'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
                     @if (isset($cartItems) && $cartItems->count())
                         <span class="ml-auto"
@@ -742,53 +820,107 @@
                 {{-- Side Panel --}}
                 <div class="col-lg-4 mb-4">
                     {{-- Profile Quick View --}}
-                    <div class="section-card mb-4">
-                        <div class="section-card-header"><i class="fas fa-user mr-2 text-color"></i>My Profile</div>
-                        <div class="section-card-body text-center">
-                            <div class="mb-3">
-                                <div
-                                    style="width:80px;height:80px;border-radius:50%;background:#e9f7ef;display:flex;align-items:center;justify-content:center;margin:0 auto;border:3px solid #28a745;">
-                                    <i class="fas fa-user fa-2x text-color"></i>
-                                </div>
-                            </div>
-                            <h6 class="mb-1">@auth {{ Auth::user()->name }}
-                                @else
-                                Member @endauth
-                            </h6>
-                            <p class="text-muted small mb-2">@auth {{ Auth::user()->email }}
-                                @else
-                                member@example.com @endauth
-                            </p>
-                            <span class="badge-plan mb-3 d-inline-block">Active</span>
-                            <div>
-                                <a href="{{ route('member.profile') }}" class="btn btn-main btn-round-full btn-sm">Edit
-                                    Profile</a>
-                            </div>
-                        </div>
-                    </div>
+                  <div class="section-card mb-4">
+    <div class="section-card-header">
+        <i class="fas fa-user mr-2 text-color"></i>My Profile
+    </div>
+
+    <div class="section-card-body text-center">
+
+        {{-- AVATAR --}}
+        <div class="mb-3">
+            <div style="width:80px;height:80px;border-radius:50%;
+                background:
+                @auth
+                    {{ Auth::user()->status == 'inactive' ? '#f8d7da' : '#e9f7ef' }}
+                @else
+                    #f8d7da
+                @endauth;
+                display:flex;align-items:center;justify-content:center;
+                margin:0 auto;
+                border:3px solid
+                @auth
+                    {{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
+                @else
+                    #dc3545
+                @endauth;">
+                
+                <i class="fas fa-user fa-2x
+                    @auth
+                        {{ Auth::user()->status == 'inactive' ? 'text-danger' : 'text-success' }}
+                    @else
+                        text-danger
+                    @endauth">
+                </i>
+            </div>
+        </div>
+
+        {{-- NAME --}}
+        <h6 class="mb-1">
+            @auth {{ Auth::user()->name }}
+            @else Member
+            @endauth
+        </h6>
+
+        {{-- EMAIL --}}
+        <p class="text-muted small mb-2">
+            @auth {{ Auth::user()->email }}
+            @else member@example.com
+            @endauth
+        </p>
+
+        {{-- STATUS BADGE --}}
+        <span class="badge-plan mb-3 d-inline-block"
+            style="background-color:
+                @auth
+                    {{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
+                @else
+                    #dc3545
+                @endauth;
+                color:#fff;">
+            
+            @auth 
+                {{ ucfirst(Auth::user()->status) }}
+            @else 
+                Inactive 
+            @endauth
+        </span>
+
+        {{-- BUTTON (UNCHANGED) --}}
+        <div>
+            <a href="{{ route('member.profile') }}" 
+               class="btn btn-main btn-round-full btn-sm">
+               Edit Profile
+            </a>
+        </div>
+
+    </div>
+</div>
 
                     {{-- Quick Links --}}
                     <div class="section-card">
                         <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
                         <div class="section-card-body p-0">
                             <a href="{{ route('member.wallet') }}"
-                                class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
+                                class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
                                 style="gap:12px;">
                                 <i class="fas fa-wallet text-color"></i><span>My Wallet</span>
                                 <i class="fas fa-chevron-right ml-auto text-muted small"></i>
                             </a>
                             <a href="{{ route('member.credentials') }}"
-                                class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
+                                class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
                                 style="gap:12px;">
                                 <i class="fas fa-award text-color"></i><span>My Credentials</span>
                                 <i class="fas fa-chevron-right ml-auto text-muted small"></i>
                             </a>
+                            @if(!$isInactive)
                             <a href="{{ route('pricing') }}"
                                 class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
                                 style="gap:12px;">
                                 <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
                                 <i class="fas fa-chevron-right ml-auto text-muted small"></i>
                             </a>
+                            @endif
                             <a href="{{ route('contact') }}"
                                 class="d-flex align-items-center p-3 text-dark text-decoration-none" style="gap:12px;">
                                 <i class="fas fa-headset text-color"></i><span>Get Support</span>
