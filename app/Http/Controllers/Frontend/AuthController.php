@@ -29,7 +29,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email'    => ['required', 'email'],
+             'phone' => 'required|digits:10',
             'password' => ['required'],
         ]);
 
@@ -40,8 +40,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
+            'phone' => 'The provided credentials do not match our records.',
+        ])->onlyInput('phone');
     }
 
     /**

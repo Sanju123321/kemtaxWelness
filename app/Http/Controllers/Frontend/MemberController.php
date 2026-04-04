@@ -6,9 +6,126 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
+ use Razorpay\Api\Api;
+use Razorpay\Api\Errors\SignatureVerificationError;
+use App\Models\Payment;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
-class MemberController extends Controller
+class MemberController extends Controller{
+    /**
+     * Verify Razorpay payment and activate plan for user
+     */
+
+
+
+    public function createOrder(Request $request)
 {
+    $request->validate([
+        'amount' => 'required|numeric|min:1'
+    ]);
+
+    // 🔒 FIXED PLAN AMOUNT (always verify)
+   
+
+    $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
+
+    $order = $api->order->create([
+        'receipt' => 'order_' . time(),
+        'amount' => $request->amount * 100,
+        'currency' => 'INR'
+    ]);
+
+    return response()->json([
+        'order_id' => $order['id'],
+        'amount' => $request->amount * 100
+    ]);
+}
+  
+
+public function verifyPayment(Request $request)
+{
+    $api = new Api(
+        config('services.razorpay.key'),
+        config('services.razorpay.secret')
+    );
+
+    try {
+        $attributes = [
+            'razorpay_order_id' => $request->razorpay_order_id,
+            'razorpay_payment_id' => $request->razorpay_payment_id,
+            'razorpay_signature' => $request->razorpay_signature
+        ];
+
+        // ✅ Verify signature
+        $api->utility->verifyPaymentSignature($attributes);
+
+        // ✅ FETCH PAYMENT DATA (MISSING STEP 🔥)
+        $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+
+        $user = auth()->user();
+
+        // ✅ Prevent duplicate entry
+        if (Payment::where('payment_id', $paymentData->id)->exists()) {
+            return response()->json(['success' => true]);
+        }
+
+        // ✅ Save payment
+        Payment::create([
+            'user_id' => $user->id,
+            'payment_id' => $paymentData->id,
+            'order_id' => $paymentData->order_id,
+            'amount' => $paymentData->amount / 100, // paise → rupees
+            'status' => $paymentData->status,
+            'method' => $paymentData->method,
+            'email' => $paymentData->email,
+            'contact' => $paymentData->contact
+        ]);
+
+        // ✅ Activate user
+       $user->status = 'active';
+        $user->has_plan = true;
+        $user->save();
+
+        return response()->json(['success' => true]);
+
+    } catch (SignatureVerificationError $e) {
+        return response()->json(['success' => false]);
+    }
+}
+
+// public function webhook(Request $request)
+// {
+//     $webhookSecret = env('RAZORPAY_WEBHOOK_SECRET');
+
+//     $signature = $request->header('X-Razorpay-Signature');
+//     $payload = $request->getContent();
+
+//     try {
+//         $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+
+//         $api->utility->verifyWebhookSignature($payload, $signature, $webhookSecret);
+
+//         $data = json_decode($payload, true);
+
+//         if ($data['event'] == 'payment.captured') {
+//             $payment = $data['payload']['payment']['entity'];
+
+//             // Save in DB
+//             \DB::table('payments')->insert([
+//                 'payment_id' => $payment['id'],
+//                 'amount' => $payment['amount'] / 100,
+//                 'status' => $payment['status'],
+//                 'created_at' => now()
+//             ]);
+//         }
+
+//         return response()->json(['status' => 'ok']);
+
+//     } catch (\Exception $e) {
+//         return response()->json(['error' => 'Invalid signature'], 400);
+//     }
+// }
     /**
      * Show member dashboard.
      */
@@ -77,3 +194,4 @@ class MemberController extends Controller
         return view('frontend.member.credentials.index');
     }
 }
+

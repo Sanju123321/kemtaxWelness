@@ -102,6 +102,10 @@ Route::prefix('member')
         Route::get('/profile', [MemberController::class, 'profile'])->name('profile');
         Route::get('/credentials', [MemberController::class, 'credentials'])->name('credentials');
 
+        // Razorpay payment verification and plan activation
+       Route::post('/create-order', [MemberController::class, 'createOrder']);
+       Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
+        Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);
     });
 
 /*
