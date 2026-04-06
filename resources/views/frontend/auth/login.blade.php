@@ -43,16 +43,16 @@
                             </div>
                         @endif
 
-                        <form method="POST" action="{{ route('login.post') }}">
+                        <form id="loginForm" class="login-form"   method="POST" action="{{ route('login.post') }}">
                             @csrf
 
                             <div class="form-group mb-4">
-                                <label for="email"><i class="fas fa-envelope text-color mr-2"></i>Email Address</label>
-                                <input type="email"
-                                    class="form-control form-control-lg @error('email') is-invalid @enderror" id="email"
-                                    name="email" placeholder="Enter your email" value="{{ old('email') }}" required
+                                <label for="phone"><i class="fas fa-phone text-color mr-2"></i>Phone Number</label>
+                                <input type="tel"
+                                    class="form-control form-control-lg @error('phone') is-invalid @enderror" id="phone"
+                                    name="phone" placeholder="Enter your Phone Number" value="{{ old('phone') }}" required
                                     autofocus>
-                                @error('email')
+                                @error('phone')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -131,4 +131,50 @@
         </div>
     </section>
 
+@endsection
+@section('scripts')
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
+<script>
+$(document).ready(function () {
+
+    $("#loginForm").validate({
+        rules: {
+            phone: {
+                required: true,
+                minlength: 10
+            },
+            password: {
+                required: true,
+               
+            },
+        },
+
+        messages: {
+          
+            phone: {
+                required: "Enter phone number",
+                digits: "Only numbers allowed",
+                minlength: "Must be 10 digits",
+                maxlength: "Must be 10 digits"
+            },
+           
+            password: {
+                required: "Enter password",
+                minlength: "Minimum 8 characters"
+            },
+           
+        },
+
+    });
+
+    // 🔐 Password validation
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value);
+    }, "Password must contain uppercase, lowercase and number");
+
+});
+</script>
 @endsection
