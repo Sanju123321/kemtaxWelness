@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules;
 use App\Models\PhoneVerification;
 use Illuminate\Support\Str;
+use App\Models\UserTree;
 class AuthController extends Controller
 {
     /**
@@ -87,8 +88,7 @@ class AuthController extends Controller
 
         $referredBy = null;
         if (!empty($validated['reference_code'])) {
-            $referrer = User::where('email', $validated['reference_code'])
-                ->orWhere('id', $validated['reference_code'])
+            $referrer = User::where('reference_code', $validated['reference_code'])
                 ->first();
             
             if ($referrer) {
@@ -100,17 +100,17 @@ class AuthController extends Controller
             'name'          => $validated['name'],
             'email'         => $validated['email'],
             'phone'         => $validated['phone'] ?? null,
-            'reference_code' => $validated['reference_code'] ?? $referralCode,
+            'reference_code' => $referralCode,
             'user_id'       => $userId,
             'referred_by'   => $referredBy,
             'password'      => Hash::make($validated['password']),
         ]);
 
         Auth::login($user);
-
+ $this->buildTree($user);
         // Redirect based on reference code
         if (!empty($validated['reference_code'])) {
-            return redirect()->route('member.setup')
+            return redirect()->route('member.dashboard')
                 ->with('success', 'Welcome! Please complete your plan payment to activate your account.');
         }
 
@@ -118,7 +118,24 @@ class AuthController extends Controller
             ->with('success', 'Welcome to Kemtex Wellness! Your account has been created successfully.');
     }
 
+public function buildTree($user)
+{
+    $sponsor = User::find($user->referred_by);
 
+    $level = 1;
+
+    while ($sponsor && $level <= 20) {
+
+        UserTree::create([
+            'user_id' => $user->id,
+            'upline_id' => $sponsor->id,
+            'level' => $level,
+        ]);
+
+ $sponsor = User::find($sponsor->referred_by);
+         $level++;
+    }
+}
     // Check if phone number is already registered
     public function checkPhone(Request $request)
 {

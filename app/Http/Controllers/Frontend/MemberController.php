@@ -11,7 +11,10 @@ use Razorpay\Api\Errors\SignatureVerificationError;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-
+use App\Models\Plan;
+use App\Models\UserPlan;
+use App\Jobs\DistributeIncomeJob;
+use Illuminate\Support\Facades\DB;
 class MemberController extends Controller{
     /**
      * Verify Razorpay payment and activate plan for user
@@ -43,6 +46,57 @@ class MemberController extends Controller{
 }
   
 
+// public function verifyPayment(Request $request)
+// {
+//     $api = new Api(
+//         config('services.razorpay.key'),
+//         config('services.razorpay.secret')
+//     );
+
+//     try {
+//         $attributes = [
+//             'razorpay_order_id' => $request->razorpay_order_id,
+//             'razorpay_payment_id' => $request->razorpay_payment_id,
+//             'razorpay_signature' => $request->razorpay_signature
+//         ];
+
+//         // ✅ Verify signature
+//         $api->utility->verifyPaymentSignature($attributes);
+
+//         // ✅ FETCH PAYMENT DATA (MISSING STEP 🔥)
+//         $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+
+//         $user = auth()->user();
+
+//         // ✅ Prevent duplicate entry
+//         if (Payment::where('payment_id', $paymentData->id)->exists()) {
+//             return response()->json(['success' => true]);
+//         }
+
+//         // ✅ Save payment
+//         Payment::create([
+//             'user_id' => $user->id,
+//             'payment_id' => $paymentData->id,
+//             'order_id' => $paymentData->order_id,
+//             'amount' => $paymentData->amount / 100, // paise → rupees
+//             'status' => $paymentData->status,
+//             'method' => $paymentData->method,
+//             'email' => $paymentData->email,
+//             'contact' => $paymentData->contact
+//         ]);
+
+//         // ✅ Activate user
+       
+//        $user->status = 'active';
+//         $user->has_plan = true;
+//         $user->save();
+
+//         return response()->json(['success' => true]);
+
+//     } catch (SignatureVerificationError $e) {
+//         return response()->json(['success' => false]);
+//     }
+// }
 public function verifyPayment(Request $request)
 {
     $api = new Api(
@@ -51,49 +105,101 @@ public function verifyPayment(Request $request)
     );
 
     try {
-        $attributes = [
-            'razorpay_order_id' => $request->razorpay_order_id,
-            'razorpay_payment_id' => $request->razorpay_payment_id,
-            'razorpay_signature' => $request->razorpay_signature
-        ];
+        DB::transaction(function () use ($request, $api) {
 
-        // ✅ Verify signature
-        $api->utility->verifyPaymentSignature($attributes);
+            // ✅ Verify signature
+            $api->utility->verifyPaymentSignature([
+                'razorpay_order_id' => $request->razorpay_order_id,
+                'razorpay_payment_id' => $request->razorpay_payment_id,
+                'razorpay_signature' => $request->razorpay_signature
+            ]);
 
-        // ✅ FETCH PAYMENT DATA (MISSING STEP 🔥)
-        $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+            // ✅ Fetch payment
+            $paymentData = $api->payment->fetch($request->razorpay_payment_id);
 
-        $user = auth()->user();
+            $user = auth()->user();
 
-        // ✅ Prevent duplicate entry
-        if (Payment::where('payment_id', $paymentData->id)->exists()) {
-            return response()->json(['success' => true]);
-        }
+            // ✅ Prevent duplicate
+            if (Payment::where('payment_id', $paymentData->id)->exists()) {
+                return;
+            }
 
-        // ✅ Save payment
-        Payment::create([
-            'user_id' => $user->id,
-            'payment_id' => $paymentData->id,
-            'order_id' => $paymentData->order_id,
-            'amount' => $paymentData->amount / 100, // paise → rupees
-            'status' => $paymentData->status,
-            'method' => $paymentData->method,
-            'email' => $paymentData->email,
-            'contact' => $paymentData->contact
-        ]);
+            $amount = $paymentData->amount / 100;
 
-        // ✅ Activate user
-       $user->status = 'active';
-        $user->has_plan = true;
-        $user->save();
+            // ✅ Get Plan
+            $plan = Plan::where('price', $amount)->first();
+
+            if (!$plan) {
+                throw new \Exception("Invalid Plan");
+            }
+
+            // 🔴 RULE 1: Must start with Plan A
+            if (!$user->current_plan_id && $plan->name != 'A') {
+                throw new \Exception("Start with Starter Package");
+            }
+
+            // 🔴 RULE 2: Only Upgrade
+            if ($user->current_plan_id) {
+                $currentPlan = $user->currentPlan;
+
+                if ($plan->price <= $currentPlan->price) {
+                    throw new \Exception("Only upgrade allowed");
+                }
+            }
+
+            // ✅ Save Payment
+            Payment::create([
+                'user_id' => $user->id,
+                'payment_id' => $paymentData->id,
+                'order_id' => $paymentData->order_id,
+                'amount' => $amount,
+                'status' => $paymentData->status,
+                'method' => $paymentData->method,
+                'email' => $paymentData->email,
+                'contact' => $paymentData->contact
+            ]);
+
+            // ✅ Update user (ACTIVE PLAN)
+            $oldPlanId = $user->current_plan_id;
+
+            // $user->update([
+            //     'status' => 'active',
+            //     'current_plan_id' => $plan->id
+            // ]);
+            $user->current_plan_id = $plan->id;
+             $user->status = 'active';
+             $user->has_plan = true;
+                $user->save();
+            // ✅ Update old plan → upgraded
+            if ($oldPlanId) {
+                UserPlan::where('user_id', $user->id)
+                    ->where('plan_id', $oldPlanId)
+                    ->update(['status' => 'upgraded']);
+            }
+
+            // ✅ Save new plan
+            UserPlan::create([
+                'user_id' => $user->id,
+                'plan_id' => $plan->id,
+                'amount_paid' => $plan->price,
+                'status' => 'active',
+                'activated_at' => now()
+            ]);
+
+            //  MLM TRIGGER
+            dispatch(new DistributeIncomeJob($user->id));
+
+        });
 
         return response()->json(['success' => true]);
 
-    } catch (SignatureVerificationError $e) {
-        return response()->json(['success' => false]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
     }
 }
-
 // public function webhook(Request $request)
 // {
 //     $webhookSecret = env('RAZORPAY_WEBHOOK_SECRET');
