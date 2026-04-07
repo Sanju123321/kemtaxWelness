@@ -66,4 +66,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(RecentlyViewed::class);
     }
+
+    public function sponsor()
+{
+    return $this->belongsTo(User::class, 'referred_by`');
+}
+
+public function currentPlan()
+{
+    return $this->belongsTo(Plan::class, 'current_plan_id');
+}
+
+public function plans()
+{
+    return $this->hasMany(UserPlan::class);
+}
 }

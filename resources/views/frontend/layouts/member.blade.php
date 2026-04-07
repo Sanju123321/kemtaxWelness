@@ -265,7 +265,7 @@
     $(document).on('click', '.purchase-plan', function(e) {
         e.preventDefault();
 
-        var planAmount = {{ isset($planAmount) ? (int)$planAmount : 1000 }};
+        var planAmount = {{ isset($planAmount) ? (int)$planAmount : 1500 }};
 
         $.post('/member/create-order', {
             _token: $('meta[name="csrf-token"]').attr('content'),
