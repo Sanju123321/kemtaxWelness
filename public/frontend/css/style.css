@@ -1257,3 +1257,85 @@ hr {
     display: none;
   }
 }
+
+ /*  genelogy tree */
+
+/* Tree layout */
+.genealogy-tree ul {
+    padding-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.genealogy-tree li {
+    list-style: none;
+    text-align: center;
+    margin: 0 15px;
+}
+
+/* Node */
+.member-view-box {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* 🎨 LEVEL COLORS (0–20) */
+
+.level-0 { background: #6a5acd; }  /* Purple */
+.level-1 { background: #28a745; }  /* Green */
+.level-2 { background: #ffc107; }  /* Yellow */
+.level-3 { background: #17a2b8; }  /* Cyan */
+.level-4 { background: #dc3545; }  /* Red */
+.level-5 { background: #6f42c1; }  /* Violet */
+.level-6 { background: #fd7e14; }  /* Orange */
+.level-7 { background: #20c997; }  /* Teal */
+.level-8 { background: #0d6efd; }  /* Blue */
+.level-9 { background: #6610f2; }
+.level-10 { background: #198754; }
+.level-11 { background: #e83e8c; }
+.level-12 { background: #343a40; }
+.level-13 { background: #ff5733; }
+.level-14 { background: #00bcd4; }
+.level-15 { background: #8bc34a; }
+.level-16 { background: #ff9800; }
+.level-17 { background: #9c27b0; }
+.level-18 { background: #3f51b5; }
+.level-19 { background: #795548; }
+.level-20 { background: #607d8b; }
+
+/* Remove extra circle */
+.member-view-box::before {
+    display: none;
+}
+
+/* Icon */
+.member-image i {
+    font-size: 22px;
+}
+
+/* Name */
+.member-name {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Expand button */
+.expand-icon {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    width: 22px;
+    height: 22px;
+    background: #28a745;
+    color: white;
+    border-radius: 50%;
+    font-size: 12px;
+    text-align: center;
+    cursor: pointer;
+}

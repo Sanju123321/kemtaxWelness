@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('frontend/images/favicon.png') }}" type="image/x-icon">
-
+@livewireStyles
     @stack('styles')
 </head>
 
@@ -54,7 +54,7 @@
     @yield('scripts')
 
     <script src="{{ asset('frontend/js/script.js') }}"></script>
-
+@livewireScripts
 </body>
 
 </html>
