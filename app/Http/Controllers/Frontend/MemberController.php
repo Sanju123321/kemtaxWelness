@@ -339,7 +339,9 @@ public function verifyPayment(Request $request)
 
     private function buildMemberTree(int $userId, int $depth): array
     {
-        $user = User::select('id', 'name')->find($userId);
+        $user = User::with('currentPlan')
+            ->select('id', 'name', 'status', 'current_plan_id', 'total_earned', 'wallet_balance', 'reference_code')
+            ->find($userId);
         if (!$user) return [];
 
         $children = UserTree::where('upline_id', $userId)
@@ -351,10 +353,19 @@ public function verifyPayment(Request $request)
             ->toArray();
 
         return [
-            'id'       => $user->id,
-            'name'     => $user->name,
-            'depth'    => $depth,
-            'children' => $children,
+            'id'           => $user->id,
+            'name'         => $user->name,
+            'depth'        => $depth,
+            'status'       => $user->status ?? 'inactive',
+            'ref_code'     => $user->reference_code ?? '-',
+            'plan_name'    => $user->currentPlan?->name ?? 'No Plan',
+            'plan_price'   => $user->currentPlan?->price ?? 0,
+            'plan_code'    => $user->currentPlan?->code ?? '-',
+            'daily_cap'    => $user->currentPlan?->daily_cap ?? 0,
+            'total_cap'    => $user->currentPlan?->total_cap ?? 0,
+            'total_earned' => $user->total_earned ?? 0,
+            'wallet'       => $user->wallet_balance ?? 0,
+            'children'     => $children,
         ];
     }
 
