@@ -4,30 +4,36 @@
 
 @push('styles')
     <style>
-                .sidebar-nav a.disabled, .sidebar-nav a.disabled:hover {
-                    pointer-events: none;
-                    color: #bbb !important;
-                    background: #f8f9fa !important;
-                    border-left-color: #eee !important;
-                    opacity: 0.7;
-                }
+        .sidebar-nav a.disabled,
+        .sidebar-nav a.disabled:hover {
+            pointer-events: none;
+            color: #bbb !important;
+            background: #f8f9fa !important;
+            border-left-color: #eee !important;
+            opacity: 0.7;
+        }
+
         .dashboard-header {
             background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
             padding: 20px 0;
             color: white;
             margin-bottom: 30px;
         }
-.text-red {
-    color: #dc3545; /* Bootstrap red */
-}
 
-.text-green {
-    color: #28a745; /* Bootstrap green */
-}
+        .text-red {
+            color: #dc3545;
+            /* Bootstrap red */
+        }
 
-.text-grey {
-    color: #6c757d;
-}
+        .text-green {
+            color: #28a745;
+            /* Bootstrap green */
+        }
+
+        .text-grey {
+            color: #6c757d;
+        }
+
         .stat-card {
             background: white;
             padding: 22px 24px;
@@ -496,108 +502,331 @@
                 padding: 16px 12px 40px;
             }
         }
+
+        /* ── Genealogy Tree Modal ── */
+        .modal-xl {
+            max-width: 96vw;
+        }
+
+        .tree-legend-dot {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        /* CSS-connector tree */
+        .gt-tree,
+        .gt-tree ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .gt-tree {
+            display: flex;
+            justify-content: center;
+            padding-top: 10px;
+        }
+
+        .gt-tree ul {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            padding-top: 24px;
+        }
+
+        .gt-tree ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 24px;
+            background: #cdd6e0;
+        }
+
+        .gt-tree li {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 12px;
+        }
+
+        /* Horizontal connector above siblings */
+        .gt-tree ul>li::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #cdd6e0;
+        }
+
+        .gt-tree ul>li:first-child::before {
+            left: 50%;
+        }
+
+        .gt-tree ul>li:last-child::before {
+            right: 50%;
+        }
+
+        .gt-tree ul>li:only-child::before {
+            display: none;
+        }
+
+        /* Vertical drop from horizontal line to node */
+        .gt-tree ul>li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 24px;
+            background: #cdd6e0;
+        }
+
+        /* Node card */
+        .gt-node-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            margin-top: 24px;
+        }
+
+        .gt-avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.6rem;
+            border: 4px solid white;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative;
+        }
+
+        .gt-node-card:hover .gt-avatar {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+
+        /* depth-based colours */
+        .gt-depth-0 {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .gt-depth-1 {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .gt-depth-2 {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .gt-depth-3 {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        }
+
+        .gt-depth-4 {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .gt-toggle-btn {
+            position: absolute;
+            bottom: -8px;
+            right: -4px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #fff;
+            border: 2px solid #28a745;
+            color: #28a745;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            transition: background 0.2s, color 0.2s, transform 0.25s;
+            line-height: 1;
+        }
+
+        .gt-node-card.gt-expanded .gt-toggle-btn {
+            background: #28a745;
+            color: white;
+            transform: rotate(45deg);
+        }
+
+        .gt-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            margin-top: 8px;
+            max-width: 90px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .gt-level-badge {
+            font-size: 10px;
+            font-weight: 700;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        /* Collapsed children */
+        .gt-children.gt-hidden {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .gt-avatar {
+                width: 52px;
+                height: 52px;
+                font-size: 1.2rem;
+            }
+
+            .gt-name {
+                font-size: 11px;
+                max-width: 70px;
+            }
+
+            .gt-tree li {
+                padding: 0 6px;
+            }
+
+            .modal-xl {
+                max-width: 100vw;
+                margin: 0;
+            }
+
+            .modal-dialog {
+                margin: 0;
+            }
+
+            .modal-content {
+                border-radius: 0 !important;
+                min-height: 100vh;
+            }
+        }
     </style>
 @endpush
 
 @section('content')
 
     {{-- Dashboard Header --}}
-  <div class="dashboard-header">
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h4 class="mb-1"><i class="fas fa-tachometer-alt mr-2"></i>My Dashboard</h4>
-                <p class="mb-0 small opacity-75">
-                    Welcome back, 
-                    @auth 
-                        {{ Auth::user()->name }}
-                    @else
-                        Member 
-                    @endauth!
-                    Here's your network overview.
-                </p>
-            </div>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h4 class="mb-1"><i class="fas fa-tachometer-alt mr-2"></i>My Dashboard</h4>
+                    <p class="mb-0 small opacity-75">
+                        Welcome back,
+                        @auth
+                            {{ Auth::user()->name }}
+                        @else
+                            Member
+                        @endauth!
+                        Here's your network overview.
+                    </p>
+                </div>
 
-            <div class="d-flex align-items-center" style="gap:10px;">
-                
-                <span class="badge-plan"
-                    style="
+                <div class="d-flex align-items-center" style="gap:10px;">
+
+                    <span class="badge-plan"
+                        style="
                     @auth
-                        {{ Auth::user()->status == 'active' ? 'background:#28a745;color:white;' : 'background:red;color:white;' }}
+{{ Auth::user()->status == 'active' ? 'background:#28a745;color:white;' : 'background:red;color:white;' }}
                     @else
-                        background:gray;color:white;
-                    @endauth
+                        background:gray;color:white; @endauth
                     ">
-                    
-                    @auth 
-                        {{ ucfirst(Auth::user()->status) }} 
-                    @else 
-                        Inactive 
-                    @endauth Member
-                </span>
 
-                <button class="btn btn-sm"
-                    style="background:white;color:#28a745;font-weight:700;border-radius:20px;border:2px solid white;"
-                    data-toggle="modal" data-target="#inviteModal">
-                    <i class="fas fa-share-alt mr-1"></i> Invite &amp; Earn
-                </button>
+                        @auth
+                            {{ ucfirst(Auth::user()->status) }}
+                        @else
+                            Inactive
+                        @endauth Member
+                    </span>
 
+                    <button class="btn btn-sm"
+                        style="background:white;color:#28a745;font-weight:700;border-radius:20px;border:2px solid white;"
+                        data-toggle="modal" data-target="#inviteModal">
+                        <i class="fas fa-share-alt mr-1"></i> Invite &amp; Earn
+                    </button>
+
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="dash-layout">
 
         {{-- Sidebar --}}
         <aside class="dash-sidebar">
-           <div class="sidebar-user">
+            <div class="sidebar-user">
 
-    @php
-        $isInactive = auth()->check() && auth()->user()->status == 'inactive';
-    @endphp
+                @php
+                    $isInactive = auth()->check() && auth()->user()->status == 'inactive';
+                @endphp
 
-    {{-- AVATAR --}}
-    <div class="s-avatar"
-        style="
+                {{-- AVATAR --}}
+                <div class="s-avatar"
+                    style="
             background: {{ $isInactive ? '#f8d7da' : '#e9f7ef' }};
             border:2px solid {{ $isInactive ? '#dc3545' : '#28a745' }};
             border-radius:50%;
             width:40px;height:40px;
             display:flex;align-items:center;justify-content:center;
         ">
-        <i class="fas fa-user 
+                    <i class="fas fa-user 
             {{ $isInactive ? 'text-danger' : 'text-success' }}"
-            style="font-size:18px;">
-        </i>
-    </div>
+                        style="font-size:18px;">
+                    </i>
+                </div>
 
-    <div>
-        {{-- NAME --}}
-        <div class="u-name">
-            @auth {{ Auth::user()->name }}
-            @else Member
-            @endauth
-        </div>
+                <div>
+                    {{-- NAME --}}
+                    <div class="u-name">
+                        @auth {{ Auth::user()->name }}
+                        @else
+                            Member
+                        @endauth
+                    </div>
 
-        {{-- STATUS --}}
-        <div class="u-role"
-            style="color: {{ $isInactive ? '#dc3545' : '#28a745' }};">
+                    {{-- STATUS --}}
+                    <div class="u-role" style="color: {{ $isInactive ? '#dc3545' : '#28a745' }};">
 
-            <i class="fas fa-circle"
-                style="font-size:7px;margin-right:3px;
+                        <i class="fas fa-circle"
+                            style="font-size:7px;margin-right:3px;
                        color: {{ $isInactive ? '#dc3545' : '#28a745' }};">
-            </i>
+                        </i>
 
-            @auth 
-                {{ ucfirst(Auth::user()->status) }}
-            @else
-                Inactive 
-            @endauth
-        </div>
-    </div>
+                        @auth
+                            {{ ucfirst(Auth::user()->status) }}
+                        @else
+                            Inactive
+                        @endauth
+                    </div>
+                </div>
 
-</div>
+            </div>
 
             <nav class="sidebar-nav">
                 <div class="nav-label">Main Menu</div>
@@ -605,7 +834,8 @@
                     class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
                 </a>
-                <a href="{{ route('member.wallet') }}" class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+                <a href="{{ route('member.wallet') }}"
+                    class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
                     <i class="fas fa-wallet nav-icon"></i> Wallet
                 </a>
                 <a href="{{ route('member.credentials') }}"
@@ -613,35 +843,43 @@
                     <i class="fas fa-award nav-icon"></i> Credentials
                 </a>
                 <div class="nav-label">More</div>
-               
-                <a href="{{ route('pricing') }}" >
+
+                <a href="{{ route('pricing') }}">
                     <i class="fas fa-tags nav-icon"></i> Pricing
                 </a>
-               
+
                 <a href="{{ route('contact') }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" data-toggle="modal" data-target="#inviteModal" class="{{ $isInactive ? 'disabled' : '' }}">
+                <a href="#" data-toggle="modal" data-target="#inviteModal"
+                    class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
                 <a href="#" id="sidebarCommissionLink"
-                    onclick="showSection('referralCommissionSection'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
+                    onclick="showSection('referralCommissionSection'); return false;"
+                    class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
                 </a>
                 <div class="nav-label">My Shopping</div>
-                <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
+                <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;"
+                    class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
                     @if (isset($wishlistItems) && $wishlistItems->count())
                         <span class="ml-auto"
                             style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
                     @endif
                 </a>
-                <a href="#cart" onclick="scrollToSection('cart'); return false;" class="{{ $isInactive ? 'disabled' : '' }}">
+                <a href="#cart" onclick="scrollToSection('cart'); return false;"
+                    class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
                     @if (isset($cartItems) && $cartItems->count())
                         <span class="ml-auto"
                             style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
                     @endif
+                </a>
+                <div class="nav-label">My Team</div>
+                <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
+                    <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
                 </a>
             </nav>
 
@@ -663,10 +901,30 @@
             <div class="row mb-4">
                 @php
                     $stats = [
-                        ['label' => 'Total Earnings', 'value' => '₹0', 'icon' => 'fa-rupee-sign', 'color' => '#28a745'],
-                        ['label' => 'Direct Referrals', 'value' => '0', 'icon' => 'fa-users', 'color' => '#17a2b8'],
-                        ['label' => 'Team Size', 'value' => '0', 'icon' => 'fa-network-wired', 'color' => '#ffc107'],
-                        ['label' => 'Wallet Balance', 'value' => '₹0.00', 'icon' => 'fa-wallet', 'color' => '#6610f2'],
+                        [
+                            'label' => 'Total Earnings',
+                            'value' => '₹' . number_format($dashStats['total_earnings'], 2),
+                            'icon' => 'fa-rupee-sign',
+                            'color' => '#28a745',
+                        ],
+                        [
+                            'label' => 'Direct Referrals',
+                            'value' => $dashStats['direct_referrals'],
+                            'icon' => 'fa-users',
+                            'color' => '#17a2b8',
+                        ],
+                        [
+                            'label' => 'Team Size',
+                            'value' => $dashStats['team_size'],
+                            'icon' => 'fa-network-wired',
+                            'color' => '#ffc107',
+                        ],
+                        [
+                            'label' => 'Wallet Balance',
+                            'value' => '₹' . number_format($dashStats['wallet_balance'], 2),
+                            'icon' => 'fa-wallet',
+                            'color' => '#6610f2',
+                        ],
                     ];
                 @endphp
                 @foreach ($stats as $stat)
@@ -763,44 +1021,20 @@
                                         <th>Status</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="commissionTableBody">
                                     <tr>
-                                        <td>Apr 22, 2024</td>
-                                        <td>Vikram Singh</td>
-                                        <td><span class="text-muted" style="font-size:12px;">Direct Ref.</span></td>
-                                        <td><strong style="color:#28a745;">₹ 200.00</strong></td>
-                                        <td><span class="badge-completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Apr 15, 2024</td>
-                                        <td>Ananya Rao</td>
-                                        <td><span class="text-muted" style="font-size:12px;">Level 1</span></td>
-                                        <td><strong style="color:#28a745;">₹ 150.00</strong></td>
-                                        <td><span class="badge-completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Apr 08, 2024</td>
-                                        <td>Rohit Mehta</td>
-                                        <td><span class="text-muted" style="font-size:12px;">Direct Ref.</span></td>
-                                        <td><strong style="color:#28a745;">₹ 300.00</strong></td>
-                                        <td><span class="badge-completed">Completed</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 30, 2024</td>
-                                        <td>Neha Gupta</td>
-                                        <td><span class="text-muted" style="font-size:12px;">Level 2</span></td>
-                                        <td><strong style="color:#28a745;">₹ 75.00</strong></td>
-                                        <td><span class="badge-pending">Pending</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>Mar 22, 2024</td>
-                                        <td>Siddharth Jain</td>
-                                        <td><span class="text-muted" style="font-size:12px;">Level 2</span></td>
-                                        <td><strong style="color:#28a745;">₹ 50.00</strong></td>
-                                        <td><span class="badge-completed">Completed</span></td>
+                                        <td colspan="5" class="text-center text-muted py-3">
+                                            <i class="fas fa-spinner fa-spin mr-1"></i> Loading…
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        {{-- Pagination --}}
+                        <div class="d-flex justify-content-between align-items-center px-3 py-2"
+                            style="flex-wrap:wrap;gap:8px;">
+                            <div id="commissionInfo" style="font-size:12px;color:#777;"></div>
+                            <div id="commissionPagination" style="display:flex;gap:4px;"></div>
                         </div>
                     </div>{{-- /.recentCommissionsSection --}}
 
@@ -818,82 +1052,81 @@
                 {{-- Side Panel --}}
                 <div class="col-lg-4 mb-4">
                     {{-- Profile Quick View --}}
-                  <div class="section-card mb-4">
-    <div class="section-card-header">
-        <i class="fas fa-user mr-2 text-color"></i>My Profile
-    </div>
+                    <div class="section-card mb-4">
+                        <div class="section-card-header">
+                            <i class="fas fa-user mr-2 text-color"></i>My Profile
+                        </div>
 
-    <div class="section-card-body text-center">
+                        <div class="section-card-body text-center">
 
-        {{-- AVATAR --}}
-        <div class="mb-3">
-            <div style="width:80px;height:80px;border-radius:50%;
+                            {{-- AVATAR --}}
+                            <div class="mb-3">
+                                <div
+                                    style="width:80px;height:80px;border-radius:50%;
                 background:
                 @auth
-                    {{ Auth::user()->status == 'inactive' ? '#f8d7da' : '#e9f7ef' }}
+{{ Auth::user()->status == 'inactive' ? '#f8d7da' : '#e9f7ef' }}
                 @else
-                    #f8d7da
-                @endauth;
+                    #f8d7da @endauth;
                 display:flex;align-items:center;justify-content:center;
                 margin:0 auto;
                 border:3px solid
                 @auth
-                    {{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
+{{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
                 @else
-                    #dc3545
-                @endauth;">
-                
-                <i class="fas fa-user fa-2x
+                    #dc3545 @endauth;">
+
+                                    <i
+                                        class="fas fa-user fa-2x
                     @auth
-                        {{ Auth::user()->status == 'inactive' ? 'text-danger' : 'text-success' }}
+{{ Auth::user()->status == 'inactive' ? 'text-danger' : 'text-success' }}
                     @else
-                        text-danger
-                    @endauth">
-                </i>
-            </div>
-        </div>
+                        text-danger @endauth">
+                                    </i>
+                                </div>
+                            </div>
 
-        {{-- NAME --}}
-        <h6 class="mb-1">
-            @auth {{ Auth::user()->name }}
-            @else Member
-            @endauth
-        </h6>
+                            {{-- NAME --}}
+                            <h6 class="mb-1">
+                                @auth {{ Auth::user()->name }}
+                                @else
+                                    Member
+                                @endauth
+                            </h6>
 
-        {{-- EMAIL --}}
-        <p class="text-muted small mb-2">
-            @auth {{ Auth::user()->email }}
-            @else member@example.com
-            @endauth
-        </p>
+                            {{-- EMAIL --}}
+                            <p class="text-muted small mb-2">
+                                @auth {{ Auth::user()->email }}
+                                @else
+                                    member@example.com
+                                @endauth
+                            </p>
 
-        {{-- STATUS BADGE --}}
-        <span class="badge-plan mb-3 d-inline-block"
-            style="background-color:
+                            {{-- STATUS BADGE --}}
+                            <span class="badge-plan mb-3 d-inline-block"
+                                style="background-color:
                 @auth
-                    {{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
+{{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
                 @else
-                    #dc3545
-                @endauth;
+                    #dc3545 @endauth;
                 color:#fff;">
-            
-            @auth 
-                {{ ucfirst(Auth::user()->status) }}
-            @else 
-                Inactive 
-            @endauth
-        </span>
 
-        {{-- BUTTON (UNCHANGED) --}}
-        <div>
-            <a href="{{ route('member.profile') }}" 
-               class="btn btn-main btn-round-full btn-sm">
-               Edit Profile
-            </a>
-        </div>
+                                @auth
+                                    {{ ucfirst(Auth::user()->status) }}
+                                @else
+                                    Inactive
+                                @endauth
+                            </span>
 
-    </div>
-</div>
+                            {{-- BUTTON (UNCHANGED) --}}
+                            <div>
+                                <a href="{{ route('member.profile') }}" class="btn btn-main btn-round-full btn-sm">
+                                    Edit Profile
+                                </a>
+                            </div>
+
+                        </div>
+                    </div>
 
                     {{-- Quick Links --}}
                     <div class="section-card">
@@ -911,13 +1144,13 @@
                                 <i class="fas fa-award text-color"></i><span>My Credentials</span>
                                 <i class="fas fa-chevron-right ml-auto text-muted small"></i>
                             </a>
-                            @if(!$isInactive)
-                            <a href="{{ route('pricing') }}"
-                                class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
-                                style="gap:12px;">
-                                <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
-                                <i class="fas fa-chevron-right ml-auto text-muted small"></i>
-                            </a>
+                            @if (!$isInactive)
+                                <a href="{{ route('pricing') }}"
+                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
+                                    style="gap:12px;">
+                                    <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
+                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                </a>
                             @endif
                             <a href="{{ route('contact') }}"
                                 class="d-flex align-items-center p-3 text-dark text-decoration-none" style="gap:12px;">
@@ -1219,179 +1452,181 @@
         </div>
     </div>
 
+    {{-- ========== / Genealogy Tree Modal removed — now a standalone page ========== --}}
+
 @endsection
 
 
 @push('scripts')
     <script>
         // Dummy genealogy data
-            // const genealogyData = {
-            //     id: 1,
-            //     name: 'Priya Iyer',
-            //     level: 0,
-            //     children: [{
-            //             id: 2,
-            //             name: 'Vikram Singh',
-            //             level: 1,
-            //             children: [{
-            //                     id: 5,
-            //                     name: 'Neha Gupta',
-            //                     level: 2,
-            //                     children: [{
-            //                             id: 9,
-            //                             name: 'Raj Kumar',
-            //                             level: 3,
-            //                             children: []
-            //                         },
-            //                         {
-            //                             id: 10,
-            //                             name: 'Priya Sharma',
-            //                             level: 3,
-            //                             children: []
-            //                         }
-            //                     ]
-            //                 },
-            //                 {
-            //                     id: 6,
-            //                     name: 'Siddharth Jain',
-            //                     level: 2,
-            //                     children: [{
-            //                         id: 11,
-            //                         name: 'Anjali Verma',
-            //                         level: 3,
-            //                         children: []
-            //                     }]
-            //                 }
-            //             ]
-            //         },
-            //         {
-            //             id: 3,
-            //             name: 'Ananya Rao',
-            //             level: 1,
-            //             children: [{
-            //                     id: 7,
-            //                     name: 'Karan Mehta',
-            //                     level: 2,
-            //                     children: []
-            //                 },
-            //                 {
-            //                     id: 8,
-            //                     name: 'Sneha Nair',
-            //                     level: 2,
-            //                     children: []
-            //                 }
-            //             ]
-            //         },
-            //         {
-            //             id: 4,
-            //             name: 'Rohit Mehta',
-            //             level: 1,
-            //             children: [{
-            //                 id: 12,
-            //                 name: 'Divya Patel',
-            //                 level: 2,
-            //                 children: []
-            //             }]
-            //         }
-            //     ]
-            // };
+        // const genealogyData = {
+        //     id: 1,
+        //     name: 'Priya Iyer',
+        //     level: 0,
+        //     children: [{
+        //             id: 2,
+        //             name: 'Vikram Singh',
+        //             level: 1,
+        //             children: [{
+        //                     id: 5,
+        //                     name: 'Neha Gupta',
+        //                     level: 2,
+        //                     children: [{
+        //                             id: 9,
+        //                             name: 'Raj Kumar',
+        //                             level: 3,
+        //                             children: []
+        //                         },
+        //                         {
+        //                             id: 10,
+        //                             name: 'Priya Sharma',
+        //                             level: 3,
+        //                             children: []
+        //                         }
+        //                     ]
+        //                 },
+        //                 {
+        //                     id: 6,
+        //                     name: 'Siddharth Jain',
+        //                     level: 2,
+        //                     children: [{
+        //                         id: 11,
+        //                         name: 'Anjali Verma',
+        //                         level: 3,
+        //                         children: []
+        //                     }]
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             id: 3,
+        //             name: 'Ananya Rao',
+        //             level: 1,
+        //             children: [{
+        //                     id: 7,
+        //                     name: 'Karan Mehta',
+        //                     level: 2,
+        //                     children: []
+        //                 },
+        //                 {
+        //                     id: 8,
+        //                     name: 'Sneha Nair',
+        //                     level: 2,
+        //                     children: []
+        //                 }
+        //             ]
+        //         },
+        //         {
+        //             id: 4,
+        //             name: 'Rohit Mehta',
+        //             level: 1,
+        //             children: [{
+        //                 id: 12,
+        //                 name: 'Divya Patel',
+        //                 level: 2,
+        //                 children: []
+        //             }]
+        //         }
+        //     ]
+        // };
 
-            // // Function to create member node HTML
-            // function createMemberNode(member) {
-            //     const hasChildren = member.children && member.children.length > 0;
-            //     const childrenClass = hasChildren ? '' : 'no-children';
+        // // Function to create member node HTML
+        // function createMemberNode(member) {
+        //     const hasChildren = member.children && member.children.length > 0;
+        //     const childrenClass = hasChildren ? '' : 'no-children';
 
-            //     return `
-            //         <div class="member-view-box ${childrenClass}" data-member-id="${member.id}">
-            //             <div class="member-image">
-            //                 <i class="fas fa-user"></i>
-            //                 ${hasChildren ? '<div class="expand-icon"><i class="fas fa-plus"></i></div>' : ''}
-            //             </div>
-            //             <div class="member-name">${member.name}</div>
-            //         </div>
-            //     `;
-            // }
+        //     return `
+    //         <div class="member-view-box ${childrenClass}" data-member-id="${member.id}">
+    //             <div class="member-image">
+    //                 <i class="fas fa-user"></i>
+    //                 ${hasChildren ? '<div class="expand-icon"><i class="fas fa-plus"></i></div>' : ''}
+    //             </div>
+    //             <div class="member-name">${member.name}</div>
+    //         </div>
+    //     `;
+        // }
 
-            // // Function to build tree recursively
-            // function buildTree(member, isInitialLoad = false) {
-            //     const hasChildren = member.children && member.children.length > 0;
-            //     const childrenHiddenClass = isInitialLoad ? '' : 'hidden';
+        // // Function to build tree recursively
+        // function buildTree(member, isInitialLoad = false) {
+        //     const hasChildren = member.children && member.children.length > 0;
+        //     const childrenHiddenClass = isInitialLoad ? '' : 'hidden';
 
-            //     let html = `<li class="level-${member.level}">`;
-            //     html += createMemberNode(member);
+        //     let html = `<li class="level-${member.level}">`;
+        //     html += createMemberNode(member);
 
-            //     if (hasChildren) {
-            //         html += `<ul class="${childrenHiddenClass}">`;
-            //         member.children.forEach(child => {
-            //             html += buildTree(child, isInitialLoad);
-            //         });
-            //         html += '</ul>';
-            //     }
+        //     if (hasChildren) {
+        //         html += `<ul class="${childrenHiddenClass}">`;
+        //         member.children.forEach(child => {
+        //             html += buildTree(child, isInitialLoad);
+        //         });
+        //         html += '</ul>';
+        //     }
 
-            //     html += '</li>';
-            //     return html;
-            // }
+        //     html += '</li>';
+        //     return html;
+        // }
 
-            // // Initialize the tree
-            // function initGenealogyTree() {
-            //     const treeContainer = document.getElementById('genealogyTree');
-            //     const treeHTML = `<ul>${buildTree(genealogyData, true)}</ul>`;
-            //     treeContainer.innerHTML = treeHTML;
+        // // Initialize the tree
+        // function initGenealogyTree() {
+        //     const treeContainer = document.getElementById('genealogyTree');
+        //     const treeHTML = `<ul>${buildTree(genealogyData, true)}</ul>`;
+        //     treeContainer.innerHTML = treeHTML;
 
-            //     // Add click event listeners to all expand icons
-            //     attachExpandListeners();
-            // }
+        //     // Add click event listeners to all expand icons
+        //     attachExpandListeners();
+        // }
 
-            // // Attach expand/collapse listeners
-            // function attachExpandListeners() {
-            //     const expandIcons = document.querySelectorAll('.genealogy-tree .expand-icon');
+        // // Attach expand/collapse listeners
+        // function attachExpandListeners() {
+        //     const expandIcons = document.querySelectorAll('.genealogy-tree .expand-icon');
 
-            //     expandIcons.forEach(icon => {
-            //         icon.addEventListener('click', function(e) {
-            //             e.stopPropagation();
+        //     expandIcons.forEach(icon => {
+        //         icon.addEventListener('click', function(e) {
+        //             e.stopPropagation();
 
-            //             const memberBox = this.closest('.member-view-box');
-            //             const parentLi = memberBox.closest('li');
-            //             const childrenUl = parentLi.querySelector(':scope > ul');
+        //             const memberBox = this.closest('.member-view-box');
+        //             const parentLi = memberBox.closest('li');
+        //             const childrenUl = parentLi.querySelector(':scope > ul');
 
-            //             if (childrenUl) {
-            //                 const iconElement = this.querySelector('i');
+        //             if (childrenUl) {
+        //                 const iconElement = this.querySelector('i');
 
-            //                 if (childrenUl.classList.contains('hidden')) {
-            //                     // Expand
-            //                     childrenUl.classList.remove('hidden');
-            //                     iconElement.classList.remove('fa-plus');
-            //                     iconElement.classList.add('fa-minus');
-            //                     this.style.background = '#dc3545';
-            //                 } else {
-            //                     // Collapse
-            //                     childrenUl.classList.add('hidden');
-            //                     iconElement.classList.remove('fa-minus');
-            //                     iconElement.classList.add('fa-plus');
-            //                     this.style.background = '#28a745';
-            //                 }
-            //             }
-            //         });
-            //     });
+        //                 if (childrenUl.classList.contains('hidden')) {
+        //                     // Expand
+        //                     childrenUl.classList.remove('hidden');
+        //                     iconElement.classList.remove('fa-plus');
+        //                     iconElement.classList.add('fa-minus');
+        //                     this.style.background = '#dc3545';
+        //                 } else {
+        //                     // Collapse
+        //                     childrenUl.classList.add('hidden');
+        //                     iconElement.classList.remove('fa-minus');
+        //                     iconElement.classList.add('fa-plus');
+        //                     this.style.background = '#28a745';
+        //                 }
+        //             }
+        //         });
+        //     });
 
-            //     // Add hover effect to member boxes
-            //     const memberBoxes = document.querySelectorAll('.member-view-box');
-            //     memberBoxes.forEach(box => {
-            //         box.addEventListener('click', function(e) {
-            //             if (!e.target.closest('.expand-icon')) {
-            //                 // You can add member detail modal here
-            //                 console.log('Member clicked:', this.dataset.memberId);
-            //             }
-            //         });
-            //     });
-            // }
+        //     // Add hover effect to member boxes
+        //     const memberBoxes = document.querySelectorAll('.member-view-box');
+        //     memberBoxes.forEach(box => {
+        //         box.addEventListener('click', function(e) {
+        //             if (!e.target.closest('.expand-icon')) {
+        //                 // You can add member detail modal here
+        //                 console.log('Member clicked:', this.dataset.memberId);
+        //             }
+        //         });
+        //     });
+        // }
 
-            // Initialize on page load
-            // document.addEventListener('DOMContentLoaded', function() {
-            //     initGenealogyTree();
-            //     buildShareLinks();
-            //     renderRefTable();
-            // });
+        // Initialize on page load
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     initGenealogyTree();
+        //     buildShareLinks();
+        //     renderRefTable();
+        // });
 
         // ── Section toggle ──────────────────────────────────────────
         function scrollToSection(id) {
@@ -1885,5 +2120,124 @@
                     btn.innerHTML = '<i class="fas fa-trash"></i>';
                 });
         }
+    </script>
+
+    {{-- Commission AJAX Pagination --}}
+    <script>
+        (function() {
+            const COMMISSION_URL = '{{ route('member.commissions.json') }}';
+            let currentPage = 1;
+
+            function statusBadge(status) {
+                if (status.toLowerCase() === 'completed') {
+                    return '<span class="badge-completed">Completed</span>';
+                }
+                return '<span class="badge-pending">' + status + '</span>';
+            }
+
+            function renderRows(data) {
+                const tbody = document.getElementById('commissionTableBody');
+                if (!data.length) {
+                    tbody.innerHTML =
+                        '<tr><td colspan="5" class="text-center text-muted py-3">No commissions yet</td></tr>';
+                    return;
+                }
+                tbody.innerHTML = data.map(function(row) {
+                    return '<tr>' +
+                        '<td>' + row.date + '</td>' +
+                        '<td>' + row.from + '</td>' +
+                        '<td><span class="text-muted" style="font-size:12px;">' + row.type + '</span></td>' +
+                        '<td><strong style="color:#28a745;">&#x20B9; ' + row.amount + '</strong></td>' +
+                        '<td>' + statusBadge(row.status) + '</td>' +
+                        '</tr>';
+                }).join('');
+            }
+
+            function renderPagination(current, last, total, perPage) {
+                const info = document.getElementById('commissionInfo');
+                const nav = document.getElementById('commissionPagination');
+
+                const from = total === 0 ? 0 : (current - 1) * perPage + 1;
+                const to = Math.min(current * perPage, total);
+                info.textContent = total ? 'Showing ' + from + '–' + to + ' of ' + total : '';
+
+                if (last <= 1) {
+                    nav.innerHTML = '';
+                    return;
+                }
+
+                let pages = '';
+                const btnStyle =
+                    'style="min-width:32px;height:32px;border-radius:6px;border:1px solid #dee2e6;background:#fff;cursor:pointer;font-size:13px;padding:0 8px;transition:0.2s;"';
+                const activeStyle =
+                    'style="min-width:32px;height:32px;border-radius:6px;border:1px solid var(--color-primary,#28a745);background:var(--color-primary,#28a745);color:#fff;cursor:default;font-size:13px;padding:0 8px;font-weight:600;"';
+
+                // Prev
+                pages += '<button ' + btnStyle + (current === 1 ? ' disabled' : '') +
+                    ' onclick="commissionGoTo(' + (current - 1) + ')">' +
+                    '<i class="fas fa-chevron-left" style="font-size:11px;"></i></button>';
+
+                // Page numbers with ellipsis
+                let pagesToShow = [];
+                pagesToShow.push(1);
+                if (current > 3) pagesToShow.push('…');
+                for (let p = Math.max(2, current - 1); p <= Math.min(last - 1, current + 1); p++) pagesToShow.push(p);
+                if (current < last - 2) pagesToShow.push('…');
+                if (last > 1) pagesToShow.push(last);
+
+                pagesToShow.forEach(function(p) {
+                    if (p === '…') {
+                        pages += '<span style="padding:0 4px;line-height:32px;color:#aaa;">…</span>';
+                    } else {
+                        pages += '<button ' + (p === current ? activeStyle : btnStyle) +
+                            (p === current ? '' : ' onclick="commissionGoTo(' + p + ')"') + '>' + p +
+                            '</button>';
+                    }
+                });
+
+                // Next
+                pages += '<button ' + btnStyle + (current === last ? ' disabled' : '') +
+                    ' onclick="commissionGoTo(' + (current + 1) + ')">' +
+                    '<i class="fas fa-chevron-right" style="font-size:11px;"></i></button>';
+
+                nav.innerHTML = pages;
+            }
+
+            window.commissionGoTo = function(page) {
+                if (page < 1) return;
+                currentPage = page;
+                loadCommissions(page);
+            };
+
+            function loadCommissions(page) {
+                const tbody = document.getElementById('commissionTableBody');
+                tbody.innerHTML =
+                    '<tr><td colspan="5" class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading…</td></tr>';
+                document.getElementById('commissionPagination').innerHTML = '';
+                document.getElementById('commissionInfo').textContent = '';
+
+                fetch(COMMISSION_URL + '?page=' + page, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(res) {
+                        renderRows(res.data);
+                        renderPagination(res.current_page, res.last_page, res.total, res.per_page);
+                    })
+                    .catch(function() {
+                        tbody.innerHTML =
+                            '<tr><td colspan="5" class="text-center text-danger py-3">Failed to load commissions.</td></tr>';
+                    });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                loadCommissions(1);
+            });
+        })();
     </script>
 @endpush

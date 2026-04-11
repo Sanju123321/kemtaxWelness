@@ -97,6 +97,9 @@ Route::prefix('member')
     ->group(function () {
 
         Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
+        Route::get('/commissions', [MemberController::class, 'commissionsJson'])->name('commissions.json');
+        Route::get('/team', [MemberController::class, 'team'])->name('team');
+        Route::get('/team/tree', [MemberController::class, 'treeJson'])->name('team.tree');
         Route::get('/setup', [MemberController::class, 'setup'])->name('setup');
         Route::get('/wallet', [MemberController::class, 'wallet'])->name('wallet');
         Route::get('/profile', [MemberController::class, 'profile'])->name('profile');

@@ -180,34 +180,42 @@
     {{-- Page Content --}}
     @yield('content')
 
-        {{-- Plan Purchase Modal (hidden by default) --}}
-        <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="planModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content" style="border-radius: 18px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
-                    <div class="modal-header" style="background: linear-gradient(90deg, #0066cc 0%, #28a745 100%); color: #fff; border-bottom: none;">
-                        <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">Welcome! Please Choose a Plan to Continue</h4>
-                    </div>
-                    <div class="modal-body" style="background: #f7fafd;">
-                        <div class="container-fluid">
-                            <div class="row justify-content-center">
-                                <!-- Only One Plan Card -->
-                                <div class="col-lg-5 col-md-8 col-sm-12 mb-4">
-                                    <div class="card h-100 shadow-sm border-0" style="border-radius: 14px; background: #e3f0ff;">
-                                        <div class="card-body d-flex flex-column align-items-center py-4">
-                                            <div class="mb-3">
-                                                <span class="badge badge-primary px-3 py-2" style="font-size: 1rem;">Essential Care</span>
-                                            </div>
-                                            <h2 class="font-weight-bold mb-1" style="color: #0066cc;">₹{{ $planAmount ?? '1500' }}</h2>
-                                            <p class="small mb-3">One-Time / Monthly</p>
-                                            <ul class="list-unstyled mb-4">
-                                                <li>20% Personal Commission</li>
-                                                <li>Starter Resources Kit</li>
-                                                <li>Basic Training Access</li>
-                                                <li>Community Support</li>
-                                            </ul>
-                                            <a href="{{ route('contact') }}" class="btn btn-primary btn-block btn-round-full purchase-plan" style="width: 100%;">Join Now</a>
-                                                                <!-- The Razorpay button uses JS, so href is not used -->
+    {{-- Plan Purchase Modal (hidden by default) --}}
+    <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="planModalLabel"
+        aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content"
+                style="border-radius: 18px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
+                <div class="modal-header"
+                    style="background: linear-gradient(90deg, #0066cc 0%, #28a745 100%); color: #fff; border-bottom: none;">
+                    <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">Welcome! Please
+                        Choose a Plan to Continue</h4>
+                </div>
+                <div class="modal-body" style="background: #f7fafd;">
+                    <div class="container-fluid">
+                        <div class="row justify-content-center">
+                            <!-- Only One Plan Card -->
+                            <div class="col-lg-5 col-md-8 col-sm-12 mb-4">
+                                <div class="card h-100 shadow-sm border-0"
+                                    style="border-radius: 14px; background: #e3f0ff;">
+                                    <div class="card-body d-flex flex-column align-items-center py-4">
+                                        <div class="mb-3">
+                                            <span class="badge badge-primary px-3 py-2"
+                                                style="font-size: 1rem;">Essential Care</span>
                                         </div>
+                                        <h2 class="font-weight-bold mb-1" style="color: #0066cc;">
+                                            ₹{{ $planAmount ?? '1500' }}</h2>
+                                        <p class="small mb-3">One-Time / Monthly</p>
+                                        <ul class="list-unstyled mb-4">
+                                            <li>20% Personal Commission</li>
+                                            <li>Starter Resources Kit</li>
+                                            <li>Basic Training Access</li>
+                                            <li>Community Support</li>
+                                        </ul>
+                                        <a href="{{ route('contact') }}"
+                                            class="btn btn-primary btn-block btn-round-full purchase-plan"
+                                            style="width: 100%;">Join Now</a>
+                                        <!-- The Razorpay button uses JS, so href is not used -->
                                     </div>
                                 </div>
                             </div>
@@ -216,6 +224,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
     {{-- Scroll to top --}}
     <div id="scroll-to-top" class="scroll-to-top">
@@ -244,66 +253,70 @@
     <!-- Razorpay Checkout Script -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-        {{-- Inactivity Detection and Modal Trigger (Dashboard only, first time) --}}
-        @if (request()->routeIs('member.dashboard')&& !auth()->user()->has_plan)
-            <script>
-               $(document).ready(function() {
+    {{-- Inactivity Detection and Modal Trigger (Dashboard only, first time) --}}
+    @if (request()->routeIs('member.dashboard') && !auth()->user()->has_plan)
+        <script>
+            $(document).ready(function() {
 
-    console.log('Modal script loaded');
+                console.log('Modal script loaded');
 
-    $('#planModal').modal({
-        backdrop: 'static',
-        keyboard: false
-    }).modal('show');
+                $('#planModal').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                }).modal('show');
 
-    $('#planModal').on('hide.bs.modal', function (e) {
-        if (!window.planPurchased) {
-            e.preventDefault();
-        }
-    });
+                $('#planModal').on('hide.bs.modal', function(e) {
+                    if (!window.planPurchased) {
+                        e.preventDefault();
+                    }
+                });
 
-    $(document).on('click', '.purchase-plan', function(e) {
-        e.preventDefault();
+                $(document).on('click', '.purchase-plan', function(e) {
+                    e.preventDefault();
 
-        var planAmount = {{ isset($planAmount) ? (int)$planAmount : 1500 }};
+                    var planAmount = {{ isset($planAmount) ? (int) $planAmount : 1500 }};
 
-        $.post('/member/create-order', {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            amount: planAmount
-        }, function(orderData) {
-
-            var options = {
-                "key": "{{ config('services.razorpay.key') }}", // ✅ FIXED
-                "amount": orderData.amount,
-                "currency": "INR",
-                "order_id": orderData.order_id,
-
-                "handler": function (response){
-                    $.post('/member/verify-payment', {
+                    $.post('/member/create-order', {
                         _token: $('meta[name="csrf-token"]').attr('content'),
-                        razorpay_payment_id: response.razorpay_payment_id,
-                        razorpay_order_id: response.razorpay_order_id,
-                        razorpay_signature: response.razorpay_signature
-                    }, function(res){
-                        if(res.success){
-                            window.planPurchased = true;
-                            $('#planModal').modal('hide');
-                            alert('Payment Successful ✅');
-                        }
+                        amount: planAmount
+                    }, function(orderData) {
+
+                        var options = {
+                            "key": "{{ config('services.razorpay.key') }}", // ✅ FIXED
+                            "amount": orderData.amount,
+                            "currency": "INR",
+                            "order_id": orderData.order_id,
+
+                            "handler": function(response) {
+                                $.post('/member/verify-payment', {
+                                    _token: $('meta[name="csrf-token"]').attr(
+                                        'content'),
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                }, function(res) {
+                                    if (res.success) {
+                                        window.planPurchased = true;
+                                        $('#planModal').modal('hide');
+                                        window.location.reload();
+                                    } else {
+                                        alert('Payment failed: ' + (res.message ||
+                                            'Unknown error. Please contact support.'
+                                            ));
+                                    }
+                                });
+                            }
+                        };
+
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+
                     });
-                }
-            };
+                });
 
-            var rzp = new Razorpay(options);
-            rzp.open();
-
-        });
-    });
-
-});
-               
-            </script>
-        @endif
+            });
+        </script>
+    @endif
 
     @stack('scripts')
 

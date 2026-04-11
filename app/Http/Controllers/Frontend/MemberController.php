@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Plan;
 use App\Models\UserPlan;
+use App\Models\Income;
+use App\Models\UserTree;
 use App\Jobs\DistributeIncomeJob;
 use Illuminate\Support\Facades\DB;
 class MemberController extends Controller{
@@ -133,9 +135,12 @@ public function verifyPayment(Request $request)
                 throw new \Exception("Invalid Plan");
             }
 
-            // 🔴 RULE 1: Must start with Plan A
-            if (!$user->current_plan_id && $plan->name != 'A') {
-                throw new \Exception("Start with Starter Package");
+            // 🔴 RULE 1: New users must start with the cheapest active plan
+            if (!$user->current_plan_id) {
+                $starterPlan = Plan::where('is_active', 1)->orderBy('price')->first();
+                if (!$starterPlan || $plan->id !== $starterPlan->id) {
+                    throw new \Exception("New members must start with the Starter Package (₹" . ($starterPlan->price ?? '') . ")");
+                }
             }
 
             // 🔴 RULE 2: Only Upgrade
@@ -143,7 +148,7 @@ public function verifyPayment(Request $request)
                 $currentPlan = $user->currentPlan;
 
                 if ($plan->price <= $currentPlan->price) {
-                    throw new \Exception("Only upgrade allowed");
+                    throw new \Exception("Only upgrade allowed. Please select a higher plan.");
                 }
             }
 
@@ -239,12 +244,15 @@ public function verifyPayment(Request $request)
     {
         $user = auth()->user();
 
-        // Get user stats (placeholder - replace with actual queries)
-        $stats = [
-            'total_earnings'   => 0,
-            'direct_referrals' => 0,
-            'team_size'        => 0,
-            'wallet_balance'   => 0,
+        // Real dashboard stats
+        $directReferrals = UserTree::where('upline_id', $user->id)->where('level', 1)->count();
+        $teamSize        = UserTree::where('upline_id', $user->id)->count();
+
+        $dashStats = [
+            'total_earnings'   => $user->total_earned ?? 0,
+            'direct_referrals' => $directReferrals,
+            'team_size'        => $teamSize,
+            'wallet_balance'   => $user->wallet_balance ?? 0,
         ];
 
         // Wishlist items with eager-loaded products
@@ -260,11 +268,16 @@ public function verifyPayment(Request $request)
 
         $cartTotal = $cartItems->sum(fn($i) => $i->quantity * ($i->product->price ?? 0));
 
+        // Starter plan amount for the purchase modal (cheapest active plan)
+        $starterPlan = Plan::where('is_active', 1)->orderBy('price')->first();
+        $planAmount  = $starterPlan?->price ?? 1500;
+
         return view('frontend.member.dashboard.index', compact(
-            'stats',
+            'dashStats',
             'wishlistItems',
             'cartItems',
             'cartTotal',
+            'planAmount',
         ));
     }
 
@@ -277,11 +290,118 @@ public function verifyPayment(Request $request)
     }
 
     /**
+     * Return paginated commissions as JSON for AJAX requests.
+     */
+    public function commissionsJson(Request $request)
+    {
+        $user = auth()->user();
+
+        $paginator = Income::with('fromUser')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->paginate(5);
+
+        $items = $paginator->getCollection()->map(function ($income) {
+            return [
+                'date'      => $income->created_at->format('M d, Y'),
+                'from'      => $income->fromUser->name ?? 'N/A',
+                'type'      => $income->type === 'direct' ? 'Direct Ref.' : 'Level ' . $income->level,
+                'amount'    => number_format($income->amount, 2),
+                'status'    => ucfirst($income->status),
+            ];
+        });
+
+        return response()->json([
+            'data'         => $items,
+            'current_page' => $paginator->currentPage(),
+            'last_page'    => $paginator->lastPage(),
+            'total'        => $paginator->total(),
+            'per_page'     => $paginator->perPage(),
+        ]);
+    }
+
+    /**
+     * Show the My Team genealogy page.
+     */
+    public function team()
+    {
+        return view('frontend.member.mytree.index');
+    }
+
+    /**
+     * Return team genealogy tree as JSON for AJAX rendering.
+     */
+    public function treeJson()
+    {
+        $tree = $this->buildMemberTree(auth()->id(), 0);
+        return response()->json($tree);
+    }
+
+    private function buildMemberTree(int $userId, int $depth): array
+    {
+        $user = User::select('id', 'name')->find($userId);
+        if (!$user) return [];
+
+        $children = UserTree::where('upline_id', $userId)
+            ->where('level', 1)
+            ->pluck('user_id')
+            ->map(fn($id) => $this->buildMemberTree($id, $depth + 1))
+            ->filter()
+            ->values()
+            ->toArray();
+
+        return [
+            'id'       => $user->id,
+            'name'     => $user->name,
+            'depth'    => $depth,
+            'children' => $children,
+        ];
+    }
+
+    /**
      * Show wallet page.
      */
     public function wallet()
     {
-        return view('frontend.member.wallet.index');
+        $user = auth()->user();
+
+        $walletBalance = $user->wallet_balance ?? 0;
+        $totalEarned   = $user->total_earned   ?? 0;
+
+        $plan     = $user->currentPlan;
+        $dailyCap = $plan?->daily_cap  ?? 0;
+        $totalCap = $plan?->total_cap  ?? 0;
+
+        // Today earnings (credited)
+        $todayEarned = Income::where('user_id', $user->id)
+            ->where('status', 'credited')
+            ->whereDate('created_at', today())
+            ->sum('amount');
+
+        // Today lost (due to daily cap)
+        $todayLost = Income::where('user_id', $user->id)
+            ->where('status', 'lost')
+            ->whereDate('created_at', today())
+            ->sum('amount');
+
+        // Recent wallet transactions (credited incomes)
+        $recentTransactions = Income::with('fromUser')
+            ->where('user_id', $user->id)
+            ->where('status', 'credited')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        return view('frontend.member.wallet.index', compact(
+            'walletBalance',
+            'totalEarned',
+            'dailyCap',
+            'totalCap',
+            'todayEarned',
+            'todayLost',
+            'plan',
+            'recentTransactions',
+        ));
     }
 
     /**

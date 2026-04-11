@@ -25,6 +25,8 @@ class User extends Authenticatable
         'phone',
         'reference_code',
         'referred_by',
+        'wallet_balance',
+        'total_earned',
     ];
 
     /**
