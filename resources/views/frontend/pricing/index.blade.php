@@ -447,7 +447,7 @@
                                     <div class="card-body py-4 d-flex flex-column">
                                         <div class="pricing-header mb-4">
                                             <h5 class="font-weight-normal mb-2">Essential Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹1000</h2>
+                                            <h2 class="mb-1 font-weight-bold">₹1500</h2>
                                             <p class="small">One-Time / Monthly</p>
                                         </div>
                                         <strong class="mb-3">✅ Get Started:</strong>
@@ -457,8 +457,8 @@
                                             <li class="py-1">- Basic Training Access</li>
                                             <li class="py-1">- Community Support</li>
                                         </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full">Join Now</a>
+                                        <a
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="1500" data-plan="1">Join Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -468,7 +468,7 @@
                                     <div class="card-body py-4 d-flex flex-column">
                                         <div class="pricing-header mb-4">
                                             <h5 class="font-weight-normal mb-2">Signature Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹2500</h2>
+                                            <h2 class="mb-1 font-weight-bold">₹3000</h2>
                                             <p class="small">One-Time / Monthly</p>
                                         </div>
                                         <strong class="mb-3">✅ Build Your Team:</strong>
@@ -478,8 +478,8 @@
                                             <li class="py-1">- Advanced Marketing Materials</li>
                                             <li class="py-1">- Bi-Weekly Coaching Calls</li>
                                         </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-small btn-main mt-4 btn-round-full">Join Now</a>
+                                                     <a
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="3000" data-plan="2">Join Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -489,7 +489,7 @@
                                     <div class="card-body py-4 d-flex flex-column">
                                         <div class="pricing-header mb-4">
                                             <h5 class="font-weight-normal mb-2">Premium Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹5000</h2>
+                                            <h2 class="mb-1 font-weight-bold">₹7500</h2>
                                             <p class="small">One-Time / Monthly</p>
                                         </div>
                                         <strong class="mb-3">✅ Scale Your Income:</strong>
@@ -499,8 +499,8 @@
                                             <li class="py-1">- Complete Training Academy</li>
                                             <li class="py-1">- Weekly 1-on-1 Coaching</li>
                                         </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full">Join Now</a>
+                                                     <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="7500" data-plan="3">Join Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -515,7 +515,7 @@
                                     <div class="card-body py-4 d-flex flex-column">
                                         <div class="pricing-header mb-4">
                                             <h5 class="font-weight-normal mb-2">Executive Wellness</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹10000</h2>
+                                            <h2 class="mb-1 font-weight-bold">₹15000</h2>
                                             <p class="small">One-Time / Monthly</p>
                                         </div>
                                         <strong class="mb-3">✅ Leadership Tier:</strong>
@@ -525,8 +525,8 @@
                                             <li class="py-1">- VIP Mastermind Access</li>
                                             <li class="py-1">- Bonus Trip Qualification</li>
                                         </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-small btn-main mt-4 btn-round-full">Join Now</a>
+                                        <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="15000" data-plan="4">Join Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -536,7 +536,7 @@
                                     <div class="card-body py-4 d-flex flex-column">
                                         <div class="pricing-header mb-4">
                                             <h5 class="font-weight-normal mb-2">Platinum Elite</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹20000</h2>
+                                            <h2 class="mb-1 font-weight-bold">₹30000</h2>
                                             <p class="small">One-Time / Monthly</p>
                                         </div>
                                         <strong class="mb-3">✅ Elite Executive:</strong>
@@ -546,8 +546,8 @@
                                             <li class="py-1">- Luxury Exclusive Rewards</li>
                                             <li class="py-1">- Career Car Qualification</li>
                                         </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full">Join Now</a>
+                                        <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="30000" data-plan="5">Join Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -581,4 +581,64 @@
     </section>
     <!-- Section Pricing End -->
 
+@endsection
+@section('scripts')
+<script src="{{ asset('frontend/plugins/jquery/jquery.min.js') }}"></script>
+    <script src="{{ asset('frontend/plugins/bootstrap/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('frontend/js/script.js') }}"></script>
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+$(document).on('click', '.purchase-plan', function(e) {
+    e.preventDefault();
+
+    var amount = $(this).data('amount');
+    var planId = $(this).data('plan');
+
+    $.post("{{ url('member/create-order') }}", {
+        _token: $('meta[name="csrf-token"]').attr('content'),
+        amount: amount,
+        plan_id: planId
+    }, function(order) {
+
+        var options = {
+            key: "{{ config('services.razorpay.key') }}",
+            amount: order.amount,
+            currency: "INR",
+            order_id: order.order_id,
+
+            handler: function(response) {
+
+                $.post("{{ url('member/verify-payment') }}", {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    razorpay_order_id: response.razorpay_order_id,
+                    razorpay_signature: response.razorpay_signature,
+                    plan_id: planId,
+                    amount: amount
+                }, function(res) {
+
+                    if (res.success) {
+                        alert('✅ Plan Activated Successfully');
+                        window.location.reload();
+                    } else {
+                        alert('❌ Payment Failed');
+                    }
+
+                });
+            }
+        };
+
+        var rzp = new Razorpay(options);
+        rzp.open();
+
+    });
+});
+</script>
 @endsection
