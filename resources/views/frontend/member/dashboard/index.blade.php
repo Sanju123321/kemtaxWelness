@@ -787,20 +787,26 @@
                 @endphp
 
                 {{-- AVATAR --}}
-                <div class="s-avatar"
-                    style="
-            background: {{ $isInactive ? '#f8d7da' : '#e9f7ef' }};
-            border:2px solid {{ $isInactive ? '#dc3545' : '#28a745' }};
-            border-radius:50%;
-            width:40px;height:40px;
-            display:flex;align-items:center;justify-content:center;
-        ">
-                    <i class="fas fa-user 
-            {{ $isInactive ? 'text-danger' : 'text-success' }}"
-                        style="font-size:18px;">
-                    </i>
-                </div>
+               <div class="s-avatar"
+    style="
+        background: {{ $isInactive ? '#f8d7da' : '#e9f7ef' }};
+        border:2px solid {{ $isInactive ? '#dc3545' : '#28a745' }};
+        border-radius:50%;
+        width:40px;height:40px;
+        display:flex;align-items:center;justify-content:center;
+        overflow:hidden;
+    ">
 
+    @if(Auth::user()->profile_photo)
+        <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}"
+             style="width:100%; height:100%; object-fit:cover;">
+    @else
+        <i class="fas fa-user {{ $isInactive ? 'text-danger' : 'text-success' }}"
+           style="font-size:18px;">
+        </i>
+    @endif
+
+</div>
                 <div>
                     {{-- NAME --}}
                     <div class="u-name">
@@ -1039,14 +1045,14 @@
                     </div>{{-- /.recentCommissionsSection --}}
 
                     {{-- Team Tree --}}
-                    <div class="section-card">
+                    <!-- <div class="section-card">
                         <div class="section-card-header">
                             <i class="fas fa-sitemap mr-2 text-color"></i>My Team Genealogy
                         </div>
                         <div class="section-card-body">
-                            <livewire:genealogy-tree />
+                           
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 {{-- Side Panel --}}
@@ -1060,31 +1066,40 @@
                         <div class="section-card-body text-center">
 
                             {{-- AVATAR --}}
-                            <div class="mb-3">
-                                <div
-                                    style="width:80px;height:80px;border-radius:50%;
-                background:
-                @auth
-{{ Auth::user()->status == 'inactive' ? '#f8d7da' : '#e9f7ef' }}
-                @else
-                    #f8d7da @endauth;
-                display:flex;align-items:center;justify-content:center;
-                margin:0 auto;
-                border:3px solid
-                @auth
-{{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
-                @else
-                    #dc3545 @endauth;">
+                        <div class="mb-3">
+    <div
+        style="width:80px;height:80px;border-radius:50%;
+        background:
+        @auth
+            {{ Auth::user()->status == 'inactive' ? '#f8d7da' : '#e9f7ef' }}
+        @else
+            #f8d7da
+        @endauth;
+        display:flex;align-items:center;justify-content:center;
+        margin:0 auto;
+        overflow:hidden;
+        border:3px solid
+        @auth
+            {{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
+        @else
+            #dc3545
+        @endauth;">
 
-                                    <i
-                                        class="fas fa-user fa-2x
-                    @auth
-{{ Auth::user()->status == 'inactive' ? 'text-danger' : 'text-success' }}
-                    @else
-                        text-danger @endauth">
-                                    </i>
-                                </div>
-                            </div>
+        @auth
+            @if(Auth::user()->profile_photo)
+                <img src="{{ asset('storage/' . Auth::user()->profile_photo) }}"
+                     style="width:100%; height:100%; object-fit:cover;">
+            @else
+                <i class="fas fa-user fa-2x
+                    {{ Auth::user()->status == 'inactive' ? 'text-danger' : 'text-success' }}">
+                </i>
+            @endif
+        @else
+            <i class="fas fa-user fa-2x text-danger"></i>
+        @endauth
+
+    </div>
+</div>
 
                             {{-- NAME --}}
                             <h6 class="mb-1">
@@ -1393,7 +1408,7 @@
                             style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.05em;"
                             class="mb-1">Referral Code</label>
                         <div class="invite-code-box">
-                            <input type="text" id="referralCode" value="KEMMLWK9CXY1" readonly>
+                            <input type="text" id="referralCode" value="{{ auth()->user()->reference_code }}" readonly>
                             <button class="btn btn-main btn-sm px-3"
                                 onclick="copyText('referralCode', 'codeToast')">Copy</button>
                         </div>
@@ -1405,7 +1420,7 @@
                             style="font-size:12px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.05em;"
                             class="mb-1">Referral Link</label>
                         <div class="invite-code-box">
-                            <input type="text" id="referralLink" value="{{ url('/register?ref=KEMMLWK9CXY1') }}"
+                            <input type="text" id="referralLink" value="{{ url('/register?ref=' . auth()->user()->reference_code) }}"
                                 readonly>
                             <button class="btn btn-main btn-sm px-3"
                                 onclick="copyText('referralLink', 'linkToast')">Copy</button>
@@ -1417,27 +1432,27 @@
                         class="mb-2">Share Via</p>
                     <div class="row" style="gap:0;">
                         <div class="col-6 mb-2">
-                            <a id="shareWhatsapp" href="#" target="_blank" class="share-btn whatsapp">
+                            <a id="shareWhatsapp" href="https://wa.me/?text={{ urlencode('Join me using my referral link: ' . url('/register?ref=' . auth()->user()->reference_code)) }}" target="_blank" class="share-btn whatsapp">
                                 <i class="fab fa-whatsapp fa-lg"></i> WhatsApp
                             </a>
                         </div>
                         <div class="col-6 mb-2">
-                            <a id="shareGmail" href="#" target="_blank" class="share-btn gmail">
+                            <a id="shareGmail" href="https://mail.google.com/mail/?view=cm&fs=1&su=Join Me&body={{ urlencode('Join me using my referral link: ' . url('/register?ref=' . auth()->user()->reference_code)) }}" target="_blank" class="share-btn gmail">
                                 <i class="fas fa-envelope fa-lg"></i> Gmail
                             </a>
                         </div>
                         <div class="col-6 mb-2">
-                            <a id="shareFacebook" href="#" target="_blank" class="share-btn facebook">
+                            <a id="shareFacebook" href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url('/register?ref=' . auth()->user()->reference_code)) }}" target="_blank" class="share-btn facebook">
                                 <i class="fab fa-facebook fa-lg"></i> Facebook
                             </a>
                         </div>
                         <div class="col-6 mb-2">
-                            <a id="shareTwitter" href="#" target="_blank" class="share-btn twitter">
+                            <a id="shareTwitter" href="https://twitter.com/intent/tweet?text=Join me using my referral link: {{ urlencode(url('/register?ref=' . auth()->user()->reference_code)) }}" target="_blank" class="share-btn twitter">
                                 <i class="fab fa-twitter fa-lg"></i> Twitter / X
                             </a>
                         </div>
                         <div class="col-6 mb-2">
-                            <a id="shareTelegram" href="#" target="_blank" class="share-btn telegram">
+                            <a id="shareTelegram" href="https://t.me/share/url?url={{ urlencode(url('/register?ref=' . auth()->user()->reference_code)) }}&text=Join Me" target="_blank" class="share-btn telegram">
                                 <i class="fab fa-telegram fa-lg"></i> Telegram
                             </a>
                         </div>

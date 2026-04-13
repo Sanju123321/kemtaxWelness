@@ -83,4 +83,9 @@ public function plans()
 {
     return $this->hasMany(UserPlan::class);
 }
+
+public function bankDetail()
+{
+    return $this->hasOne(UserBankDetail::class);
+}
 }

@@ -71,7 +71,12 @@
             <div class="col-lg-4 mb-4">
                 <div class="profile-card text-center">
                     <div class="avatar-circle">
-                        <i class="fas fa-user"></i>
+                         @if(auth()->user()->profile_photo)
+            <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}" 
+                 class="rounded-circle" width="100" height="100">
+        @else
+            <i class="fas fa-user"></i>
+        @endif
                     </div>
                     <h5 class="mb-1">@auth {{ Auth::user()->name }}
                         @else
@@ -82,11 +87,16 @@
                         - @endauth
                     </p>
                     <span class="badge-rank mb-3 d-inline-block">Active Member</span>
-                    <div class="mt-3">
-                        <button class="btn btn-outline-success btn-sm btn-round-full">
-                            <i class="fas fa-camera mr-1"></i>Change Photo
-                        </button>
-                    </div>
+                       <form action="{{ url('/member/profile/photo') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <input type="file" name="photo" id="photoInput" hidden onchange="this.form.submit()">
+
+        <button type="button" onclick="document.getElementById('photoInput').click()" 
+                class="btn btn-outline-success btn-sm btn-round-full">
+            <i class="fas fa-camera mr-1"></i>Change Photo
+        </button>
+    </form>
                 </div>
 
                 <div class="profile-card p-0 overflow-hidden">
@@ -124,116 +134,180 @@
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
 
-                    <form method="POST" action="#">
-                        @csrf
-                        @method('PUT')
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Full Name</label>
-                                <input type="text" class="form-control" name="name"
-                                    value="@auth{{ Auth::user()->name }} @endauth">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Email Address</label>
-                                <input type="email" class="form-control" name="email"
-                                    value="@auth{{ Auth::user()->email }} @endauth">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Phone Number</label>
-                                <div class="input-group">
-                                    <div class="input-group-prepend"><span class="input-group-text">+91</span></div>
-                                    <input type="tel" class="form-control" name="phone"
-                                        placeholder="10-digit phone number">
-                                </div>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>City</label>
-                                <input type="text" class="form-control" name="city" placeholder="Your city">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>State</label>
-                                <select class="form-control" name="state">
-                                    <option value="">Select State</option>
-                                    @foreach (['Maharashtra', 'Delhi', 'Karnataka', 'Tamil Nadu', 'Gujarat', 'Rajasthan', 'Uttar Pradesh', 'West Bengal', 'Telangana', 'Madhya Pradesh'] as $state)
-                                        <option>{{ $state }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Pincode</label>
-                                <input type="text" class="form-control" name="pincode" placeholder="6-digit pincode">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-main btn-round-full">
-                            <i class="fas fa-save mr-2"></i>Save Changes
-                        </button>
-                    </form>
+                    <form method="POST" action="{{ url('member/profile/update') }}">
+    @csrf
+    @method('PUT')
+
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label>Full Name</label>
+            <input type="text" class="form-control" name="name"
+                value="{{ old('name', auth()->user()->name) }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Email Address</label>
+            <input type="email" class="form-control" name="email"
+                value="{{ old('email', auth()->user()->email) }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Phone Number</label>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">+91</span>
+                </div>
+                <input type="tel" class="form-control" name="phone"
+                    value="{{ old('phone', auth()->user()->phone) }}"
+                    placeholder="10-digit phone number" readonly>
+            </div>
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>City</label>
+            <input type="text" class="form-control" name="city"
+                value="{{ old('city', auth()->user()->city) }}"
+                placeholder="Your city">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>State</label>
+            <select class="form-control" name="state">
+                <option value="">Select State</option>
+                @foreach (['Maharashtra','Delhi','Karnataka','Tamil Nadu','Gujarat','Rajasthan','Uttar Pradesh','West Bengal','Telangana','Madhya Pradesh'] as $state)
+                    <option value="{{ $state }}"
+                        {{ old('state', auth()->user()->state) == $state ? 'selected' : '' }}>
+                        {{ $state }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Pincode</label>
+            <input type="text" class="form-control" name="pincode"
+                value="{{ old('pincode', auth()->user()->pincode) }}"
+                placeholder="6-digit pincode">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-main btn-round-full">
+        <i class="fas fa-save mr-2"></i>Save Changes
+    </button>
+</form>
                 </div>
 
                 {{-- Bank Details --}}
                 <div class="profile-card mb-4">
                     <div class="form-section-title">Bank Account Details (for Withdrawals)</div>
-                    <form method="POST" action="#">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Account Holder Name</label>
-                                <input type="text" class="form-control" name="bank_name"
-                                    placeholder="As per bank records">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Account Number</label>
-                                <input type="text" class="form-control" name="account_number"
-                                    placeholder="Bank account number">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>IFSC Code</label>
-                                <input type="text" class="form-control" name="ifsc" placeholder="e.g. SBIN0001234">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Bank Name</label>
-                                <input type="text" class="form-control" name="bank_branch" placeholder="Bank name">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>UPI ID (optional)</label>
-                                <input type="text" class="form-control" name="upi_id" placeholder="yourname@upi">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-main btn-round-full">
-                            <i class="fas fa-save mr-2"></i>Save Bank Details
-                        </button>
-                    </form>
+                    <form method="POST" action="{{ url('member/bank/save') }}">
+    @csrf
+
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label>Account Holder Name</label>
+            <input type="text" class="form-control" name="account_holder"
+                value="{{ old('account_holder', auth()->user()->bankDetail->account_holder ?? '') }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Account Number</label>
+            <input type="text" class="form-control" name="account_number"
+                value="{{ old('account_number', auth()->user()->bankDetail->account_number ?? '') }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>IFSC Code</label>
+            <input type="text" class="form-control" name="ifsc"
+                value="{{ old('ifsc', auth()->user()->bankDetail->ifsc ?? '') }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Bank Name</label>
+            <input type="text" class="form-control" name="bank_name"
+                value="{{ old('bank_name', auth()->user()->bankDetail->bank_name ?? '') }}">
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>UPI ID</label>
+            <input type="text" class="form-control" name="upi_id"
+                value="{{ old('upi_id', auth()->user()->bankDetail->upi_id ?? '') }}">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-main btn-round-full">
+        Save Bank Details
+    </button>
+</form>
                 </div>
 
                 {{-- Change Password --}}
                 <div class="profile-card">
                     <div class="form-section-title">Change Password</div>
-                    <form method="POST" action="#">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6 form-group">
-                                <label>Current Password</label>
-                                <input type="password" class="form-control" name="current_password"
-                                    placeholder="Current password">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>New Password</label>
-                                <input type="password" class="form-control" name="new_password"
-                                    placeholder="New password">
-                            </div>
-                            <div class="col-md-6 form-group">
-                                <label>Confirm New Password</label>
-                                <input type="password" class="form-control" name="new_password_confirmation"
-                                    placeholder="Confirm new password">
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-main btn-round-full">
-                            <i class="fas fa-key mr-2"></i>Update Password
-                        </button>
-                    </form>
+                    <form method="POST" id="changePasswordForm" action="{{ url('member/change/password') }}">
+    @csrf
+
+    <div class="row">
+        <div class="col-md-6 form-group">
+            <label>Current Password</label>
+            <input type="password" class="form-control" id="current_password" name="current_password"
+                placeholder="Current password" required>
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>New Password</label>
+            <input type="password" class="form-control" id="password" name="password"
+                placeholder="New password" required>
+        </div>
+
+        <div class="col-md-6 form-group">
+            <label>Confirm New Password</label>
+            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation"
+                placeholder="Confirm new password" required>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-main btn-round-full">
+        <i class="fas fa-key mr-2"></i>Update Password
+    </button>
+</form>
                 </div>
             </div>
         </div>
     </div>
 
+@endsection
+
+@section('scripts')
+  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    console.log("Validation Loaded"); // 👈 check in console
+
+    $.validator.addMethod("pwcheck", function (value) {
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(value);
+    });
+
+    $("#changePasswordForm").validate({
+        rules: {
+            current_password: {
+                required: true,
+                minlength: 8
+            },
+            password: {
+                required: true,
+                minlength: 8,
+                pwcheck: true
+            },
+            password_confirmation: {
+                required: true,
+                equalTo: "#password"
+            }
+        }
+    });
+});
+</script>
 @endsection

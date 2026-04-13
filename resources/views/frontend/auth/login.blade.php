@@ -68,7 +68,7 @@
                             </div>
 
                             <div class="text-right mb-4">
-                                <a href="{{ route('password.request') }}" class="text-color font-weight-600 small">Forgot
+                                <a href="{{ url('/forgot-password') }}" class="text-color font-weight-600 small">Forgot
                                     password?</a>
                             </div>
 
@@ -104,7 +104,7 @@
                                 <i class="ti-key text-color mb-2" style="font-size: 1.8rem;"></i>
                                 <h6 class="mt-2">Account Issues?</h6>
                                 <p class="text-muted small">Verify your credentials</p>
-                                <a href="{{ route('password.request') }}" class="text-color small font-weight-600">Reset
+                                <a href="{{ url('/forgot-password') }}" class="text-color small font-weight-600">Reset
                                     Password</a>
                             </div>
                         </div>

@@ -14,6 +14,7 @@ use Illuminate\Validation\Rules;
 use App\Models\PhoneVerification;
 use Illuminate\Support\Str;
 use App\Models\UserTree;
+
 class AuthController extends Controller
 {
     /**
@@ -237,5 +238,41 @@ public function verifyOtp(Request $request)
     return response()->json([
         'success' => true
     ]);
+}
+
+
+
+
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'phone' => 'required',
+        'password' => 'required|confirmed|min:6'
+    ]);
+
+    // ✅ Check if phone is verified
+    $record = PhoneVerification::where('phone', $request->phone)
+        ->where('is_verified', true)
+        ->first();
+
+    if (!$record) {
+        return back()->withErrors(['otp' => 'OTP not verified']);
+    }
+
+    // ✅ Find user
+    $user = User::where('phone', $request->phone)->first();
+
+    if (!$user) {
+        return back()->withErrors(['phone' => 'User not found']);
+    }
+
+    // ✅ Update password
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    // ✅ Clean OTP record
+    $record->delete();
+
+    return redirect('/login')->with('success', 'Password reset successful');
 }
 }
