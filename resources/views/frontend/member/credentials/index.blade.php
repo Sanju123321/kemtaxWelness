@@ -93,11 +93,11 @@
     <div class="container py-4" style="max-width: 1200px; padding-bottom: 60px;">
 
         {{-- Header --}}
-        <div class="credentials-header">
+        <!-- <div class="credentials-header">
             <h1 style="font-size: 36px; font-weight: 800; margin-bottom: 10px;">🏆 Credentials &amp; Achievements</h1>
             <p style="font-size: 16px; opacity: 0.95; margin: 0;">Track your milestones and showcase your network marketing
                 achievements</p>
-        </div>
+        </div> -->
 
         {{-- Member Certificate --}}
         <div class="certificate-card">

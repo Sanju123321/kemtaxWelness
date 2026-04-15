@@ -345,7 +345,7 @@ public function verifyPayment(Request $request)
     private function buildMemberTree(int $userId, int $depth): array
     {
         $user = User::with('currentPlan')
-            ->select('id', 'name', 'status', 'current_plan_id', 'total_earned', 'wallet_balance', 'reference_code')
+            ->select('id', 'name', 'status', 'profile_photo', 'current_plan_id', 'total_earned', 'wallet_balance', 'reference_code')
             ->find($userId);
         if (!$user) return [];
 
@@ -361,6 +361,7 @@ public function verifyPayment(Request $request)
             'id'           => $user->id,
             'name'         => $user->name,
             'depth'        => $depth,
+            'profile_photo' => $user->profile_photo,
             'status'       => $user->status ?? 'inactive',
             'ref_code'     => $user->reference_code ?? '-',
             'plan_name'    => $user->currentPlan?->name ?? 'No Plan',

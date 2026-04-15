@@ -53,6 +53,30 @@
         background: #d4edda;
         color: #155724;
     }
+
+    .avatar-circle {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        /* This makes image stay inside circle */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f0f0f0;
+    }
+
+    .avatar-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Prevents stretching */
+    }
+
+    .avatar-circle i {
+        font-size: 40px;
+        color: #999;
+    }
 </style>
 @endpush
 
@@ -72,8 +96,7 @@
             <div class="profile-card text-center">
                 <div class="avatar-circle">
                     @if(auth()->user()->profile_photo)
-                    <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}"
-                        class="rounded-circle" width="100" height="100">
+                    <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}">
                     @else
                     <i class="fas fa-user"></i>
                     @endif
@@ -426,4 +449,3 @@
     });
 </script>
 @endpush
-

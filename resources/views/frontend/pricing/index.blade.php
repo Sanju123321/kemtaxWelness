@@ -21,7 +21,155 @@
             </div>
         </div>
     </section>
+<!-- Section Pricing Packages Start -->
+    <section class="section pricing bg-gray position-relative">
+        <div class="hero-img bg-overlay h70"></div>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-7 text-center">
+                    <div class="section-title">
+                        <span class="h6 text-dark">🎯 Start Now</span>
+                        <h2 class="mt-3 content-title text-dark">Choose Your Membership Plan &amp; Start Earning Today</h2>
+                    </div>
+                </div>
+            </div>
 
+            <div id="pricingCarousel" class="carousel slide" data-ride="carousel" data-interval="5000">
+                <ol class="carousel-indicators">
+                    <li data-target="#pricingCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#pricingCarousel" data-slide-to="1"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <!-- Slide 1 -->
+                    <div class="carousel-item active">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card text-center h-100"
+                                    style="border-top:4px solid #0066cc;background-color:#dce8fb;">
+                                    <div class="card-body py-4 d-flex flex-column">
+                                        <div class="pricing-header mb-4">
+                                            <h5 class="font-weight-normal mb-2">Essential Care</h5>
+                                            <h2 class="mb-1 font-weight-bold">₹1500</h2>
+                                            <p class="small">One-Time / Monthly</p>
+                                        </div>
+                                        <strong class="mb-3">✅ Get Started:</strong>
+                                        <ul class="list-unstyled flex-grow-1">
+                                            <li class="py-1">- 20% Personal Commission</li>
+                                            <li class="py-1">- Starter Resources Kit</li>
+                                            <li class="py-1">- Basic Training Access</li>
+                                            <li class="py-1">- Community Support</li>
+                                        </ul>
+                                        <a
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="1500" data-plan="1">Join Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card text-center h-100"
+                                    style="border-top:4px solid #c8a800;background-color:#fff9d6;">
+                                    <div class="card-body py-4 d-flex flex-column">
+                                        <div class="pricing-header mb-4">
+                                            <h5 class="font-weight-normal mb-2">Signature Care</h5>
+                                            <h2 class="mb-1 font-weight-bold">₹3000</h2>
+                                            <p class="small">One-Time / Monthly</p>
+                                        </div>
+                                        <strong class="mb-3">✅ Build Your Team:</strong>
+                                        <ul class="list-unstyled flex-grow-1">
+                                            <li class="py-1">- 25% Personal Commission</li>
+                                            <li class="py-1">- 5% Team Bonus</li>
+                                            <li class="py-1">- Advanced Marketing Materials</li>
+                                            <li class="py-1">- Bi-Weekly Coaching Calls</li>
+                                        </ul>
+                                                     <a
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="3000" data-plan="2">Join Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card text-center h-100"
+                                    style="border-top:4px solid #28a745;background-color:#d4edda;">
+                                    <div class="card-body py-4 d-flex flex-column">
+                                        <div class="pricing-header mb-4">
+                                            <h5 class="font-weight-normal mb-2">Premium Care</h5>
+                                            <h2 class="mb-1 font-weight-bold">₹7500</h2>
+                                            <p class="small">One-Time / Monthly</p>
+                                        </div>
+                                        <strong class="mb-3">✅ Scale Your Income:</strong>
+                                        <ul class="list-unstyled flex-grow-1">
+                                            <li class="py-1">- 30% Personal Commission</li>
+                                            <li class="py-1">- 10% Team Bonus</li>
+                                            <li class="py-1">- Complete Training Academy</li>
+                                            <li class="py-1">- Weekly 1-on-1 Coaching</li>
+                                        </ul>
+                                                     <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="7500" data-plan="3">Join Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Slide 2 -->
+                    <div class="carousel-item">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card text-center h-100"
+                                    style="border-top:4px solid #888;background-color:#e8e8e8;">
+                                    <div class="card-body py-4 d-flex flex-column">
+                                        <div class="pricing-header mb-4">
+                                            <h5 class="font-weight-normal mb-2">Executive Wellness</h5>
+                                            <h2 class="mb-1 font-weight-bold">₹15000</h2>
+                                            <p class="small">One-Time / Monthly</p>
+                                        </div>
+                                        <strong class="mb-3">✅ Leadership Tier:</strong>
+                                        <ul class="list-unstyled flex-grow-1">
+                                            <li class="py-1">- 35% Personal Commission</li>
+                                            <li class="py-1">- 15% Team Bonus + Overrides</li>
+                                            <li class="py-1">- VIP Mastermind Access</li>
+                                            <li class="py-1">- Bonus Trip Qualification</li>
+                                        </ul>
+                                        <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="15000" data-plan="4">Join Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card text-center h-100"
+                                    style="border-top:4px solid #FFB300;background-color:#fff3cd;">
+                                    <div class="card-body py-4 d-flex flex-column">
+                                        <div class="pricing-header mb-4">
+                                            <h5 class="font-weight-normal mb-2">Platinum Elite</h5>
+                                            <h2 class="mb-1 font-weight-bold">₹30000</h2>
+                                            <p class="small">One-Time / Monthly</p>
+                                        </div>
+                                        <strong class="mb-3">✅ Elite Executive:</strong>
+                                        <ul class="list-unstyled flex-grow-1">
+                                            <li class="py-1">- 40% Personal Commission</li>
+                                            <li class="py-1">- 20% Team Bonus + Generational Income</li>
+                                            <li class="py-1">- Luxury Exclusive Rewards</li>
+                                            <li class="py-1">- Career Car Qualification</li>
+                                        </ul>
+                                        <a 
+                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="30000" data-plan="5">Join Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#pricingCarousel" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#pricingCarousel" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+
+           
+        </div>
+    </section>
+    <!-- Section Pricing End -->
     <!-- Section Intro Start -->
     <section class="section intro">
         <div class="container">
@@ -414,157 +562,7 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-    </section>
-    <!-- Commission Structure Section End -->
-
-    <!-- Section Pricing Packages Start -->
-    <section class="section pricing bg-gray position-relative">
-        <div class="hero-img bg-overlay h70"></div>
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-7 text-center">
-                    <div class="section-title">
-                        <span class="h6 text-dark">🎯 Start Now</span>
-                        <h2 class="mt-3 content-title text-dark">Choose Your Membership Plan &amp; Start Earning Today</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div id="pricingCarousel" class="carousel slide" data-ride="carousel" data-interval="5000">
-                <ol class="carousel-indicators">
-                    <li data-target="#pricingCarousel" data-slide-to="0" class="active"></li>
-                    <li data-target="#pricingCarousel" data-slide-to="1"></li>
-                </ol>
-                <div class="carousel-inner">
-                    <!-- Slide 1 -->
-                    <div class="carousel-item active">
-                        <div class="row">
-                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-center h-100"
-                                    style="border-top:4px solid #0066cc;background-color:#dce8fb;">
-                                    <div class="card-body py-4 d-flex flex-column">
-                                        <div class="pricing-header mb-4">
-                                            <h5 class="font-weight-normal mb-2">Essential Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹1500</h2>
-                                            <p class="small">One-Time / Monthly</p>
-                                        </div>
-                                        <strong class="mb-3">✅ Get Started:</strong>
-                                        <ul class="list-unstyled flex-grow-1">
-                                            <li class="py-1">- 20% Personal Commission</li>
-                                            <li class="py-1">- Starter Resources Kit</li>
-                                            <li class="py-1">- Basic Training Access</li>
-                                            <li class="py-1">- Community Support</li>
-                                        </ul>
-                                        <a
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="1500" data-plan="1">Join Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-center h-100"
-                                    style="border-top:4px solid #c8a800;background-color:#fff9d6;">
-                                    <div class="card-body py-4 d-flex flex-column">
-                                        <div class="pricing-header mb-4">
-                                            <h5 class="font-weight-normal mb-2">Signature Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹3000</h2>
-                                            <p class="small">One-Time / Monthly</p>
-                                        </div>
-                                        <strong class="mb-3">✅ Build Your Team:</strong>
-                                        <ul class="list-unstyled flex-grow-1">
-                                            <li class="py-1">- 25% Personal Commission</li>
-                                            <li class="py-1">- 5% Team Bonus</li>
-                                            <li class="py-1">- Advanced Marketing Materials</li>
-                                            <li class="py-1">- Bi-Weekly Coaching Calls</li>
-                                        </ul>
-                                                     <a
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="3000" data-plan="2">Join Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-center h-100"
-                                    style="border-top:4px solid #28a745;background-color:#d4edda;">
-                                    <div class="card-body py-4 d-flex flex-column">
-                                        <div class="pricing-header mb-4">
-                                            <h5 class="font-weight-normal mb-2">Premium Care</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹7500</h2>
-                                            <p class="small">One-Time / Monthly</p>
-                                        </div>
-                                        <strong class="mb-3">✅ Scale Your Income:</strong>
-                                        <ul class="list-unstyled flex-grow-1">
-                                            <li class="py-1">- 30% Personal Commission</li>
-                                            <li class="py-1">- 10% Team Bonus</li>
-                                            <li class="py-1">- Complete Training Academy</li>
-                                            <li class="py-1">- Weekly 1-on-1 Coaching</li>
-                                        </ul>
-                                                     <a 
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="7500" data-plan="3">Join Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Slide 2 -->
-                    <div class="carousel-item">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-center h-100"
-                                    style="border-top:4px solid #888;background-color:#e8e8e8;">
-                                    <div class="card-body py-4 d-flex flex-column">
-                                        <div class="pricing-header mb-4">
-                                            <h5 class="font-weight-normal mb-2">Executive Wellness</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹15000</h2>
-                                            <p class="small">One-Time / Monthly</p>
-                                        </div>
-                                        <strong class="mb-3">✅ Leadership Tier:</strong>
-                                        <ul class="list-unstyled flex-grow-1">
-                                            <li class="py-1">- 35% Personal Commission</li>
-                                            <li class="py-1">- 15% Team Bonus + Overrides</li>
-                                            <li class="py-1">- VIP Mastermind Access</li>
-                                            <li class="py-1">- Bonus Trip Qualification</li>
-                                        </ul>
-                                        <a 
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="15000" data-plan="4">Join Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                                <div class="card text-center h-100"
-                                    style="border-top:4px solid #FFB300;background-color:#fff3cd;">
-                                    <div class="card-body py-4 d-flex flex-column">
-                                        <div class="pricing-header mb-4">
-                                            <h5 class="font-weight-normal mb-2">Platinum Elite</h5>
-                                            <h2 class="mb-1 font-weight-bold">₹30000</h2>
-                                            <p class="small">One-Time / Monthly</p>
-                                        </div>
-                                        <strong class="mb-3">✅ Elite Executive:</strong>
-                                        <ul class="list-unstyled flex-grow-1">
-                                            <li class="py-1">- 40% Personal Commission</li>
-                                            <li class="py-1">- 20% Team Bonus + Generational Income</li>
-                                            <li class="py-1">- Luxury Exclusive Rewards</li>
-                                            <li class="py-1">- Career Car Qualification</li>
-                                        </ul>
-                                        <a 
-                                            class="btn btn-small btn-solid-border mt-4 btn-round-full purchase-plan"  data-amount="30000" data-plan="5">Join Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <a class="carousel-control-prev" href="#pricingCarousel" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                </a>
-                <a class="carousel-control-next" href="#pricingCarousel" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                </a>
-            </div>
-
-            <div class="container mt-5">
+ <div class="container mt-5">
                 <div class="cta-block p-5 rounded">
                     <div class="row justify-content-center align-items-center">
                         <div class="col-lg-7 text-center text-lg-left">
@@ -579,7 +577,9 @@
             </div>
         </div>
     </section>
-    <!-- Section Pricing End -->
+    <!-- Commission Structure Section End -->
+
+    
 
 @endsection
 @section('scripts')
