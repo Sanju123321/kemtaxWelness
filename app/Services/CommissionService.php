@@ -25,6 +25,27 @@ class CommissionService
         $baseValue = $user->currentPlan->base_value;
         $uplines   = UserTree::where('user_id', $userId)->get();
 
+        // Pre-load all upline users and their income totals to avoid N+1 queries
+        $uplineIds = $uplines->pluck('upline_id')->unique()->all();
+
+        $uplineUsers = User::with('currentPlan')
+            ->whereIn('id', $uplineIds)
+            ->get()
+            ->keyBy('id');
+
+        $totalEarnedMap = Income::where('status', 'credited')
+            ->whereIn('user_id', $uplineIds)
+            ->groupBy('user_id')
+            ->selectRaw('user_id, SUM(amount) as total')
+            ->pluck('total', 'user_id');
+
+        $todayEarnedMap = Income::where('status', 'credited')
+            ->whereIn('user_id', $uplineIds)
+            ->whereDate('created_at', today())
+            ->groupBy('user_id')
+            ->selectRaw('user_id, SUM(amount) as total')
+            ->pluck('total', 'user_id');
+
         foreach ($uplines as $node) {
             $percent = $this->getPercent($node->level);
             if ($percent == 0) continue;
@@ -32,19 +53,17 @@ class CommissionService
             $grossIncome = round(($baseValue * $percent) / 100, 2);
             $type        = ((int) $node->level === 1) ? 'direct' : 'level';
 
-            DB::transaction(function () use ($node, $userId, $grossIncome, $type) {
+            DB::transaction(function () use ($node, $userId, $grossIncome, $type, $uplineUsers, $totalEarnedMap, $todayEarnedMap) {
+                // Reload with lock inside transaction for safe increment
                 $uplineUser = User::with('currentPlan')->lockForUpdate()->find($node->upline_id);
 
                 if (!$uplineUser) return;
 
-                // Default unlimited caps if no plan (safety)
                 $dailyCap = $uplineUser->currentPlan?->daily_cap ?? PHP_INT_MAX;
                 $totalCap = $uplineUser->currentPlan?->total_cap ?? PHP_INT_MAX;
 
-                // Lifetime credited earnings
-                $totalEarned = Income::where('user_id', $uplineUser->id)
-                    ->where('status', 'credited')
-                    ->sum('amount');
+                $totalEarned = $totalEarnedMap[$uplineUser->id] ?? 0;
+                $todayEarned = $todayEarnedMap[$uplineUser->id] ?? 0;
 
                 // Already hit total cap
                 if ($totalEarned >= $totalCap) {
@@ -59,12 +78,6 @@ class CommissionService
                     ]);
                     return;
                 }
-
-                // Earnings today
-                $todayEarned = Income::where('user_id', $uplineUser->id)
-                    ->where('status', 'credited')
-                    ->whereDate('created_at', today())
-                    ->sum('amount');
 
                 $remainingDaily = max(0, $dailyCap - $todayEarned);
                 $remainingTotal = max(0, $totalCap - $totalEarned);
@@ -132,10 +145,10 @@ class CommissionService
 
     private function getPercent(int $level): float
     {
-        if ($level == 1)                               return 15;
-        if ($level == 2)                               return 10;
-        if ($level == 3)                               return 5;
-        if ($level == 4)                               return 5;
+        if ($level === 1)                              return 15;
+        if ($level === 2)                              return 10;
+        if ($level === 3)                              return 5;
+        if ($level === 4)                              return 5;
         if ($level >= 5  && $level <= 10)              return 2;
         if ($level >= 11 && $level <= 20)              return 1;
         return 0;

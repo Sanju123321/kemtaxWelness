@@ -15,6 +15,17 @@ Artisan::command('inspire', function () {
 | Uses increasing thresholds (70/80/90/95/100%) to nudge users to upgrade.
 |--------------------------------------------------------------------------
 */
+/*
+|--------------------------------------------------------------------------
+| Income Distribution Schedule
+| Dispatches DistributeIncomeJob for all active-plan users every minute.
+| Run `php artisan queue:work` in a separate terminal to process the jobs.
+|--------------------------------------------------------------------------
+*/
+Schedule::command('income:distribute')
+    ->everyMinute()
+    ->appendOutputTo(storage_path('logs/income-distribute.log'));
+
 Schedule::command('cap:warn')->dailyAt('21:00')->appendOutputTo(storage_path('logs/cap-warn.log'));
 Schedule::command('cap:warn')->dailyAt('22:00')->appendOutputTo(storage_path('logs/cap-warn.log'));
 Schedule::command('cap:warn')->dailyAt('23:00')->appendOutputTo(storage_path('logs/cap-warn.log'));

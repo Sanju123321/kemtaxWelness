@@ -253,11 +253,46 @@ public function verifyPayment(Request $request)
         $directReferrals = UserTree::where('upline_id', $user->id)->where('level', 1)->count();
         $teamSize        = UserTree::where('upline_id', $user->id)->count();
 
+        // Cap calculations
+        $plan      = $user->currentPlan;
+        $dailyCap  = $plan?->daily_cap  ?? 0;
+        $totalCap  = $plan?->total_cap  ?? 0;
+
+        $todayEarned = \App\Models\Income::where('user_id', $user->id)
+            ->where('status', 'credited')
+            ->whereDate('created_at', today())
+            ->sum('amount');
+
+        $totalEarned = $user->total_earned ?? 0;
+
+        // Lost income = all income records with status 'lost'
+        $lostIncome = \App\Models\Income::where('user_id', $user->id)
+            ->where('status', 'lost')
+            ->sum('amount');
+
+        // Locked earning = amount earned beyond daily or total cap (same as lost income)
+        $lockedEarning = $lostIncome;
+
+        // Daily cap hit?
+        $dailyCapHit  = $dailyCap > 0 && $todayEarned >= $dailyCap;
+        // Total cap hit?
+        $totalCapHit  = $totalCap > 0 && $totalEarned >= $totalCap;
+        $capHit       = $dailyCapHit || $totalCapHit;
+
+        // Next (upgrade) plan
+        $nextPlan = $plan
+            ? \App\Models\Plan::where('price', '>', $plan->price)
+                ->where('is_active', true)
+                ->orderBy('price')
+                ->first()
+            : null;
+
         $dashStats = [
-            'total_earnings'   => $user->total_earned ?? 0,
+            'total_earnings'   => $totalEarned,
             'direct_referrals' => $directReferrals,
             'team_size'        => $teamSize,
             'wallet_balance'   => $user->wallet_balance ?? 0,
+            'lost_income'      => $lostIncome,
         ];
 
         // Wishlist items with eager-loaded products
@@ -283,6 +318,17 @@ public function verifyPayment(Request $request)
             'cartItems',
             'cartTotal',
             'planAmount',
+            'plan',
+            'nextPlan',
+            'dailyCap',
+            'totalCap',
+            'todayEarned',
+            'totalEarned',
+            'lostIncome',
+            'lockedEarning',
+            'capHit',
+            'dailyCapHit',
+            'totalCapHit',
         ));
     }
 

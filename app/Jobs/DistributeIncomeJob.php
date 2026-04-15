@@ -4,27 +4,23 @@ namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\User;
-use App\Models\Income;
-use App\Models\UserTree;
 use App\Services\CommissionService;
+
 class DistributeIncomeJob implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new job instance.
-     */
-   public $userId;
+    public int $tries = 3;
+    public int $timeout = 120;
 
-    // ✅ Step 2.1: Pass userId
-    public function __construct($userId)
+    public int $userId;
+
+    public function __construct(int $userId)
     {
         $this->userId = $userId;
     }
 
-    // ✅ Step 2.2: Main Logic Call
-    public function handle()
+    public function handle(): void
     {
         app(CommissionService::class)
             ->distributeIncome($this->userId);
