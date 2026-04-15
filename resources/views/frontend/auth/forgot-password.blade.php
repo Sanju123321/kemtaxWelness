@@ -4,75 +4,185 @@
 
 @section('content')
 
-    <section class="page-title bg-1">
-        <div class="overlay"></div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="block text-center">
-                        <h1 class="text-capitalize mb-5 text-lg">Forgot Password</h1>
-                    </div>
+<section class="page-title bg-1">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="block text-center">
+                    <h1 class="text-capitalize mb-5 text-lg">Forgot Password</h1>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <section class="section contact-form">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-6 col-md-8">
-                    <div class="contact-form-wrapper p-5 rounded shadow">
-                        <h3 class="mb-3 text-center">Reset Your Password</h3>
-                        <p class="text-muted text-center mb-4">Enter your email address and we'll send you a link to reset
-                            your password.</p>
+<section class="section contact-form">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="contact-form-wrapper p-5 rounded shadow">
 
-                        @if (session('status'))
-                            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                <i class="fas fa-check-circle mr-2"></i>{{ session('status') }}
-                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                        @endif
+                    <h3 class="mb-3 text-center">Reset Your Password</h3>
+                    <p class="text-muted text-center mb-4">
+                        Enter your phone number to receive OTP and reset your password.
+                    </p>
 
-                        <form method="POST" action="{{ route('password.email') }}" class="contact__form">
+                    {{-- ALERT --}}
+                    <div id="alertBox"></div>
+
+                    {{-- PHONE --}}
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="phone" class="form-control"
+                            placeholder="Enter 10 digit phone">
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" onclick="sendOtp()"
+                            class="btn btn-main btn-round-full btn-block">
+                            Send OTP
+                        </button>
+                    </div>
+
+                    {{-- OTP --}}
+                    <div id="otpSection" style="display:none;">
+                        <div class="form-group">
+                            <label>Enter OTP</label>
+                            <input type="text" id="otp" class="form-control"
+                                placeholder="Enter OTP">
+                        </div>
+
+                        <button type="button" onclick="verifyOtp()"
+                            class="btn btn-success btn-block">
+                            Verify OTP
+                        </button>
+                    </div>
+
+                    {{-- RESET PASSWORD --}}
+                    <div id="resetSection" style="display:none;">
+                        <form method="POST" action="{{ url('/reset-password-phone') }}">
                             @csrf
 
+                            <input type="hidden" name="phone" id="hiddenPhone">
+
                             <div class="form-group">
-                                <label for="email">Email Address</label>
-                                <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                    id="email" name="email" value="{{ old('email') }}" required autofocus
-                                    placeholder="Enter your registered email">
-                                @error('email')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
+                                <label>New Password</label>
+                                <input type="password" name="password" class="form-control">
                             </div>
 
                             <div class="form-group">
-                                <button type="submit" class="btn btn-main btn-round-full btn-block">
-                                    <i class="fas fa-paper-plane mr-2"></i>Send Reset Link
-                                </button>
+                                <label>Confirm Password</label>
+                                <input type="password" name="password_confirmation" class="form-control">
                             </div>
 
-                            <div class="text-center mt-3">
-                                <p class="mb-0">
-                                    <a href="{{ route('login') }}" class="text-color">
-                                        <i class="fas fa-arrow-left mr-1"></i>Back to Login
-                                    </a>
-                                </p>
-                            </div>
+                            <button class="btn btn-danger btn-block">
+                                Reset Password
+                            </button>
                         </form>
-
-                        <div class="mt-4 p-3 bg-light rounded">
-                            <h6 class="mb-2"><i class="fas fa-info-circle text-color mr-2"></i>Need Help?</h6>
-                            <p class="text-muted small mb-0">If you don't receive the email within a few minutes, please
-                                check your spam folder or <a href="{{ route('contact') }}" class="text-color">contact
-                                    support</a>.</p>
-                        </div>
                     </div>
+
+                    <div class="text-center mt-3">
+                        <a href="{{ route('login') }}" class="text-color">
+                            <i class="fas fa-arrow-left mr-1"></i>Back to Login
+                        </a>
+                    </div>
+
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
+
+@endsection
+
+
+@section('scripts')
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+let currentPhone = '';
+
+function showAlert(msg, type = 'success') {
+    $('#alertBox').html(
+        `<div class="alert alert-${type}">${msg}</div>`
+    );
+}
+
+// SEND OTP
+function sendOtp() {
+
+    let phone = $('#phone').val();
+
+    if (phone.length != 10) {
+        showAlert('Enter valid 10 digit number', 'danger');
+        return;
+    }
+
+    $.ajax({
+        url: "{{ url('/send-otp') }}",
+        method: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            phone: phone
+        },
+        success: function (res) {
+
+            if (res.success) {
+
+                currentPhone = res.phone;
+
+                showAlert(res.message, 'success');
+
+                $('#otpSection').show();
+
+            } else {
+                showAlert(res.message, 'danger');
+            }
+        },
+        error: function () {
+            showAlert('Failed to send OTP', 'danger');
+        }
+    });
+}
+
+
+// VERIFY OTP
+function verifyOtp() {
+
+    let otp = $('#otp').val();
+
+    $.ajax({
+        url: "{{ url('/verify-otp') }}",
+        method: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            phone: currentPhone,
+            otp: otp
+        },
+        success: function (res) {
+
+            if (res.success) {
+
+                showAlert('OTP Verified Successfully', 'success');
+
+                $('#hiddenPhone').val(currentPhone);
+
+                $('#otpSection').hide();
+                $('#resetSection').show();
+
+            } else {
+                showAlert(res.message, 'danger');
+            }
+        },
+        error: function () {
+            showAlert('Invalid OTP', 'danger');
+        }
+    });
+}
+
+</script>
 
 @endsection

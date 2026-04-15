@@ -31,7 +31,7 @@
                         <div class="small mb-3 text-muted">Enter your email address and we will send you a link to reset
                             your password.</div>
 
-                        <form method="POST" action="{{ route('password.email') }}">
+                        <form method="POST" action="{{ url('/forgot-password') }}">
                             @csrf
                             <div class="form-floating mb-3">
                                 <input class="form-control @error('email') is-invalid @enderror" id="inputEmail"

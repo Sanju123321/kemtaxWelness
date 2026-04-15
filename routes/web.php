@@ -80,8 +80,9 @@ Route::middleware('guest')->group(function () {
    Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
    Route::post('/check-phone', [AuthController::class, 'checkPhone'])->name('check.phone');
 
-    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.reset');
+    // Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
+    Route::post('/reset-password-phone', [AuthController::class, 'resetPassword'])->name('reset.password.phone');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -104,8 +105,15 @@ Route::prefix('member')
         Route::get('/wallet', [MemberController::class, 'wallet'])->name('wallet');
         Route::get('/profile', [MemberController::class, 'profile'])->name('profile');
         Route::get('/credentials', [MemberController::class, 'credentials'])->name('credentials');
+Route::post('/profile/photo', [MemberController::class, 'updatePhoto'])->name('profile.photo');
+        
+Route::put('/profile/update', [MemberController::class, 'updateProfile'])
+    ->name('profile.update');
+    Route::post('/change/password', [MemberController::class, 'changePassword'])->name('change.password');
+Route::post('/bank/save', [MemberController::class, 'saveBank'])
+    ->name('bank.save');
 
-        // Razorpay payment verification and plan activation
+    // Razorpay payment verification and plan activation
        Route::post('/create-order', [MemberController::class, 'createOrder'])->name('member.create.order');
        Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
         Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);

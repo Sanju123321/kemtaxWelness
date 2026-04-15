@@ -88,7 +88,7 @@
                                     Code</label>
                                 <input type="text" class="form-control form-control-lg" id="reference_code"
                                     name="reference_code" placeholder="Enter your referrer's code"
-                                    value="{{ old('reference_code') }}">
+                                    value="{{ request()->ref ?? session('ref') }}">
                                 <small class="form-text text-muted">A team member's reference code is required to
                                     join</small>
                             </div>

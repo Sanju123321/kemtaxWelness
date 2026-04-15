@@ -17,6 +17,11 @@ use App\Models\Income;
 use App\Models\UserTree;
 use App\Jobs\DistributeIncomeJob;
 use Illuminate\Support\Facades\DB;
+    use Illuminate\Support\Facades\Storage;
+    use Illuminate\Support\Facades\Hash;
+    use App\Models\UserBankDetail;
+
+
 class MemberController extends Controller{
     /**
      * Verify Razorpay payment and activate plan for user
@@ -299,7 +304,7 @@ public function verifyPayment(Request $request)
         $paginator = Income::with('fromUser')
             ->where('user_id', $user->id)
             ->latest()
-            ->paginate(5);
+            ->paginate(10);
 
         $items = $paginator->getCollection()->map(function ($income) {
             return [
@@ -365,10 +370,35 @@ public function verifyPayment(Request $request)
             'total_cap'    => $user->currentPlan?->total_cap ?? 0,
             'total_earned' => $user->total_earned ?? 0,
             'wallet'       => $user->wallet_balance ?? 0,
-            'children'     => $children,
+               'children'     => $children,
         ];
     }
 
+public function saveBank(Request $request)
+{
+    $request->validate([
+        'account_holder' => 'required|string|max:255',
+        'account_number' => 'required',
+        'ifsc' => 'required',
+        'bank_name' => 'required',
+        'upi_id' => 'nullable',
+    ]);
+
+    $user = auth()->user();
+
+    UserBankDetail::updateOrCreate(
+        ['user_id' => $user->id], // check existing
+        [
+            'account_holder' => $request->account_holder,
+            'account_number' => $request->account_number,
+            'ifsc' => $request->ifsc,
+            'bank_name' => $request->bank_name,
+            'upi_id' => $request->upi_id,
+        ]
+    );
+
+    return back()->with('success', 'Bank details saved successfully');
+}
     /**
      * Show wallet page.
      */
@@ -423,6 +453,73 @@ public function verifyPayment(Request $request)
         return view('frontend.member.profile.index');
     }
 
+public function updateProfile(Request $request)
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email',
+        'phone' => 'nullable|digits:10',
+        'city' => 'nullable|string|max:100',
+        'state' => 'nullable|string|max:100',
+        'pincode' => 'nullable|digits:6',
+    ]);
+
+    $user = auth()->user();
+
+    
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->city = $request->city;
+        $user->state = $request->state;
+        $user->pincode = $request->pincode;
+   $user->save();
+
+    return back()->with('success', 'Profile updated successfully');
+}
+
+
+public function changePassword(Request $request)
+{
+    $request->validate([
+        'current_password' => 'required',
+        'password' => 'required|min:6|confirmed',
+    ]);
+
+    $user = auth()->user();
+
+    // Check current password
+    if (!Hash::check($request->current_password, $user->password)) {
+        return back()->with('error', 'Current password is incorrect');
+    }
+
+    // Update password
+    $user->password = Hash::make($request->password);
+    $user->save();
+
+    return back()->with('success', 'Password updated successfully');
+}
+public function updatePhoto(Request $request)
+{
+    $request->validate([
+        'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+    ]);
+
+    $user = auth()->user();
+
+    // Delete old image
+    if ($user->profile_photo && Storage::exists($user->profile_photo)) {
+        Storage::delete($user->profile_photo);
+    }
+
+    // Upload new image
+    $path = $request->file('photo')->store('profile_photos', 'public');
+
+
+    $user->profile_photo = $path;
+    $user->save();
+return back()->with('success', 'Profile photo updated');
+}
     /**
      * Show credentials page.
      */
