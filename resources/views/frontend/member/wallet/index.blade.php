@@ -250,28 +250,60 @@
     </div>
 
     <nav class="sidebar-nav">
-        <div class="nav-label">Main Menu</div>
-        <a href="{{ route('member.dashboard') }}">
-            <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
-        </a>
-        <a href="{{ route('member.wallet') }}" class="active">
-            <i class="fas fa-wallet nav-icon"></i> Wallet
-        </a>
-        <a href="{{ route('member.credentials') }}" class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-award nav-icon"></i> Credentials
-        </a>
-        <div class="nav-label">More</div>
-        <a href="{{ route('pricing') }}">
-            <i class="fas fa-tags nav-icon"></i> Pricing
-        </a>
-        <a href="{{ route('contact') }}">
-            <i class="fas fa-headset nav-icon"></i> Support
-        </a>
-        <div class="nav-label">My Team</div>
-        <a href="{{ route('member.team') }}" class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
-        </a>
-    </nav>
+            <div class="nav-label">Main Menu</div>
+            <a href="{{ route('member.dashboard') }}"
+                class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
+                <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
+            </a>
+            <a href="{{ route('member.wallet') }}"
+                class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+                <i class="fas fa-wallet nav-icon"></i> Wallet
+            </a>
+            <div class="nav-label">My Team</div>
+            <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
+            </a>
+            <a href="{{ route('member.credentials') }}"
+                class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+                <i class="fas fa-award nav-icon"></i> My Achievements
+            </a>
+            <div class="nav-label">More</div>
+
+            <a href="{{ route('pricing') }}">
+                <i class="fas fa-tags nav-icon"></i> Pricing
+            </a>
+
+            <a href="{{ route('contact') }}">
+                <i class="fas fa-headset nav-icon"></i> Support
+            </a>
+            <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
+            </a>
+            <a href="{{ route('member.dashboard') }}#referral-commission" href="#" id="sidebarCommissionLink"
+                onclick="showSection('referralCommissionSection'); return false;"
+                class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+            </a>
+            <div class="nav-label">My Shopping</div>
+            <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"
+                class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
+                @if (isset($wishlistItems) && $wishlistItems->count())
+                <span class="ml-auto"
+                    style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
+                @endif
+            </a>
+            <a href="{{ route('member.dashboard') }}#cart" onclick="scrollToSection('cart'); return false;"
+                class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
+                @if (isset($cartItems) && $cartItems->count())
+                <span class="ml-auto"
+                    style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
+                @endif
+            </a>
+            
+        </nav>
 
     <div class="sidebar-footer">
         <form action="{{ route('logout') }}" method="POST">

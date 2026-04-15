@@ -1001,8 +1001,8 @@
                         <div style="display:flex;gap:8px;">
                             @if ($nextPlan)
                                 <button type="button" class="btn btn-sm btn-main btn-round-full"
-                                    style="font-weight:700;padding:8px 18px;"
-                                    data-toggle="modal" data-target="#upgradeModal">Upgrade Now</button>
+                                    style="font-weight:700;padding:8px 18px;" data-toggle="modal"
+                                    data-target="#upgradeModal">Upgrade Now</button>
                             @endif
                             <button type="button" class="btn btn-sm btn-round-full"
                                 style="font-weight:700;padding:8px 18px;border:1.5px solid #28a745;color:#28a745;background:white;"
@@ -1109,13 +1109,13 @@
 
                     {{-- Team Tree --}}
                     <!-- <div class="section-card">
-                                <div class="section-card-header">
-                                    <i class="fas fa-sitemap mr-2 text-color"></i>My Team Genealogy
-                                </div>
-                                <div class="section-card-body">
-                                   
-                                </div>
-                            </div> -->
+                                        <div class="section-card-header">
+                                            <i class="fas fa-sitemap mr-2 text-color"></i>My Team Genealogy
+                                        </div>
+                                        <div class="section-card-body">
+                                           
+                                        </div>
+                                    </div> -->
                 </div>
 
                 {{-- Side Panel --}}
@@ -1269,10 +1269,8 @@
                 </div>
             </div>
 
-            {{-- ═══════════════════════════════════════════════ --}}
-            {{-- MY FAVORITES (Wishlist) --}}
-            {{-- ═══════════════════════════════════════════════ --}}
-            <div class="section-card" id="wishlist">
+            <<<<<<< HEAD {{-- ═══════════════════════════════════════════════ --}} {{-- MY FAVORITES (Wishlist) --}} {{-- ═══════════════════════════════════════════════ --}} <div class="section-card"
+                id="wishlist">
                 <div class="section-card-header d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-heart mr-2" style="color:#e74c3c;"></i>My Favorites
                         @if (isset($wishlistItems) && $wishlistItems->count())
@@ -1357,130 +1355,161 @@
                         </div>
                     @endif
                 </div>
-            </div>
+                =======
+                {{-- Quick Links --}}
+                <!-- <div class="section-card">
+                            <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
+                            <div class="section-card-body p-0">
+                                <a href="{{ route('member.wallet') }}"
+                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
+                                    style="gap:12px;">
+                                    <i class="fas fa-wallet text-color"></i><span>My Wallet</span>
+                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                </a>
+                                <a href="{{ route('member.credentials') }}"
+                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
+                                    style="gap:12px;">
+                                    <i class="fas fa-award text-color"></i><span>My Credentials</span>
+                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                </a>
+                                @if (!$isInactive)
+    <a href="{{ route('pricing') }}"
+                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
+                                    style="gap:12px;">
+                                    <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
+                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                </a>
+    @endif
+                                <a href="{{ route('contact') }}"
+                                    class="d-flex align-items-center p-3 text-dark text-decoration-none" style="gap:12px;">
+                                    <i class="fas fa-headset text-color"></i><span>Get Support</span>
+                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                </a>
+                            </div>
+                        </div> -->
+                >>>>>>> 882410c09985127078bbf3f0b403839805e86e30
+        </div>
 
-            {{-- ═══════════════════════════════════════════════ --}}
-            {{-- MY CART --}}
-            {{-- ═══════════════════════════════════════════════ --}}
-            <div class="section-card" id="cart">
-                <div class="section-card-header d-flex justify-content-between align-items-center">
-                    <span><i class="fas fa-shopping-bag mr-2 text-color"></i>My Cart
-                        @if (isset($cartItems) && $cartItems->count())
-                            <span class="ml-2"
-                                style="background:#28a745;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;">{{ $cartItems->count() }}</span>
-                        @endif
-                    </span>
-                    <a href="{{ route('products') }}" class="btn btn-sm btn-main btn-round-full"
-                        style="font-size:11px;padding:4px 14px;">
-                        <i class="fas fa-plus mr-1"></i>Add Products
-                    </a>
-                </div>
-                <div class="section-card-body p-0">
+        {{-- ═══════════════════════════════════════════════ --}}
+        {{-- MY CART --}}
+        {{-- ═══════════════════════════════════════════════ --}}
+        <div class="section-card" id="cart">
+            <div class="section-card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-shopping-bag mr-2 text-color"></i>My Cart
                     @if (isset($cartItems) && $cartItems->count())
-                        <div style="overflow-x:auto;">
-                            <table class="table mb-0 commission-table" id="cart-table">
-                                <thead>
-                                    <tr>
-                                        <th style="width:60px;"></th>
-                                        <th>Product</th>
-                                        <th>Price</th>
-                                        <th>Qty</th>
-                                        <th>Total</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($cartItems as $cartItem)
-                                        @if ($cartItem->product)
-                                            <tr id="cart-row-{{ $cartItem->product->id }}">
-                                                <td>
-                                                    <img src="{{ $cartItem->product->image_url }}"
-                                                        alt="{{ $cartItem->product->name }}"
-                                                        style="width:48px;height:48px;object-fit:cover;border-radius:6px;"
-                                                        onerror="this.src='{{ asset('frontend/images/placeholder.jpg') }}'">
-                                                </td>
-                                                <td>
-                                                    <div
-                                                        style="font-size:13px;font-weight:600;color:#333;line-height:1.3;">
-                                                        {{ Str::limit($cartItem->product->name, 45) }}
-                                                    </div>
-                                                    <div
-                                                        style="font-size:11px;color:#28a745;font-weight:600;text-transform:uppercase;">
-                                                        {{ $cartItem->product->category }}
-                                                    </div>
-                                                </td>
-                                                <td style="font-weight:700;color:#333;">
-                                                    ₹{{ number_format($cartItem->product->price, 2) }}</td>
-                                                <td>
-                                                    <div class="qty-stepper d-flex align-items-center" style="gap:4px;">
-                                                        <button type="button" class="qty-btn qty-dec"
-                                                            data-product="{{ $cartItem->product->id }}"
-                                                            data-price="{{ $cartItem->product->price }}"
-                                                            onclick="stepQty(this, -1)"
-                                                            {{ $cartItem->quantity <= 1 ? 'disabled' : '' }}
-                                                            style="width:28px;height:28px;border:1px solid #dee2e6;background:white;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;color:#333;line-height:1;padding:0;">−</button>
-                                                        <input type="number" id="qty-{{ $cartItem->product->id }}"
-                                                            class="cart-qty-input" value="{{ $cartItem->quantity }}"
-                                                            min="1" max="{{ $cartItem->product->stock }}"
-                                                            data-product="{{ $cartItem->product->id }}"
-                                                            data-price="{{ $cartItem->product->price }}"
-                                                            data-stock="{{ $cartItem->product->stock }}"
-                                                            onchange="syncQty(this)"
-                                                            style="width:44px;height:28px;text-align:center;border:1px solid #dee2e6;border-radius:5px;font-size:13px;font-weight:700;color:#28a745;padding:0 4px;">
-                                                        <button type="button" class="qty-btn qty-inc"
-                                                            data-product="{{ $cartItem->product->id }}"
-                                                            data-price="{{ $cartItem->product->price }}"
-                                                            onclick="stepQty(this, 1)"
-                                                            {{ $cartItem->quantity >= $cartItem->product->stock ? 'disabled' : '' }}
-                                                            style="width:28px;height:28px;border:1px solid #dee2e6;background:white;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;color:#333;line-height:1;padding:0;">+</button>
-                                                    </div>
-                                                    <div
-                                                        style="font-size:10px;color:#aaa;margin-top:2px;text-align:center;">
-                                                        Max: {{ $cartItem->product->stock }}
-                                                    </div>
-                                                </td>
-                                                <td style="font-weight:800;color:#28a745;">
-                                                    ₹{{ number_format($cartItem->product->price * $cartItem->quantity, 2) }}
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-sm"
-                                                        style="color:#dc3545;border:1px solid #dc3545;background:white;border-radius:6px;font-size:11px;padding:4px 10px;"
-                                                        onclick="removeFromCart({{ $cartItem->product->id }}, this)">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        @endif
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center p-3"
-                            style="background:#f8f9fa;border-top:1px solid #e9ecef;">
-                            <div style="font-size:14px;color:#555;">
-                                <strong>{{ $cartItems->count() }}</strong> item(s)
-                            </div>
-                            <div style="font-size:16px;font-weight:800;color:#28a745;">
-                                Total: ₹{{ number_format($cartTotal ?? 0, 2) }}
-                            </div>
-                        </div>
-                        <p id="cart-empty" class="text-muted text-center py-3 m-0" style="display:none;">
-                            <i class="fas fa-shopping-bag fa-2x mb-2 d-block" style="color:#ddd;"></i>
-                            Your cart is empty. <a href="{{ route('products') }}">Shop now</a>
-                        </p>
-                    @else
-                        <div class="text-center py-5">
-                            <i class="fas fa-shopping-bag fa-3x mb-3" style="color:#ddd;"></i>
-                            <p class="text-muted mb-3">Your cart is empty.</p>
-                            <a href="{{ route('products') }}" class="btn btn-main btn-round-full">
-                                <i class="fas fa-shopping-bag mr-1"></i>Start Shopping
-                            </a>
-                        </div>
+                        <span class="ml-2"
+                            style="background:#28a745;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;">{{ $cartItems->count() }}</span>
                     @endif
-                </div>
+                </span>
+                <a href="{{ route('products') }}" class="btn btn-sm btn-main btn-round-full"
+                    style="font-size:11px;padding:4px 14px;">
+                    <i class="fas fa-plus mr-1"></i>Add Products
+                </a>
             </div>
+            <div class="section-card-body p-0">
+                @if (isset($cartItems) && $cartItems->count())
+                    <div style="overflow-x:auto;">
+                        <table class="table mb-0 commission-table" id="cart-table">
+                            <thead>
+                                <tr>
+                                    <th style="width:60px;"></th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($cartItems as $cartItem)
+                                    @if ($cartItem->product)
+                                        <tr id="cart-row-{{ $cartItem->product->id }}">
+                                            <td>
+                                                <img src="{{ $cartItem->product->image_url }}"
+                                                    alt="{{ $cartItem->product->name }}"
+                                                    style="width:48px;height:48px;object-fit:cover;border-radius:6px;"
+                                                    onerror="this.src='{{ asset('frontend/images/placeholder.jpg') }}'">
+                                            </td>
+                                            <td>
+                                                <div style="font-size:13px;font-weight:600;color:#333;line-height:1.3;">
+                                                    {{ Str::limit($cartItem->product->name, 45) }}
+                                                </div>
+                                                <div
+                                                    style="font-size:11px;color:#28a745;font-weight:600;text-transform:uppercase;">
+                                                    {{ $cartItem->product->category }}
+                                                </div>
+                                            </td>
+                                            <td style="font-weight:700;color:#333;">
+                                                ₹{{ number_format($cartItem->product->price, 2) }}</td>
+                                            <td>
+                                                <div class="qty-stepper d-flex align-items-center" style="gap:4px;">
+                                                    <button type="button" class="qty-btn qty-dec"
+                                                        data-product="{{ $cartItem->product->id }}"
+                                                        data-price="{{ $cartItem->product->price }}"
+                                                        onclick="stepQty(this, -1)"
+                                                        {{ $cartItem->quantity <= 1 ? 'disabled' : '' }}
+                                                        style="width:28px;height:28px;border:1px solid #dee2e6;background:white;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;color:#333;line-height:1;padding:0;">−</button>
+                                                    <input type="number" id="qty-{{ $cartItem->product->id }}"
+                                                        class="cart-qty-input" value="{{ $cartItem->quantity }}"
+                                                        min="1" max="{{ $cartItem->product->stock }}"
+                                                        data-product="{{ $cartItem->product->id }}"
+                                                        data-price="{{ $cartItem->product->price }}"
+                                                        data-stock="{{ $cartItem->product->stock }}"
+                                                        onchange="syncQty(this)"
+                                                        style="width:44px;height:28px;text-align:center;border:1px solid #dee2e6;border-radius:5px;font-size:13px;font-weight:700;color:#28a745;padding:0 4px;">
+                                                    <button type="button" class="qty-btn qty-inc"
+                                                        data-product="{{ $cartItem->product->id }}"
+                                                        data-price="{{ $cartItem->product->price }}"
+                                                        onclick="stepQty(this, 1)"
+                                                        {{ $cartItem->quantity >= $cartItem->product->stock ? 'disabled' : '' }}
+                                                        style="width:28px;height:28px;border:1px solid #dee2e6;background:white;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;color:#333;line-height:1;padding:0;">+</button>
+                                                </div>
+                                                <div style="font-size:10px;color:#aaa;margin-top:2px;text-align:center;">
+                                                    Max: {{ $cartItem->product->stock }}
+                                                </div>
+                                            </td>
+                                            <td style="font-weight:800;color:#28a745;">
+                                                ₹{{ number_format($cartItem->product->price * $cartItem->quantity, 2) }}
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm"
+                                                    style="color:#dc3545;border:1px solid #dc3545;background:white;border-radius:6px;font-size:11px;padding:4px 10px;"
+                                                    onclick="removeFromCart({{ $cartItem->product->id }}, this)">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center p-3"
+                        style="background:#f8f9fa;border-top:1px solid #e9ecef;">
+                        <div style="font-size:14px;color:#555;">
+                            <strong>{{ $cartItems->count() }}</strong> item(s)
+                        </div>
+                        <div style="font-size:16px;font-weight:800;color:#28a745;">
+                            Total: ₹{{ number_format($cartTotal ?? 0, 2) }}
+                        </div>
+                    </div>
+                    <p id="cart-empty" class="text-muted text-center py-3 m-0" style="display:none;">
+                        <i class="fas fa-shopping-bag fa-2x mb-2 d-block" style="color:#ddd;"></i>
+                        Your cart is empty. <a href="{{ route('products') }}">Shop now</a>
+                    </p>
+                @else
+                    <div class="text-center py-5">
+                        <i class="fas fa-shopping-bag fa-3x mb-3" style="color:#ddd;"></i>
+                        <p class="text-muted mb-3">Your cart is empty.</p>
+                        <a href="{{ route('products') }}" class="btn btn-main btn-round-full">
+                            <i class="fas fa-shopping-bag mr-1"></i>Start Shopping
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
 
-        </div>{{-- /.dash-main --}}
+    </div>{{-- /.dash-main --}}
     </div>{{-- /.dash-layout --}}
 
     {{-- Invite & Earn Modal --}}
@@ -1580,23 +1609,26 @@
     @php
         $allPlans = \App\Models\Plan::where('is_active', true)->orderBy('price')->get();
     @endphp
-    <div class="modal fade" id="upgradeModal" tabindex="-1" role="dialog" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+    <div class="modal fade" id="upgradeModal" tabindex="-1" role="dialog" aria-labelledby="upgradeModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content" style="border-radius:14px;border:none;overflow:hidden;">
 
                 {{-- Header --}}
-                <div class="modal-header" style="background:linear-gradient(135deg,#28a745,#1e7e34);border:none;padding:18px 24px;">
+                <div class="modal-header"
+                    style="background:linear-gradient(135deg,#28a745,#1e7e34);border:none;padding:18px 24px;">
                     <div>
-                        <h5 class="modal-title mb-0" id="upgradeModalLabel" style="color:white;font-weight:700;font-size:17px;">
+                        <h5 class="modal-title mb-0" id="upgradeModalLabel"
+                            style="color:white;font-weight:700;font-size:17px;">
                             <i class="fas fa-arrow-circle-up mr-2"></i>Upgrade Your Plan
                         </h5>
-                        @if($plan)
-                        <div style="color:rgba(255,255,255,.8);font-size:12px;margin-top:3px;">
-                            Current: <strong style="color:white;">{{ $plan->name }}</strong>
-                            &nbsp;·&nbsp; ₹{{ number_format($plan->price, 0) }}
-                            &nbsp;·&nbsp; Daily Cap: ₹{{ number_format($plan->daily_cap, 0) }}
-                            &nbsp;·&nbsp; Total Cap: ₹{{ number_format($plan->total_cap, 0) }}
-                        </div>
+                        @if ($plan)
+                            <div style="color:rgba(255,255,255,.8);font-size:12px;margin-top:3px;">
+                                Current: <strong style="color:white;">{{ $plan->name }}</strong>
+                                &nbsp;·&nbsp; ₹{{ number_format($plan->price, 0) }}
+                                &nbsp;·&nbsp; Daily Cap: ₹{{ number_format($plan->daily_cap, 0) }}
+                                &nbsp;·&nbsp; Total Cap: ₹{{ number_format($plan->total_cap, 0) }}
+                            </div>
                         @endif
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
@@ -1608,15 +1640,16 @@
                 {{-- Body --}}
                 <div class="modal-body" style="padding:24px;background:#f8fafb;">
                     <div class="row" style="gap:0;">
-                        @foreach($allPlans as $p)
-                        @php
-                            $isCurrent   = $plan && $plan->id === $p->id;
-                            $isNext      = $nextPlan && $nextPlan->id === $p->id;
-                            $isLocked    = $plan && $p->price <= $plan->price && !$isCurrent;
-                            $canUpgrade  = !$isCurrent && !$isLocked;
-                        @endphp
-                        <div class="col-md-6 mb-3">
-                            <div style="
+                        @foreach ($allPlans as $p)
+                            @php
+                                $isCurrent = $plan && $plan->id === $p->id;
+                                $isNext = $nextPlan && $nextPlan->id === $p->id;
+                                $isLocked = $plan && $p->price <= $plan->price && !$isCurrent;
+                                $canUpgrade = !$isCurrent && !$isLocked;
+                            @endphp
+                            <div class="col-md-6 mb-3">
+                                <div
+                                    style="
                                 background: {{ $isCurrent ? '#eaf7ef' : 'white' }};
                                 border: 2px solid {{ $isCurrent ? '#28a745' : ($isNext ? '#fd7e14' : '#e9ecef') }};
                                 border-radius: 10px;
@@ -1625,41 +1658,48 @@
                                 position: relative;
                                 opacity: {{ $isLocked ? '0.5' : '1' }};
                             ">
-                                {{-- Badge --}}
-                                @if($isCurrent)
-                                <span style="position:absolute;top:10px;right:12px;background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">CURRENT</span>
-                                @elseif($isNext)
-                                <span style="position:absolute;top:10px;right:12px;background:#fd7e14;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">RECOMMENDED</span>
-                                @endif
+                                    {{-- Badge --}}
+                                    @if ($isCurrent)
+                                        <span
+                                            style="position:absolute;top:10px;right:12px;background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">CURRENT</span>
+                                    @elseif($isNext)
+                                        <span
+                                            style="position:absolute;top:10px;right:12px;background:#fd7e14;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">RECOMMENDED</span>
+                                    @endif
 
-                                <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px;">{{ $p->name }}</div>
-                                <div style="font-size:22px;font-weight:800;color:{{ $isCurrent ? '#28a745' : '#333' }};margin-bottom:10px;">
-                                    ₹{{ number_format($p->price, 0) }}
-                                </div>
-                                <div style="font-size:12px;color:#666;line-height:1.8;">
-                                    <div><i class="fas fa-coins mr-1" style="color:#f59e0b;width:14px;"></i> Base Value: <strong>₹{{ number_format($p->base_value, 0) }}</strong></div>
-                                    <div><i class="fas fa-calendar-day mr-1" style="color:#17a2b8;width:14px;"></i> Daily Cap: <strong>₹{{ number_format($p->daily_cap, 0) }}</strong></div>
-                                    <div><i class="fas fa-lock-open mr-1" style="color:#6610f2;width:14px;"></i> Total Cap: <strong>₹{{ number_format($p->total_cap, 0) }}</strong></div>
-                                </div>
+                                    <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px;">
+                                        {{ $p->name }}</div>
+                                    <div
+                                        style="font-size:22px;font-weight:800;color:{{ $isCurrent ? '#28a745' : '#333' }};margin-bottom:10px;">
+                                        ₹{{ number_format($p->price, 0) }}
+                                    </div>
+                                    <div style="font-size:12px;color:#666;line-height:1.8;">
+                                        <div><i class="fas fa-coins mr-1" style="color:#f59e0b;width:14px;"></i> Base
+                                            Value: <strong>₹{{ number_format($p->base_value, 0) }}</strong></div>
+                                        <div><i class="fas fa-calendar-day mr-1" style="color:#17a2b8;width:14px;"></i>
+                                            Daily Cap: <strong>₹{{ number_format($p->daily_cap, 0) }}</strong></div>
+                                        <div><i class="fas fa-lock-open mr-1" style="color:#6610f2;width:14px;"></i> Total
+                                            Cap: <strong>₹{{ number_format($p->total_cap, 0) }}</strong></div>
+                                    </div>
 
-                                @if($canUpgrade && !$isLocked)
-                                <button class="btn btn-main btn-round-full btn-sm purchase-plan mt-3 w-100"
-                                    data-amount="{{ $p->price }}"
-                                    data-plan="{{ $p->id }}"
-                                    style="font-weight:700;font-size:13px;">
-                                    <i class="fas fa-arrow-up mr-1"></i> Upgrade to {{ $p->name }}
-                                </button>
-                                @elseif($isCurrent)
-                                <div style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:600;">
-                                    <i class="fas fa-check-circle mr-1"></i> Your Active Plan
+                                    @if ($canUpgrade && !$isLocked)
+                                        <button class="btn btn-main btn-round-full btn-sm purchase-plan mt-3 w-100"
+                                            data-amount="{{ $p->price }}" data-plan="{{ $p->id }}"
+                                            style="font-weight:700;font-size:13px;">
+                                            <i class="fas fa-arrow-up mr-1"></i> Upgrade to {{ $p->name }}
+                                        </button>
+                                    @elseif($isCurrent)
+                                        <div
+                                            style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:600;">
+                                            <i class="fas fa-check-circle mr-1"></i> Your Active Plan
+                                        </div>
+                                    @else
+                                        <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">
+                                            <i class="fas fa-lock mr-1"></i> Already passed
+                                        </div>
+                                    @endif
                                 </div>
-                                @else
-                                <div style="text-align:center;margin-top:12px;font-size:11px;color:#aaa;">
-                                    <i class="fas fa-lock mr-1"></i> Already passed
-                                </div>
-                                @endif
                             </div>
-                        </div>
                         @endforeach
                     </div>
 
@@ -2488,75 +2528,96 @@
     {{-- ── Razorpay Upgrade Plan ─────────────────────────────────────── --}}
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
-    (function () {
-        var CSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        (function() {
+            var CSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-        document.addEventListener('click', function (e) {
-            var btn = e.target.closest('.purchase-plan');
-            if (!btn) return;
-            e.preventDefault();
+            document.addEventListener('click', function(e) {
+                var btn = e.target.closest('.purchase-plan');
+                if (!btn) return;
+                e.preventDefault();
 
-            var amount = btn.getAttribute('data-amount');
-            var planId = btn.getAttribute('data-plan');
+                var amount = btn.getAttribute('data-amount');
+                var planId = btn.getAttribute('data-plan');
 
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Processing…';
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Processing…';
 
-            fetch("{{ url('member/create-order') }}", {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-                body: JSON.stringify({ amount: amount, plan_id: planId })
-            })
-            .then(function (r) { return r.json(); })
-            .then(function (order) {
-                var options = {
-                    key: "{{ config('services.razorpay.key') }}",
-                    amount: order.amount,
-                    currency: 'INR',
-                    order_id: order.order_id,
-                    name: 'KemtexWellness',
-                    description: 'Plan Upgrade',
-                    theme: { color: '#28a745' },
-                    handler: function (response) {
-                        fetch("{{ url('member/verify-payment') }}", {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF },
-                            body: JSON.stringify({
-                                razorpay_payment_id: response.razorpay_payment_id,
-                                razorpay_order_id:   response.razorpay_order_id,
-                                razorpay_signature:  response.razorpay_signature,
-                                plan_id: planId,
-                                amount:  amount
-                            })
+                fetch("{{ url('member/create-order') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': CSRF
+                        },
+                        body: JSON.stringify({
+                            amount: amount,
+                            plan_id: planId
                         })
-                        .then(function (r) { return r.json(); })
-                        .then(function (res) {
-                            if (res.success) {
-                                alert('✅ Plan Upgraded Successfully!');
-                                window.location.reload();
-                            } else {
-                                alert('❌ Payment Verification Failed: ' + (res.message || ''));
-                                btn.disabled = false;
-                                btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                    })
+                    .then(function(r) {
+                        return r.json();
+                    })
+                    .then(function(order) {
+                        var options = {
+                            key: "{{ config('services.razorpay.key') }}",
+                            amount: order.amount,
+                            currency: 'INR',
+                            order_id: order.order_id,
+                            name: 'KemtexWellness',
+                            description: 'Plan Upgrade',
+                            theme: {
+                                color: '#28a745'
+                            },
+                            handler: function(response) {
+                                fetch("{{ url('member/verify-payment') }}", {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRF-TOKEN': CSRF
+                                        },
+                                        body: JSON.stringify({
+                                            razorpay_payment_id: response
+                                                .razorpay_payment_id,
+                                            razorpay_order_id: response
+                                                .razorpay_order_id,
+                                            razorpay_signature: response
+                                                .razorpay_signature,
+                                            plan_id: planId,
+                                            amount: amount
+                                        })
+                                    })
+                                    .then(function(r) {
+                                        return r.json();
+                                    })
+                                    .then(function(res) {
+                                        if (res.success) {
+                                            alert('✅ Plan Upgraded Successfully!');
+                                            window.location.reload();
+                                        } else {
+                                            alert('❌ Payment Verification Failed: ' + (res
+                                                .message || ''));
+                                            btn.disabled = false;
+                                            btn.innerHTML =
+                                                '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                                        }
+                                    });
+                            },
+                            modal: {
+                                ondismiss: function() {
+                                    btn.disabled = false;
+                                    btn.innerHTML =
+                                        '<i class="fas fa-arrow-up mr-1"></i> Upgrade to Plan';
+                                }
                             }
-                        });
-                    },
-                    modal: {
-                        ondismiss: function () {
-                            btn.disabled = false;
-                            btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade to Plan';
-                        }
-                    }
-                };
-                var rzp = new Razorpay(options);
-                rzp.open();
-            })
-            .catch(function () {
-                alert('❌ Could not create order. Please try again.');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                        };
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+                    })
+                    .catch(function() {
+                        alert('❌ Could not create order. Please try again.');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                    });
             });
-        });
-    })();
+        })();
     </script>
 @endpush
