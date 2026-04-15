@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 | Frontend Routes
 |--------------------------------------------------------------------------
 */
+
 Route::group([], function () {
 
     // Home
@@ -59,7 +60,6 @@ Route::group([], function () {
 
     // Portfolio
     Route::get('/portfolio', fn() => view('frontend.portfolio.index'))->name('portfolio');
-
 });
 
 /*
@@ -76,9 +76,9 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
     Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name('send.otp');
 
-   
-   Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
-   Route::post('/check-phone', [AuthController::class, 'checkPhone'])->name('check.phone');
+
+    Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])->name('verify.otp');
+    Route::post('/check-phone', [AuthController::class, 'checkPhone'])->name('check.phone');
 
     Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.reset');
     // Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.email');
@@ -105,17 +105,17 @@ Route::prefix('member')
         Route::get('/wallet', [MemberController::class, 'wallet'])->name('wallet');
         Route::get('/profile', [MemberController::class, 'profile'])->name('profile');
         Route::get('/credentials', [MemberController::class, 'credentials'])->name('credentials');
-Route::post('/profile/photo', [MemberController::class, 'updatePhoto'])->name('profile.photo');
-        
-Route::put('/profile/update', [MemberController::class, 'updateProfile'])
-    ->name('profile.update');
-    Route::post('/change/password', [MemberController::class, 'changePassword'])->name('change.password');
-Route::post('/bank/save', [MemberController::class, 'saveBank'])
-    ->name('bank.save');
+        Route::post('/profile/photo', [MemberController::class, 'updatePhoto'])->name('profile.photo');
 
-    // Razorpay payment verification and plan activation
-       Route::post('/create-order', [MemberController::class, 'createOrder'])->name('member.create.order');
-       Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
+        Route::put('/profile/update', [MemberController::class, 'updateProfile'])
+            ->name('profile.update');
+        Route::post('/change/password', [MemberController::class, 'changePassword'])->name('change.password');
+        Route::post('/bank/save', [MemberController::class, 'saveBank'])
+            ->name('bank.save');
+
+        // Razorpay payment verification and plan activation
+        Route::post('/create-order', [MemberController::class, 'createOrder'])->name('member.create.order');
+        Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
         Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);
     });
 
@@ -137,13 +137,12 @@ Route::get('/admin', function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')->name('admin.')->group(function () {
-    
+
     Route::get('/login', [AdminAuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('login.post');
 
     Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
-
 });
 
 /*
@@ -181,5 +180,4 @@ Route::prefix('admin')
 
         // Logout
         Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
-
     });
