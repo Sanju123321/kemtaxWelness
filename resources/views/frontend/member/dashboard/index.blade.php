@@ -844,9 +844,13 @@
                 class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
                 <i class="fas fa-wallet nav-icon"></i> Wallet
             </a>
+            <div class="nav-label">My Team</div>
+            <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
+                <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
+            </a>
             <a href="{{ route('member.credentials') }}"
                 class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
-                <i class="fas fa-award nav-icon"></i> Credentials
+                <i class="fas fa-award nav-icon"></i> My Achievements
             </a>
             <div class="nav-label">More</div>
 
@@ -861,7 +865,7 @@
                 class="{{ $isInactive ? 'disabled' : '' }}">
                 <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
             </a>
-            <a href="#" id="sidebarCommissionLink"
+            <a href="#referral-commission" id="sidebarCommissionLink"
                 onclick="showSection('referralCommissionSection'); return false;"
                 class="{{ $isInactive ? 'disabled' : '' }}">
                 <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
@@ -883,10 +887,7 @@
                     style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
                 @endif
             </a>
-            <div class="nav-label">My Team</div>
-            <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
-            </a>
+
         </nav>
 
         <div class="sidebar-footer">
@@ -1144,7 +1145,7 @@
                 </div>
 
                 {{-- Quick Links --}}
-                <div class="section-card">
+                <!-- <div class="section-card">
                     <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
                     <div class="section-card-body p-0">
                         <a href="{{ route('member.wallet') }}"
@@ -1173,7 +1174,7 @@
                             <i class="fas fa-chevron-right ml-auto text-muted small"></i>
                         </a>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
