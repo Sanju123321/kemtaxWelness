@@ -15,6 +15,10 @@
             box-sizing: border-box;
         }
 
+        #tree-root {
+            display: inline-block;
+        }
+
         /* ── Search bar ─────────────────────────────────────── */
         .tree-search-wrap {
             display: flex;
@@ -586,61 +590,62 @@
             </div>
         </div>
     </div>
-     <nav class="sidebar-nav">
-            <div class="nav-label">Main Menu</div>
-            <a href="{{ route('member.dashboard') }}"
-                class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
-            </a>
-            <a href="{{ route('member.wallet') }}"
-                class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
-                <i class="fas fa-wallet nav-icon"></i> Wallet
-            </a>
-            <div class="nav-label">My Team</div>
-            <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
-            </a>
-            <a href="{{ route('member.credentials') }}"
-                class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
-                <i class="fas fa-award nav-icon"></i> My Achievements
-            </a>
-            <div class="nav-label">More</div>
+    <nav class="sidebar-nav">
+        <div class="nav-label">Main Menu</div>
+        <a href="{{ route('member.dashboard') }}"
+            class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
+        </a>
+        <a href="{{ route('member.wallet') }}"
+            class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-wallet nav-icon"></i> Wallet
+        </a>
+        <div class="nav-label">My Team</div>
+        <a href="{{ route('member.team') }}" id="sidebarTreeLink"
+            class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
+        </a>
+        <a href="{{ route('member.credentials') }}"
+            class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-award nav-icon"></i> My Achievements
+        </a>
+        <div class="nav-label">More</div>
 
-            <a href="{{ route('pricing') }}">
-                <i class="fas fa-tags nav-icon"></i> Pricing
-            </a>
+        <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
+            <i class="fas fa-tags nav-icon"></i> Pricing
+        </a>
 
-            <a href="{{ route('contact') }}">
-                <i class="fas fa-headset nav-icon"></i> Support
-            </a>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
-            </a>
-            <a href="{{ route('member.dashboard') }}#referral-commission" id="sidebarCommissionLink"
-                onclick="showSection('referralCommissionSection'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
-            </a>
-            <div class="nav-label">My Shopping</div>
-            <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
-                @if (isset($wishlistItems) && $wishlistItems->count())
+        <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
+            <i class="fas fa-headset nav-icon"></i> Support
+        </a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
+        </a>
+        <a href="{{ route('member.dashboard') }}#referral-commission" id="sidebarCommissionLink"
+            onclick="showSection('referralCommissionSection'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+        </a>
+        <div class="nav-label">My Shopping</div>
+        <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
+            @if (isset($wishlistItems) && $wishlistItems->count())
                 <span class="ml-auto"
                     style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
-                @endif
-            </a>
-            <a href="{{ route('member.dashboard') }}#cart" onclick="scrollToSection('cart'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
-                @if (isset($cartItems) && $cartItems->count())
+            @endif
+        </a>
+        <a href="{{ route('member.dashboard') }}#cart" onclick="scrollToSection('cart'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
+            @if (isset($cartItems) && $cartItems->count())
                 <span class="ml-auto"
                     style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
-                @endif
-            </a>
-            
-        </nav>
+            @endif
+        </a>
+
+    </nav>
     <div class="sidebar-footer">
         <form action="{{ route('logout') }}" method="POST">
             @csrf
@@ -730,7 +735,8 @@
 
                 {{-- Loading --}}
                 <div id="tree-loading">
-                    <div class="spinner-border text-success" role="status"><span class="sr-only">Loading...</span>
+                    <div class="spinner-border text-success" role="status"><span
+                            class="sr-only">Loading...</span>
                     </div>
                     <p class="mt-2 text-muted">Loading your team network…</p>
                 </div>
@@ -783,6 +789,18 @@
 @endsection
 
 @push('scripts')
+<script>
+    // ── Sidebar click-active for in-page links ─────────────────────────
+    document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            document.querySelectorAll('.sidebar-nav a').forEach(function(l) {
+                l.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+</script>
 <script>
     let storageUrl = "{{ asset('storage') }}";
 </script>
@@ -864,7 +882,8 @@
             const avatar = document.createElement('div');
             avatar.className = 'geo-avatar';
             // avatar.innerHTML = '<i class="fas fa-user"></i>';
-            avatar.innerHTML = node.profile_photo ? '<img src="' + storageUrl + '/' + node.profile_photo + '" style="width:100%;height:100%;border-radius:50%;">' : '<i class="fas fa-user"></i>';
+            avatar.innerHTML = node.profile_photo ? '<img src="' + storageUrl + '/' + node.profile_photo +
+                '" style="width:100%;height:100%;border-radius:50%;">' : '<i class="fas fa-user"></i>';
 
             // Name
             const nameEl = document.createElement('div');
@@ -886,13 +905,13 @@
             const planCls = (node.plan_name && node.plan_name !== 'No Plan') ? 'tt-plan' : '';
             tooltip.innerHTML =
                 '<div class="tt-name"><i class="fas fa-user mr-1"></i>' + (node.name || 'Unknown') + '</div>' +
-                
-//                 '<div class="tt-name d-flex align-items-center">' +
-//     (node.profile_photo 
-//         ? '<img src="' + storageUrl + '/' + node.profile_photo + '" class="tt-avatar">' 
-//         : '<i class="fas fa-user mr-1"></i>') +
-//     '<span>' + (node.name || 'Unknown') + '</span>' +
-// '</div>'
+
+                //                 '<div class="tt-name d-flex align-items-center">' +
+                //     (node.profile_photo 
+                //         ? '<img src="' + storageUrl + '/' + node.profile_photo + '" class="tt-avatar">' 
+                //         : '<i class="fas fa-user mr-1"></i>') +
+                //     '<span>' + (node.name || 'Unknown') + '</span>' +
+                // '</div>'
                 '<div class="tt-row"><span class="tt-label">Status</span><span class="tt-val"><span class="tt-badge ' +
                 statusCls + '">' + statusTxt + '</span></span></div>' +
                 '<div class="tt-row"><span class="tt-label">Plan</span><span class="tt-val"><span class="tt-badge ' +
@@ -1019,9 +1038,8 @@
             });
         });
 
-        /* ---- Expand / Collapse All ----*/
+        /* ---- Expand / Collapse All ---- */
         function setAllChildren(show) {
-            // skip the root ul (first level), toggle all nested uls
             document.querySelectorAll('#tree-root ul ul').forEach(function(ul) {
                 ul.style.display = show ? '' : 'none';
             });

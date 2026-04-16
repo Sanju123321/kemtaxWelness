@@ -313,7 +313,6 @@ public function verifyPayment(Request $request)
         $planAmount  = $starterPlan?->price ?? 1500;
 
         return view('frontend.member.dashboard.index', compact(
-            'user',
             'dashStats',
             'wishlistItems',
             'cartItems',
@@ -328,7 +327,6 @@ public function verifyPayment(Request $request)
             'lostIncome',
             'lockedEarning',
             'capHit',
-            'user',
             'dailyCapHit',
             'totalCapHit',
         ));

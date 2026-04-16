@@ -849,11 +849,11 @@
                 </a>
                 <div class="nav-label">More</div>
 
-                <a href="{{ route('pricing') }}">
+                <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
                     <i class="fas fa-tags nav-icon"></i> Pricing
                 </a>
 
-                <a href="{{ route('contact') }}">
+                <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
                 <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
@@ -883,7 +883,8 @@
                     @endif
                 </a>
                 <div class="nav-label">My Team</div>
-                <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
+                <a href="{{ route('member.team') }}" id="sidebarTreeLink"
+                    class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
                     <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
                 </a>
             </nav>
@@ -1109,13 +1110,13 @@
 
                     {{-- Team Tree --}}
                     <!-- <div class="section-card">
-                                        <div class="section-card-header">
-                                            <i class="fas fa-sitemap mr-2 text-color"></i>My Team Genealogy
-                                        </div>
-                                        <div class="section-card-body">
-                                           
-                                        </div>
-                                    </div> -->
+                                                <div class="section-card-header">
+                                                    <i class="fas fa-sitemap mr-2 text-color"></i>My Team Genealogy
+                                                </div>
+                                                <div class="section-card-body">
+                                                   
+                                                </div>
+                                            </div> -->
                 </div>
 
                 {{-- Side Panel --}}
@@ -1181,18 +1182,8 @@
 
                             {{-- STATUS BADGE --}}
                             <span class="badge-plan mb-3 d-inline-block"
-                                style="background-color:
-                @auth
-{{ Auth::user()->status == 'inactive' ? '#dc3545' : '#28a745' }}
-                @else
-                    #dc3545 @endauth;
-                color:#fff;">
-
-                                @auth
-                                    {{ ucfirst(Auth::user()->status) }}
-                                @else
-                                    Inactive
-                                @endauth
+                                style="background-color: {{ $plan ? '#28a745' : ($user->status == 'inactive' ? '#dc3545' : '#28a745') }}; color:#fff;">
+                                {{ $plan ? $plan->name : ucfirst($user->status) }}
                             </span>
 
                             {{-- BUTTON (UNCHANGED) --}}
@@ -1358,35 +1349,35 @@
                 =======
                 {{-- Quick Links --}}
                 <!-- <div class="section-card">
-                            <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
-                            <div class="section-card-body p-0">
-                                <a href="{{ route('member.wallet') }}"
-                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
-                                    style="gap:12px;">
-                                    <i class="fas fa-wallet text-color"></i><span>My Wallet</span>
-                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
-                                </a>
-                                <a href="{{ route('member.credentials') }}"
-                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
-                                    style="gap:12px;">
-                                    <i class="fas fa-award text-color"></i><span>My Credentials</span>
-                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
-                                </a>
-                                @if (!$isInactive)
+                                    <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
+                                    <div class="section-card-body p-0">
+                                        <a href="{{ route('member.wallet') }}"
+                                            class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
+                                            style="gap:12px;">
+                                            <i class="fas fa-wallet text-color"></i><span>My Wallet</span>
+                                            <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                        </a>
+                                        <a href="{{ route('member.credentials') }}"
+                                            class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none{{ $isInactive ? ' disabled' : '' }}"
+                                            style="gap:12px;">
+                                            <i class="fas fa-award text-color"></i><span>My Credentials</span>
+                                            <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                        </a>
+                                        @if (!$isInactive)
     <a href="{{ route('pricing') }}"
-                                    class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
-                                    style="gap:12px;">
-                                    <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
-                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
-                                </a>
+                                            class="d-flex align-items-center p-3 border-bottom text-dark text-decoration-none"
+                                            style="gap:12px;">
+                                            <i class="fas fa-tags text-color"></i><span>Upgrade Plan</span>
+                                            <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                        </a>
     @endif
-                                <a href="{{ route('contact') }}"
-                                    class="d-flex align-items-center p-3 text-dark text-decoration-none" style="gap:12px;">
-                                    <i class="fas fa-headset text-color"></i><span>Get Support</span>
-                                    <i class="fas fa-chevron-right ml-auto text-muted small"></i>
-                                </a>
-                            </div>
-                        </div> -->
+                                        <a href="{{ route('contact') }}"
+                                            class="d-flex align-items-center p-3 text-dark text-decoration-none" style="gap:12px;">
+                                            <i class="fas fa-headset text-color"></i><span>Get Support</span>
+                                            <i class="fas fa-chevron-right ml-auto text-muted small"></i>
+                                        </a>
+                                    </div>
+                                </div> -->
                 >>>>>>> 882410c09985127078bbf3f0b403839805e86e30
         </div>
 
@@ -1718,6 +1709,18 @@
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ── Sidebar click-active for in-page links ─────────────────────────
+        document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                if (this.classList.contains('disabled')) return;
+                document.querySelectorAll('.sidebar-nav a').forEach(function(l) {
+                    l.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
     <script>
         // ── Midnight Countdown for cap banner ──────────────────────────
         (function() {

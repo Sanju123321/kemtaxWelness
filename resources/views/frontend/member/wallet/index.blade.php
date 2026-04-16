@@ -250,60 +250,61 @@
     </div>
 
     <nav class="sidebar-nav">
-            <div class="nav-label">Main Menu</div>
-            <a href="{{ route('member.dashboard') }}"
-                class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
-                <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
-            </a>
-            <a href="{{ route('member.wallet') }}"
-                class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
-                <i class="fas fa-wallet nav-icon"></i> Wallet
-            </a>
-            <div class="nav-label">My Team</div>
-            <a href="{{ route('member.team') }}" id="sidebarTreeLink" class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
-            </a>
-            <a href="{{ route('member.credentials') }}"
-                class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
-                <i class="fas fa-award nav-icon"></i> My Achievements
-            </a>
-            <div class="nav-label">More</div>
+        <div class="nav-label">Main Menu</div>
+        <a href="{{ route('member.dashboard') }}"
+            class="{{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
+            <i class="fas fa-tachometer-alt nav-icon"></i> Dashboard
+        </a>
+        <a href="{{ route('member.wallet') }}"
+            class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-wallet nav-icon"></i> Wallet
+        </a>
+        <div class="nav-label">My Team</div>
+        <a href="{{ route('member.team') }}" id="sidebarTreeLink"
+            class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
+        </a>
+        <a href="{{ route('member.credentials') }}"
+            class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            <i class="fas fa-award nav-icon"></i> My Achievements
+        </a>
+        <div class="nav-label">More</div>
 
-            <a href="{{ route('pricing') }}">
-                <i class="fas fa-tags nav-icon"></i> Pricing
-            </a>
+        <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
+            <i class="fas fa-tags nav-icon"></i> Pricing
+        </a>
 
-            <a href="{{ route('contact') }}">
-                <i class="fas fa-headset nav-icon"></i> Support
-            </a>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
-            </a>
-            <a href="{{ route('member.dashboard') }}#referral-commission" href="#" id="sidebarCommissionLink"
-                onclick="showSection('referralCommissionSection'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
-            </a>
-            <div class="nav-label">My Shopping</div>
-            <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
-                @if (isset($wishlistItems) && $wishlistItems->count())
+        <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
+            <i class="fas fa-headset nav-icon"></i> Support
+        </a>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
+        </a>
+        <a href="{{ route('member.dashboard') }}#referral-commission" href="#" id="sidebarCommissionLink"
+            onclick="showSection('referralCommissionSection'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+        </a>
+        <div class="nav-label">My Shopping</div>
+        <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
+            @if (isset($wishlistItems) && $wishlistItems->count())
                 <span class="ml-auto"
                     style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
-                @endif
-            </a>
-            <a href="{{ route('member.dashboard') }}#cart" onclick="scrollToSection('cart'); return false;"
-                class="{{ $isInactive ? 'disabled' : '' }}">
-                <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
-                @if (isset($cartItems) && $cartItems->count())
+            @endif
+        </a>
+        <a href="{{ route('member.dashboard') }}#cart" onclick="scrollToSection('cart'); return false;"
+            class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
+            @if (isset($cartItems) && $cartItems->count())
                 <span class="ml-auto"
                     style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
-                @endif
-            </a>
-            
-        </nav>
+            @endif
+        </a>
+
+    </nav>
 
     <div class="sidebar-footer">
         <form action="{{ route('logout') }}" method="POST">
@@ -429,7 +430,8 @@
                     <h5><i class="fas fa-plus-circle text-primary mr-2"></i>Add Funds</h5>
                     <p class="text-muted small mb-3">Top up your wallet with earnings from commissions</p>
                     <div class="form-group">
-                        <input type="number" class="form-control" placeholder="Enter amount (₹)" min="1">
+                        <input type="number" class="form-control" placeholder="Enter amount (₹)"
+                            min="1">
                         <small class="text-muted">Minimum ₹100</small>
                     </div>
                     <button class="btn btn-block"
@@ -532,3 +534,17 @@
 </div>{{-- /.dash-main --}}
 </div>{{-- /.dash-layout --}}
 @endsection
+
+@push('scripts')
+<script>
+    document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
+        link.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            document.querySelectorAll('.sidebar-nav a').forEach(function(l) {
+                l.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+    });
+</script>
+@endpush
