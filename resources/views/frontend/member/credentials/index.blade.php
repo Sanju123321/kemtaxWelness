@@ -117,27 +117,43 @@
                     @auth {{ Auth::user()->name }}
                     @else
                     [Member Name] @endauth
+
+                     @php
+                function teamCount($user)
+                {
+                $user->load('sponsor'); // important
+
+                $count = 0;
+
+                foreach ($user->sponsor as $ref) {
+                $count++;
+                $count += teamCount($ref);
+                }
+
+                return $count;
+                }
+                @endphp
                 </h2>
                 <p class="text-muted mb-4">Member since {{ auth()->user()->created_at->format('F Y') ?? 'January 2026' }}
                 </p>
                 <div class="row justify-content-center">
                     <div class="col-md-3 mb-3">
                         <div style="background: #f0f9f4; border: 2px solid #28a745; border-radius: 10px; padding: 15px;">
-                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">0</div>
+                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">{{auth()->user()->sponsor->count() ?? 0}}</div>
                             <div style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 700;">Direct
                                 Referrals</div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div style="background: #f0f9f4; border: 2px solid #28a745; border-radius: 10px; padding: 15px;">
-                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">0</div>
+                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">{{ teamCount(auth()->user()) ?? 0 }}</div>
                             <div style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 700;">Team
                                 Size</div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div style="background: #f0f9f4; border: 2px solid #28a745; border-radius: 10px; padding: 15px;">
-                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">₹0</div>
+                            <div style="font-size: 22px; font-weight: 800; color: #28a745;">₹{{ auth()->user()->total_earned ?? '0.00' }}</div>
                             <div style="font-size: 11px; color: #999; text-transform: uppercase; font-weight: 700;">Total
                                 Earned</div>
                         </div>
@@ -147,7 +163,7 @@
         </div>
 
         {{-- Rank Progression --}}
-        <div class="bg-white rounded p-4 shadow-sm mb-4">
+        <!-- <div class="bg-white rounded p-4 shadow-sm mb-4">
             <h5 class="mb-4"><i class="fas fa-star text-color mr-2"></i>Rank Progression</h5>
             <div class="row">
                 @php
@@ -203,7 +219,7 @@
                     </div>
                 @endforeach
             </div>
-        </div>
+        </div> -->
 
         {{-- Income Milestones --}}
         <div class="row">

@@ -128,14 +128,28 @@
                     <i class="fas fa-chart-bar mr-2 text-color"></i>My Stats
                 </div>
                 @php
+                function teamCount($user)
+                {
+                $user->load('sponsor'); // important
+
+                $count = 0;
+
+                foreach ($user->sponsor as $ref) {
+                $count++;
+                $count += teamCount($ref);
+                }
+
+                return $count;
+                }
+
                 $memberStats = [
                 [
                 'label' => 'Member Since',
                 'value' => auth()->user()->created_at->format('M Y') ?? 'Jan 2026',
                 ],
-                ['label' => 'Total Referrals', 'value' => '0'],
-                ['label' => 'Team Size', 'value' => '0'],
-                ['label' => 'Total Earned', 'value' => '₹0.00'],
+                ['label' => 'Total Referrals', 'value' => auth()->user()->sponsor->count() ?? 0],
+                ['label' => 'Team Size', 'value' => teamCount(auth()->user()) ?? 0],
+                ['label' => 'Total Earned', 'value' => '₹' . auth()->user()->total_earned ?? '0.00'],
                 ];
                 @endphp
                 @foreach ($memberStats as $s)

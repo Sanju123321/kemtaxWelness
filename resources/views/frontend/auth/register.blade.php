@@ -433,7 +433,7 @@ $(document).on('click', '.toggle-password', function () {
 
 });
 </script>
-<script>
+<!-- <script>
 $('#phone').on('blur', function () {
 
     let phone = $(this).val();
@@ -473,5 +473,5 @@ $('#phone').on('blur', function () {
     });
 
 });
-</script>
+</script> -->
 @endsection
