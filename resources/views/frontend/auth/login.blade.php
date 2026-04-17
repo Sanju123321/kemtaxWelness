@@ -47,12 +47,12 @@
                             @csrf
 
                             <div class="form-group mb-4">
-                                <label for="phone"><i class="fas fa-phone text-color mr-2"></i>Phone Number</label>
-                                <input type="tel"
-                                    class="form-control form-control-lg @error('phone') is-invalid @enderror" id="phone"
-                                    name="phone" placeholder="Enter your Phone Number" value="{{ old('phone') }}" required
+                                <label for="user_id"><i class="fas fa-id-card text-color mr-2"></i>User ID</label>
+                                <input type="text"
+                                    class="form-control form-control-lg @error('user_id') is-invalid @enderror" id="user_id"
+                                    name="user_id" placeholder="Enter your User ID" value="{{ old('user_id') }}" required
                                     autofocus>
-                                @error('phone')
+                                @error('user_id')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
@@ -142,9 +142,9 @@ $(document).ready(function () {
 
     $("#loginForm").validate({
         rules: {
-            phone: {
+            user_id: {
                 required: true,
-                minlength: 10
+                
             },
             password: {
                 required: true,
@@ -154,11 +154,9 @@ $(document).ready(function () {
 
         messages: {
           
-            phone: {
-                required: "Enter phone number",
-                digits: "Only numbers allowed",
-                minlength: "Must be 10 digits",
-                maxlength: "Must be 10 digits"
+            user_id: {
+                required: "Enter user ID",
+               
             },
            
             password: {

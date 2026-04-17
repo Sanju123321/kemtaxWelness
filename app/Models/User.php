@@ -19,14 +19,24 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'user_id',
         'name',
         'email',
-        'password',
         'phone',
         'reference_code',
         'referred_by',
+        'email_verified_at',
+        'password',
+        'remember_token',
+        'status',
+        'has_plan',
+        'current_plan_id',
         'wallet_balance',
         'total_earned',
+        'profile_photo',
+        'city',
+        'state',
+        'pincode',
     ];
 
     /**
@@ -70,22 +80,22 @@ class User extends Authenticatable
     }
 
     public function sponsor()
-{
-    return $this->belongsTo(User::class, 'referred_by`');
-}
+    {
+        return $this->hasMany(User::class, 'referred_by');
+    }
 
-public function currentPlan()
-{
-    return $this->belongsTo(Plan::class, 'current_plan_id');
-}
+    public function currentPlan()
+    {
+        return $this->belongsTo(Plan::class, 'current_plan_id');
+    }
 
-public function plans()
-{
-    return $this->hasMany(UserPlan::class);
-}
+    public function plans()
+    {
+        return $this->hasMany(UserPlan::class);
+    }
 
-public function bankDetail()
-{
-    return $this->hasOne(UserBankDetail::class);
-}
+    public function bankDetail()
+    {
+        return $this->hasOne(UserBankDetail::class);
+    }
 }
