@@ -14,6 +14,8 @@ class UserBankDetail extends Model
         'ifsc',
         'bank_name',
         'upi_id',
+        'razorpay_contact_id',
+        'razorpay_fund_account_id',
     ];
 
     public function user()

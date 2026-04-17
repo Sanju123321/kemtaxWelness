@@ -14,7 +14,8 @@ class Payment extends Model
         'status',
         'method',
         'email',
-        'contact'
+        'contact',
+        'purpose',
     ];
 
     // Relation with User
@@ -23,4 +24,3 @@ class Payment extends Model
         return $this->belongsTo(User::class);
     }
 }
-

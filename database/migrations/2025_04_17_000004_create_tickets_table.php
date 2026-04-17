@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('ticket_number')->unique();
+            $table->string('ticket_number',191)->unique();
             $table->string('subject');
             $table->text('message');
             $table->enum('category', ['billing', 'technical', 'mlm', 'account', 'other'])->default('other');

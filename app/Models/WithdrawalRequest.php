@@ -10,11 +10,15 @@ class WithdrawalRequest extends Model
         'user_id', 'amount', 'status', 'payment_method',
         'account_holder', 'account_number', 'ifsc', 'bank_name',
         'upi_id', 'admin_remark', 'processed_by', 'processed_at',
+        'razorpay_contact_id', 'razorpay_fund_account_id', 'razorpay_payout_id',
+        'payout_status', 'payout_reference', 'idempotency_key', 'utr',
+        'provider_response',
     ];
 
     protected $casts = [
         'processed_at' => 'datetime',
         'amount'       => 'decimal:2',
+        'provider_response' => 'array',
     ];
 
     public function user()
