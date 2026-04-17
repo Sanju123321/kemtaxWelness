@@ -11,8 +11,10 @@
 
                 <div class="sb-sidenav-menu-heading">Management</div>
 
+                {{-- Users --}}
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseUsers"
-                    aria-expanded="false" aria-controls="collapseUsers">
+                    aria-expanded="{{ request()->routeIs('admin.users*') ? 'true' : 'false' }}"
+                    aria-controls="collapseUsers">
                     <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
                     Users
                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -27,8 +29,11 @@
                     </nav>
                 </div>
 
+                {{-- Products --}}
                 <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                    data-bs-target="#collapseProducts" aria-expanded="false" aria-controls="collapseProducts">
+                    data-bs-target="#collapseProducts"
+                    aria-expanded="{{ request()->routeIs('admin.products*') ? 'true' : 'false' }}"
+                    aria-controls="collapseProducts">
                     <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
                     Products
                     <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -43,19 +48,120 @@
                     </nav>
                 </div>
 
+                {{-- Plans --}}
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePlans"
+                    aria-expanded="{{ request()->routeIs('admin.plans*') ? 'true' : 'false' }}"
+                    aria-controls="collapsePlans">
+                    <div class="sb-nav-link-icon"><i class="fas fa-layer-group"></i></div>
+                    MLM Plans
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse {{ request()->routeIs('admin.plans*') ? 'show' : '' }}" id="collapsePlans"
+                    aria-labelledby="headingPlans" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link {{ request()->routeIs('admin.plans.index') ? 'active' : '' }}"
+                            href="{{ route('admin.plans.index') }}">All Plans</a>
+                        <a class="nav-link {{ request()->routeIs('admin.plans.create') ? 'active' : '' }}"
+                            href="{{ route('admin.plans.create') }}">Add Plan</a>
+                    </nav>
+                </div>
+
+                <div class="sb-sidenav-menu-heading">Finance</div>
+
+                {{-- Payments --}}
+                <a class="nav-link {{ request()->routeIs('admin.payments*') ? 'active' : '' }}"
+                    href="{{ route('admin.payments.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-receipt"></i></div>
+                    Payments
+                </a>
+
+                {{-- Commissions --}}
+                <a class="nav-link {{ request()->routeIs('admin.incomes*') ? 'active' : '' }}"
+                    href="{{ route('admin.incomes.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-coins"></i></div>
+                    Commissions
+                </a>
+
+                {{-- Admin Earnings --}}
+                <a class="nav-link {{ request()->routeIs('admin.admin.earnings*') ? 'active' : '' }}"
+                    href="{{ route('admin.admin.earnings.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-crown"></i></div>
+                    Admin Earnings
+                </a>
+
+                {{-- Withdrawals --}}
+                <a class="nav-link {{ request()->routeIs('admin.withdrawals*') ? 'active' : '' }}"
+                    href="{{ route('admin.withdrawals.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-wallet"></i></div>
+                    Withdrawals
+                    @php $pendingWithdrawals = \App\Models\WithdrawalRequest::where('status','pending')->count(); @endphp
+                    @if ($pendingWithdrawals > 0)
+                        <span class="badge bg-warning text-dark ms-auto">{{ $pendingWithdrawals }}</span>
+                    @endif
+                </a>
+
+                <div class="sb-sidenav-menu-heading">Compliance</div>
+
+                {{-- KYC --}}
+                <a class="nav-link {{ request()->routeIs('admin.kyc*') ? 'active' : '' }}"
+                    href="{{ route('admin.kyc.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-id-card"></i></div>
+                    KYC Verification
+                    @php $pendingKyc = \App\Models\KycDocument::where('status','pending')->count(); @endphp
+                    @if ($pendingKyc > 0)
+                        <span class="badge bg-danger ms-auto">{{ $pendingKyc }}</span>
+                    @endif
+                </a>
+
+                <div class="sb-sidenav-menu-heading">Support</div>
+
+                {{-- Tickets --}}
+                <a class="nav-link {{ request()->routeIs('admin.tickets*') ? 'active' : '' }}"
+                    href="{{ route('admin.tickets.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-headset"></i></div>
+                    Support Tickets
+                    @php $openTickets = \App\Models\Ticket::where('status','open')->count(); @endphp
+                    @if ($openTickets > 0)
+                        <span class="badge bg-danger ms-auto">{{ $openTickets }}</span>
+                    @endif
+                </a>
+
+                {{-- Announcements --}}
+                <a class="nav-link {{ request()->routeIs('admin.announcements*') ? 'active' : '' }}"
+                    href="{{ route('admin.announcements.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-bullhorn"></i></div>
+                    Announcements
+                </a>
+
                 <div class="sb-sidenav-menu-heading">Reports</div>
+
+                <a class="nav-link {{ request()->routeIs('admin.reports*') ? 'active' : '' }}"
+                    href="{{ route('admin.reports.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-chart-pie"></i></div>
+                    Advanced Reports
+                </a>
+
                 <a class="nav-link {{ request()->routeIs('admin.charts') ? 'active' : '' }}"
                     href="{{ route('admin.charts') }}">
                     <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
                     Charts
                 </a>
-                <a class="nav-link {{ request()->routeIs('admin.tables') ? 'active' : '' }}"
-                    href="{{ route('admin.tables') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                    Tables
+
+                <div class="sb-sidenav-menu-heading">System</div>
+
+                <a class="nav-link {{ request()->routeIs('admin.settings*') ? 'active' : '' }}"
+                    href="{{ route('admin.settings.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                    Settings
                 </a>
 
-                <div class="sb-sidenav-menu-heading">Frontend</div>
+                <a class="nav-link {{ request()->routeIs('admin.activity-log*') ? 'active' : '' }}"
+                    href="{{ route('admin.activity-log.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-history"></i></div>
+                    Activity Log
+                </a>
+
+                <div class="sb-sidenav-menu-heading">Website</div>
                 <a class="nav-link" href="{{ route('home') }}" target="_blank">
                     <div class="sb-nav-link-icon"><i class="fas fa-globe"></i></div>
                     View Website

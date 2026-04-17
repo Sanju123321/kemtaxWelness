@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::latest()->paginate(15);
+        $products = Product::latest()->get();
         return view('backend.products.index', compact('products'));
     }
 
@@ -114,5 +114,43 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');
+    }
+
+    /**
+     * Export all products to CSV.
+     */
+    public function export()
+    {
+        $products = Product::latest()->get();
+
+        $filename = 'products_' . now()->format('Ymd_His') . '.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($products) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, ['ID', 'SKU', 'Name', 'Category', 'Price', 'Original Price', 'Discount %', 'Stock', 'Status', 'Rating', 'Created']);
+            foreach ($products as $product) {
+                fputcsv($handle, [
+                    $product->id,
+                    $product->sku ?? '',
+                    $product->name,
+                    $product->category,
+                    $product->price,
+                    $product->original_price ?? '',
+                    $product->discount_percent,
+                    $product->stock,
+                    $product->status,
+                    $product->rating ?? '',
+                    $product->created_at->format('Y-m-d H:i:s'),
+                ]);
+            }
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }

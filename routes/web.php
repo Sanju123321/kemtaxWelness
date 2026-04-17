@@ -8,10 +8,21 @@ use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\AuthController;
 use App\Http\Controllers\Frontend\MemberController;
+use App\Http\Controllers\Backend\AdminEarningController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\UserController;
 use App\Http\Controllers\Backend\ProductController as BackendProductController;
 use App\Http\Controllers\Backend\AdminAuthController;
+use App\Http\Controllers\Backend\PlanController;
+use App\Http\Controllers\Backend\PaymentController;
+use App\Http\Controllers\Backend\IncomeController;
+use App\Http\Controllers\Backend\WithdrawalController;
+use App\Http\Controllers\Backend\KycController;
+use App\Http\Controllers\Backend\TicketController;
+use App\Http\Controllers\Backend\AnnouncementController;
+use App\Http\Controllers\Backend\SettingController;
+use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\ActivityLogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -21,7 +32,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group([], function () {
+Route::middleware(['maintenance'])->group(function () {
 
     // Home
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -68,7 +79,7 @@ Route::group([], function () {
 |--------------------------------------------------------------------------
 */
 // Guest-only routes (redirect logged-in users to dashboard)
-Route::middleware('guest')->group(function () {
+Route::middleware(['maintenance', 'guest'])->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
@@ -94,7 +105,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 Route::prefix('member')
     ->name('member.')
-    ->middleware(['auth'])
+    ->middleware(['maintenance', 'auth'])
     ->group(function () {
 
         Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
@@ -143,6 +154,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/register', [AdminAuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AdminAuthController::class, 'register'])->name('register.post');
+
+    Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPassword'])->name('forgot.password');
+    Route::post('/forgot-password', [AdminAuthController::class, 'forgotPassword'])->name('forgot.password.post');
 });
 
 /*
@@ -158,21 +172,97 @@ Route::prefix('admin')
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+        // Change Password (logged-in admin)
+        Route::get('/change-password', [AdminAuthController::class, 'showChangePassword'])->name('change.password');
+        Route::post('/change-password', [AdminAuthController::class, 'changePassword'])->name('change.password.post');
+
         // Users
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::get('/users/export', [UserController::class, 'export'])->name('users.export');
         Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::post('/users/{id}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle.status');
+        Route::get('/users/{id}/income', [UserController::class, 'income'])->name('users.income');
 
         // Products
         Route::get('/products', [BackendProductController::class, 'index'])->name('products.index');
+        Route::get('/products/export', [BackendProductController::class, 'export'])->name('products.export');
         Route::get('/products/create', [BackendProductController::class, 'create'])->name('products.create');
         Route::post('/products', [BackendProductController::class, 'store'])->name('products.store');
         Route::get('/products/{id}/edit', [BackendProductController::class, 'edit'])->name('products.edit');
         Route::put('/products/{id}', [BackendProductController::class, 'update'])->name('products.update');
         Route::delete('/products/{id}', [BackendProductController::class, 'destroy'])->name('products.destroy');
+
+        // Plans
+        Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
+        Route::get('/plans/export', [PlanController::class, 'export'])->name('plans.export');
+        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
+        Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
+        Route::get('/plans/{id}/edit', [PlanController::class, 'edit'])->name('plans.edit');
+        Route::put('/plans/{id}', [PlanController::class, 'update'])->name('plans.update');
+        Route::delete('/plans/{id}', [PlanController::class, 'destroy'])->name('plans.destroy');
+
+        // Payments
+        Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::get('/payments/export', [PaymentController::class, 'export'])->name('payments.export');
+
+        // Incomes / Commissions
+        Route::get('/incomes', [IncomeController::class, 'index'])->name('incomes.index');
+        Route::get('/incomes/export', [IncomeController::class, 'export'])->name('incomes.export');
+
+        // Admin Earnings (lost income captures + maintenance fees)
+        Route::get('/admin-earnings', [AdminEarningController::class, 'index'])->name('admin.earnings.index');
+        Route::get('/admin-earnings/export', [AdminEarningController::class, 'export'])->name('admin.earnings.export');
+
+        // Withdrawal Requests
+        Route::get('/withdrawals', [WithdrawalController::class, 'index'])->name('withdrawals.index');
+        Route::get('/withdrawals/create', [WithdrawalController::class, 'create'])->name('withdrawals.create');
+        Route::post('/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
+        Route::post('/withdrawals/{id}/approve', [WithdrawalController::class, 'approve'])->name('withdrawals.approve');
+        Route::post('/withdrawals/{id}/reject', [WithdrawalController::class, 'reject'])->name('withdrawals.reject');
+        Route::get('/withdrawals/export', [WithdrawalController::class, 'export'])->name('withdrawals.export');
+
+        // KYC Verification
+        Route::get('/kyc', [KycController::class, 'index'])->name('kyc.index');
+        Route::get('/kyc/create', [KycController::class, 'create'])->name('kyc.create');
+        Route::post('/kyc', [KycController::class, 'store'])->name('kyc.store');
+        Route::post('/kyc/{id}/approve', [KycController::class, 'approve'])->name('kyc.approve');
+        Route::post('/kyc/{id}/reject', [KycController::class, 'reject'])->name('kyc.reject');
+        Route::delete('/kyc/{id}', [KycController::class, 'destroy'])->name('kyc.destroy');
+
+        // Support Tickets
+        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
+        Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
+        Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
+        Route::get('/tickets/{id}', [TicketController::class, 'show'])->name('tickets.show');
+        Route::post('/tickets/{id}/reply', [TicketController::class, 'reply'])->name('tickets.reply');
+        Route::post('/tickets/{id}/status', [TicketController::class, 'updateStatus'])->name('tickets.status');
+        Route::delete('/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
+
+        // Announcements
+        Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+        Route::post('/announcements', [AnnouncementController::class, 'store'])->name('announcements.store');
+        Route::put('/announcements/{id}', [AnnouncementController::class, 'update'])->name('announcements.update');
+        Route::post('/announcements/{id}/toggle', [AnnouncementController::class, 'toggleActive'])->name('announcements.toggle');
+        Route::delete('/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
+        // Settings
+        Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+
+        // Advanced Reports
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+        // Activity Log
+        Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
+
+        // User MLM Tree & Plan History
+        Route::get('/users/{id}/tree', [UserController::class, 'tree'])->name('users.tree');
+        Route::get('/users/{id}/plan-history', [UserController::class, 'planHistory'])->name('users.plan-history');
+        Route::post('/users/{id}/assign-plan', [UserController::class, 'assignPlan'])->name('users.assign-plan');
 
         // Charts & Tables
         Route::get('/charts', fn() => view('backend.charts.index'))->name('charts');

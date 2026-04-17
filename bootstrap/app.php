@@ -14,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // Schedule defined in routes/console.php via Schedule facade
     })
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'admin.auth'  => \App\Http\Middleware\AdminAuthenticate::class,
+            'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

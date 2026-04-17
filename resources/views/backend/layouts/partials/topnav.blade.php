@@ -27,10 +27,18 @@
                     <hr class="dropdown-divider" />
                 </li>
                 <li>
+                    <a class="dropdown-item" href="{{ route('admin.change.password') }}">
+                        <i class="fas fa-key me-2"></i>Change Password
+                    </a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider" />
+                </li>
+                <li>
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
                         <button type="submit" class="dropdown-item"><i
-                                class="fas fa-sign-out-alt me-2"></i>Logout1</button>
+                                class="fas fa-sign-out-alt me-2"></i>Logout</button>
                     </form>
                 </li>
             </ul>

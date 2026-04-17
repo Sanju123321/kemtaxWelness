@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\AdminEarning;
 use App\Models\Income;
+use App\Models\User;
 use App\Models\UserTree;
 use Illuminate\Support\Facades\DB;
 
@@ -65,7 +66,7 @@ class CommissionService
                 $totalEarned = $totalEarnedMap[$uplineUser->id] ?? 0;
                 $todayEarned = $todayEarnedMap[$uplineUser->id] ?? 0;
 
-                // Already hit total cap
+                // ── Already hit total cap — full amount goes to admin ──────────
                 if ($totalEarned >= $totalCap) {
                     Income::create([
                         'user_id'      => $uplineUser->id,
@@ -76,6 +77,15 @@ class CommissionService
                         'status'       => 'lost',
                         'remark'       => 'total_cap_exceeded',
                     ]);
+
+                    // Lost income → admin
+                    AdminEarning::create([
+                        'from_user_id'       => $userId,
+                        'beneficiary_user_id' => $uplineUser->id,
+                        'type'               => 'lost_capture',
+                        'amount'             => $grossIncome,
+                        'remark'             => "total_cap_exceeded for user {$uplineUser->id}",
+                    ]);
                     return;
                 }
 
@@ -83,7 +93,7 @@ class CommissionService
                 $remainingTotal = max(0, $totalCap - $totalEarned);
                 $creditable     = min($grossIncome, $remainingDaily, $remainingTotal);
 
-                // Nothing creditable today
+                // ── Nothing creditable today — full amount goes to admin ───────
                 if ($creditable <= 0) {
                     Income::create([
                         'user_id'      => $uplineUser->id,
@@ -94,12 +104,23 @@ class CommissionService
                         'status'       => 'lost',
                         'remark'       => 'daily_cap_exceeded',
                     ]);
+
+                    // Lost income → admin
+                    AdminEarning::create([
+                        'from_user_id'       => $userId,
+                        'beneficiary_user_id' => $uplineUser->id,
+                        'type'               => 'lost_capture',
+                        'amount'             => $grossIncome,
+                        'remark'             => "daily_cap_exceeded for user {$uplineUser->id}",
+                    ]);
                     return;
                 }
 
-                // Partial credit (split into credited + lost)
+                // ── Partial credit (split into credited + lost) ────────────────
                 if ($creditable < $grossIncome) {
-                    $lost = round($grossIncome - $creditable, 2);
+                    $lost            = round($grossIncome - $creditable, 2);
+                    $feeRate         = $this->getMaintenanceFeePercent() / 100;
+                    $maintenanceFee  = round($creditable * $feeRate, 2);
 
                     Income::create([
                         'user_id'      => $uplineUser->id,
@@ -121,12 +142,33 @@ class CommissionService
                         'remark'       => 'daily_cap_exceeded',
                     ]);
 
+                    // Lost portion → admin
+                    AdminEarning::create([
+                        'from_user_id'       => $userId,
+                        'beneficiary_user_id' => $uplineUser->id,
+                        'type'               => 'lost_capture',
+                        'amount'             => $lost,
+                        'remark'             => "partial cap exceeded for user {$uplineUser->id}",
+                    ]);
+
+                    // 10% maintenance fee on credited portion → admin
+                    AdminEarning::create([
+                        'from_user_id'       => $userId,
+                        'beneficiary_user_id' => $uplineUser->id,
+                        'type'               => 'maintenance_fee',
+                        'amount'             => $maintenanceFee,
+                        'remark'             => "10% fee on ₹{$creditable} credited to user {$uplineUser->id}",
+                    ]);
+
                     $uplineUser->increment('wallet_balance', $creditable);
                     $uplineUser->increment('total_earned', $creditable);
                     return;
                 }
 
-                // Full credit
+                // ── Full credit ────────────────────────────────────────────────
+                $feeRate        = $this->getMaintenanceFeePercent() / 100;
+                $maintenanceFee = round($grossIncome * $feeRate, 2);
+
                 Income::create([
                     'user_id'      => $uplineUser->id,
                     'from_user_id' => $userId,
@@ -137,6 +179,15 @@ class CommissionService
                     'remark'       => null,
                 ]);
 
+                // 10% maintenance fee on full credited amount → admin
+                AdminEarning::create([
+                    'from_user_id'       => $userId,
+                    'beneficiary_user_id' => $uplineUser->id,
+                    'type'               => 'maintenance_fee',
+                    'amount'             => $maintenanceFee,
+                    'remark'             => "10% fee on ₹{$grossIncome} credited to user {$uplineUser->id}",
+                ]);
+
                 $uplineUser->increment('wallet_balance', $grossIncome);
                 $uplineUser->increment('total_earned', $grossIncome);
             });
@@ -145,12 +196,26 @@ class CommissionService
 
     private function getPercent(int $level): float
     {
-        if ($level === 1)                              return 15;
-        if ($level === 2)                              return 10;
-        if ($level === 3)                              return 5;
-        if ($level === 4)                              return 5;
-        if ($level >= 5  && $level <= 10)              return 2;
-        if ($level >= 11 && $level <= 20)              return 1;
+        static $rates = null;
+
+        if ($rates === null) {
+            $rates = \App\Models\Setting::whereIn('key', [
+                'commission_l1', 'commission_l2', 'commission_l3', 'commission_l4',
+                'commission_l5_l10', 'commission_l11_l20',
+            ])->pluck('value', 'key')->toArray();
+        }
+
+        if ($level === 1) return (float)($rates['commission_l1']     ?? 15);
+        if ($level === 2) return (float)($rates['commission_l2']     ?? 10);
+        if ($level === 3) return (float)($rates['commission_l3']     ?? 5);
+        if ($level === 4) return (float)($rates['commission_l4']     ?? 5);
+        if ($level >= 5  && $level <= 10) return (float)($rates['commission_l5_l10']  ?? 2);
+        if ($level >= 11 && $level <= 20) return (float)($rates['commission_l11_l20'] ?? 1);
         return 0;
+    }
+
+    private function getMaintenanceFeePercent(): float
+    {
+        return (float)(\App\Models\Setting::getValue('maintenance_fee_percent', 10));
     }
 }

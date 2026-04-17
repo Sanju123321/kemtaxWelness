@@ -11273,3 +11273,163 @@ body {
     background-color: rgba(255, 255, 255, .1);
     border-radius: 4px;
 }
+
+/* ============================================
+   Responsive Fixes
+   ============================================ */
+
+/* Ensure content area fills height so footer sticks to bottom */
+#layoutSidenav_content {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 56px);
+}
+#layoutSidenav_content main {
+    flex: 1 0 auto;
+}
+footer.mt-auto {
+    flex-shrink: 0;
+}
+
+/* Fix sidebar padding-left on mobile (< 992px) so content isn't pushed right */
+@media (max-width: 991.98px) {
+    .sb-nav-fixed #layoutSidenav #layoutSidenav_content {
+        padding-left: 0 !important;
+    }
+    /* Reduce horizontal padding on mobile */
+    .container-fluid.px-4 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    /* Stack topnav brand and search sensibly */
+    .sb-topnav .navbar-brand {
+        font-size: 1rem;
+    }
+    /* Give breadcrumbs some breathing room */
+    .breadcrumb {
+        font-size: .85rem;
+    }
+}
+
+/* Table responsiveness */
+.table-responsive {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Make sure action buttons in tables don't wrap badly */
+.table td.text-nowrap,
+.table th.text-nowrap {
+    white-space: nowrap;
+}
+
+/* Card header responsive: stack buttons on very small screens */
+@media (max-width: 575.98px) {
+    .card-header.d-flex {
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+    .card-header .d-flex.gap-2 {
+        flex-wrap: wrap;
+    }
+    h1.mt-4 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Auth layout footer positioning */
+#layoutAuthentication {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+#layoutAuthentication_content {
+    flex: 1 0 auto;
+}
+#layoutAuthentication_footer {
+    flex-shrink: 0;
+}
+
+/* ── Laravel Bootstrap 5 Pagination ─────────────────────────── */
+.pagination {
+    flex-wrap: wrap;
+    gap: .2rem;
+    margin-bottom: 0;
+}
+.pagination .page-item .page-link {
+    border-radius: .375rem !important;
+    border: 1px solid #dee2e6;
+    color: #4f46e5;
+    font-size: .875rem;
+    min-width: 2.1rem;
+    text-align: center;
+    line-height: 1.5;
+    padding: .375rem .65rem;
+    transition: background .15s, border-color .15s, color .15s;
+}
+.pagination .page-item .page-link:hover {
+    background-color: #f0effe;
+    border-color: #4f46e5;
+    color: #3730a3;
+}
+.pagination .page-item.active .page-link {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(79,70,229,.35);
+}
+.pagination .page-item.disabled .page-link {
+    color: #adb5bd;
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    pointer-events: none;
+}
+/* Wrapper row shown below paginated tables */
+.pagination-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding-top: .75rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: .25rem;
+    font-size: .8125rem;
+    color: #6c757d;
+}
+
+/* SimpleDatatables overrides */
+.dataTable-wrapper .dataTable-container {
+    overflow-x: auto;
+}
+.dataTable-wrapper .dataTable-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .5rem 0;
+}
+.dataTable-wrapper .dataTable-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+    padding: .5rem 0;
+}
+@media (max-width: 575.98px) {
+    .dataTable-wrapper .dataTable-top,
+    .dataTable-wrapper .dataTable-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .dataTable-selector {
+        width: auto;
+    }
+}
+
+/* Row gutter fix for older Bootstrap usage */
+.row.g-3 > [class*="col-"] {
+    padding-top: 0;
+}
