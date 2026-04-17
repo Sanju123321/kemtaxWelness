@@ -15,6 +15,9 @@ use App\Models\Plan;
 use App\Models\UserPlan;
 use App\Models\Income;
 use App\Models\UserTree;
+use App\Models\Setting;
+use App\Models\WithdrawalRequest;
+use App\Services\RazorpayXService;
 use App\Jobs\DistributeIncomeJob;
 use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Storage;
@@ -29,7 +32,7 @@ class MemberController extends Controller{
 
 
 
-    public function createOrder(Request $request)
+public function createOrder(Request $request)
 {
     $request->validate([
         'amount' => 'required|numeric|min:1'
@@ -49,6 +52,40 @@ class MemberController extends Controller{
     return response()->json([
         'order_id' => $order['id'],
         'amount' => $request->amount * 100
+    ]);
+}
+
+public function createWalletTopupOrder(Request $request)
+{
+    $request->validate([
+        'amount' => 'required|numeric|min:100'
+    ]);
+
+    $user = auth()->user();
+
+    $api = new Api(
+        config('services.razorpay.key'),
+        config('services.razorpay.secret')
+    );
+
+    $amount = round((float) $request->amount, 2);
+    $order = $api->order->create([
+        'receipt' => 'wallet_topup_' . $user->id . '_' . time(),
+        'amount' => (int) round($amount * 100),
+        'currency' => 'INR',
+        'notes' => [
+            'purpose' => 'wallet_topup',
+            'user_id' => (string) $user->id,
+        ],
+    ]);
+
+    return response()->json([
+        'order_id' => $order['id'],
+        'amount' => (int) round($amount * 100),
+        'display_amount' => $amount,
+        'name' => $user->name,
+        'email' => $user->email,
+        'contact' => $user->phone,
     ]);
 }
   
@@ -166,7 +203,8 @@ public function verifyPayment(Request $request)
                 'status' => $paymentData->status,
                 'method' => $paymentData->method,
                 'email' => $paymentData->email,
-                'contact' => $paymentData->contact
+                'contact' => $paymentData->contact,
+                'purpose' => 'plan',
             ]);
 
             // ✅ Update user (ACTIVE PLAN)
@@ -208,6 +246,64 @@ public function verifyPayment(Request $request)
             'success' => false,
             'message' => $e->getMessage()
         ]);
+    }
+}
+
+public function verifyWalletTopupPayment(Request $request)
+{
+    $request->validate([
+        'razorpay_order_id' => 'required|string',
+        'razorpay_payment_id' => 'required|string',
+        'razorpay_signature' => 'required|string',
+    ]);
+
+    $api = new Api(
+        config('services.razorpay.key'),
+        config('services.razorpay.secret')
+    );
+
+    try {
+        DB::transaction(function () use ($request, $api) {
+            $api->utility->verifyPaymentSignature([
+                'razorpay_order_id' => $request->razorpay_order_id,
+                'razorpay_payment_id' => $request->razorpay_payment_id,
+                'razorpay_signature' => $request->razorpay_signature
+            ]);
+
+            $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+            $user = auth()->user();
+
+            if (Payment::where('payment_id', $paymentData->id)->exists()) {
+                return;
+            }
+
+            $amount = round($paymentData->amount / 100, 2);
+
+            Payment::create([
+                'user_id' => $user->id,
+                'payment_id' => $paymentData->id,
+                'order_id' => $paymentData->order_id,
+                'amount' => $amount,
+                'status' => $paymentData->status,
+                'method' => $paymentData->method,
+                'email' => $paymentData->email,
+                'contact' => $paymentData->contact,
+                'purpose' => 'wallet_topup',
+            ]);
+
+            if ($paymentData->status === 'captured') {
+                $user->increment('wallet_balance', $amount);
+            } else {
+                throw new \Exception('Wallet top-up payment is not captured.');
+            }
+        });
+
+        return response()->json(['success' => true]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage(),
+        ], 422);
     }
 }
 // public function webhook(Request $request)
@@ -457,10 +553,13 @@ public function saveBank(Request $request)
 
         $walletBalance = $user->wallet_balance ?? 0;
         $totalEarned   = $user->total_earned   ?? 0;
+        $repurchasePercent = 10;
+        $repurchaseWallet  = round($totalEarned * ($repurchasePercent / 100), 2);
 
         $plan     = $user->currentPlan;
         $dailyCap = $plan?->daily_cap  ?? 0;
         $totalCap = $plan?->total_cap  ?? 0;
+        $minWithdrawal = (float) Setting::getValue('min_withdrawal_amount', 500);
 
         // Today earnings (credited)
         $todayEarned = Income::where('user_id', $user->id)
@@ -474,24 +573,166 @@ public function saveBank(Request $request)
             ->whereDate('created_at', today())
             ->sum('amount');
 
-        // Recent wallet transactions (credited incomes)
-        $recentTransactions = Income::with('fromUser')
+        $creditedTransactionsCount = Income::where('user_id', $user->id)
+            ->where('status', 'credited')
+            ->count();
+
+        $pendingWithdrawalAmount = WithdrawalRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->sum('amount');
+        $openWithdrawalRequestAmount = WithdrawalRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->when(
+                $this->withdrawalsHavePayoutColumns(),
+                fn ($query) => $query->whereNull('razorpay_payout_id')
+            )
+            ->sum('amount');
+
+        $availableWithdrawalBalance = max(0, $walletBalance - $openWithdrawalRequestAmount);
+
+        $approvedWithdrawalAmount = WithdrawalRequest::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->sum('amount');
+
+        $lastTransactionAt = Income::where('user_id', $user->id)->latest()->value('created_at')
+            ?? WithdrawalRequest::where('user_id', $user->id)->latest()->value('created_at')
+            ?? now();
+
+        $recentIncomeTransactions = Income::with('fromUser')
             ->where('user_id', $user->id)
             ->where('status', 'credited')
             ->latest()
             ->take(10)
             ->get();
 
+        $recentWithdrawalTransactions = WithdrawalRequest::where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $recentTopups = Payment::where('user_id', $user->id)
+            ->where('purpose', 'wallet_topup')
+            ->where('status', 'captured')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $recentTransactions = $recentIncomeTransactions
+            ->map(function ($income) {
+                return [
+                    'kind'        => 'credit',
+                    'icon'        => $income->type === 'direct' ? 'fa-user-plus' : 'fa-layer-group',
+                    'title'       => $income->type === 'direct'
+                        ? 'Direct Referral'
+                        : 'Level ' . $income->level . ' Commission',
+                    'subtitle'    => 'From: ' . ($income->fromUser?->name ?? 'N/A'),
+                    'date'        => $income->created_at,
+                    'amount'      => (float) $income->amount,
+                    'status'      => 'credited',
+                    'status_text' => 'Credited',
+                ];
+            })
+            ->merge(
+                $recentWithdrawalTransactions->map(function ($withdrawal) {
+                    return [
+                        'kind'        => 'debit',
+                        'icon'        => 'fa-arrow-up',
+                        'title'       => 'Withdrawal Request',
+                        'subtitle'    => 'Method: ' . strtoupper($withdrawal->payment_method ?? 'bank'),
+                        'date'        => $withdrawal->created_at,
+                        'amount'      => (float) $withdrawal->amount,
+                        'status'      => $withdrawal->status,
+                        'status_text' => ucfirst($withdrawal->status),
+                    ];
+                })
+            )
+            ->merge(
+                $recentTopups->map(function ($payment) {
+                    return [
+                        'kind'        => 'credit',
+                        'icon'        => 'fa-plus-circle',
+                        'title'       => 'Wallet Top Up',
+                        'subtitle'    => 'Via ' . ucfirst($payment->method ?? 'Razorpay'),
+                        'date'        => $payment->created_at,
+                        'amount'      => (float) $payment->amount,
+                        'status'      => 'credited',
+                        'status_text' => 'Added',
+                    ];
+                })
+            )
+            ->sortByDesc('date')
+            ->take(12)
+            ->values();
+
         return view('frontend.member.wallet.index', compact(
             'walletBalance',
+            'repurchaseWallet',
+            'repurchasePercent',
             'totalEarned',
             'dailyCap',
             'totalCap',
             'todayEarned',
             'todayLost',
             'plan',
+            'minWithdrawal',
+            'creditedTransactionsCount',
+            'pendingWithdrawalAmount',
+            'availableWithdrawalBalance',
+            'approvedWithdrawalAmount',
+            'lastTransactionAt',
             'recentTransactions',
         ));
+    }
+
+    public function submitWithdrawal(Request $request, RazorpayXService $razorpayXService)
+    {
+        $user = auth()->user();
+        $minWithdrawal = (float) Setting::getValue('min_withdrawal_amount', 500);
+        $pendingWithdrawalAmount = WithdrawalRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->sum('amount');
+        $openWithdrawalRequestAmount = WithdrawalRequest::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->when(
+                $this->withdrawalsHavePayoutColumns(),
+                fn ($query) => $query->whereNull('razorpay_payout_id')
+            )
+            ->sum('amount');
+        $availableWithdrawalBalance = max(0, (float) $user->wallet_balance - $openWithdrawalRequestAmount);
+
+        $request->validate([
+            'amount' => ['required', 'numeric', 'min:' . $minWithdrawal],
+        ]);
+
+        if ($user->status === 'inactive') {
+            return back()->with('error', 'Inactive members cannot request withdrawals.');
+        }
+
+        if (!$user->bankDetail) {
+            return back()->with('error', 'Please save your bank details before requesting a withdrawal.');
+        }
+
+        if (!$razorpayXService->isConfigured()) {
+            return back()->with('error', 'RazorpayX payout configuration is incomplete. Add your RazorpayX account number first.');
+        }
+
+        if ((float) $request->amount > $availableWithdrawalBalance) {
+            return back()->with('error', 'Withdrawal amount exceeds your available main wallet balance.');
+        }
+
+        WithdrawalRequest::create([
+            'user_id' => $user->id,
+            'amount' => $request->amount,
+            'status' => 'pending',
+            'payment_method' => 'bank',
+            'account_holder' => $user->bankDetail->account_holder,
+            'account_number' => $user->bankDetail->account_number,
+            'ifsc' => $user->bankDetail->ifsc,
+            'bank_name' => $user->bankDetail->bank_name,
+            'upi_id' => $user->bankDetail->upi_id,
+        ]);
+
+        return back()->with('success', 'Withdrawal request submitted. Admin approval will trigger the RazorpayX test payout.');
     }
 
     /**
@@ -576,5 +817,12 @@ return back()->with('success', 'Profile photo updated');
     {
         return view('frontend.member.credentials.index');
     }
-}
 
+    private function withdrawalsHavePayoutColumns(): bool
+    {
+        return !empty(DB::select(
+            "select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1",
+            ['withdrawal_requests', 'razorpay_payout_id']
+        ));
+    }
+}

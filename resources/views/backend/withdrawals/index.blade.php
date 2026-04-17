@@ -10,15 +10,18 @@
     </ol>
 
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}<button type="button"
-                class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-success alert-dismissible fade show">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
     @if (session('error'))
-        <div class="alert alert-danger alert-dismissible fade show">{{ session('error') }}<button type="button"
-                class="btn-close" data-bs-dismiss="alert"></button></div>
+        <div class="alert alert-danger alert-dismissible fade show">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
     @endif
 
-    {{-- Stats --}}
     <div class="row g-3 mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card bg-warning text-white">
@@ -29,8 +32,7 @@
                     </div>
                     <i class="fas fa-clock fa-2x opacity-50"></i>
                 </div>
-                <div class="card-footer text-white small">₹{{ number_format($stats['total_pending'], 2) }} pending amount
-                </div>
+                <div class="card-footer text-white small">&#8377;{{ number_format($stats['total_pending'], 2) }} pending amount</div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
@@ -42,7 +44,7 @@
                     </div>
                     <i class="fas fa-check-circle fa-2x opacity-50"></i>
                 </div>
-                <div class="card-footer text-white small">₹{{ number_format($stats['total_approved'], 2) }} paid out</div>
+                <div class="card-footer text-white small">&#8377;{{ number_format($stats['total_approved'], 2) }} paid out</div>
             </div>
         </div>
         <div class="col-xl-3 col-md-6">
@@ -61,7 +63,7 @@
                 <div class="card-body d-flex align-items-center justify-content-between py-3">
                     <div>
                         <div class="small">Total Paid Out</div>
-                        <div class="fs-4 fw-bold">₹{{ number_format($stats['total_approved'], 2) }}</div>
+                        <div class="fs-4 fw-bold">&#8377;{{ number_format($stats['total_approved'], 2) }}</div>
                     </div>
                     <i class="fas fa-money-bill-wave fa-2x opacity-50"></i>
                 </div>
@@ -81,10 +83,12 @@
                         @endforeach
                     </select>
                 </form>
-                <a href="{{ route('admin.withdrawals.create') }}" class="btn btn-sm btn-primary"><i
-                        class="fas fa-plus me-1"></i>New</a>
-                <a href="{{ route('admin.withdrawals.export') }}" class="btn btn-sm btn-success"><i
-                        class="fas fa-file-csv me-1"></i>CSV</a>
+                <a href="{{ route('admin.withdrawals.create') }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>New
+                </a>
+                <a href="{{ route('admin.withdrawals.export') }}" class="btn btn-sm btn-success">
+                    <i class="fas fa-file-csv me-1"></i>CSV
+                </a>
             </div>
         </div>
         <div class="card-body p-0">
@@ -98,6 +102,7 @@
                             <th>Method</th>
                             <th>Payment Details</th>
                             <th>Status</th>
+                            <th>RazorpayX</th>
                             <th>Requested</th>
                             <th>Actions</th>
                         </tr>
@@ -107,17 +112,16 @@
                             <tr>
                                 <td>{{ $w->id }}</td>
                                 <td>
-                                    <div class="fw-semibold">{{ $w->user->name ?? '—' }}</div>
+                                    <div class="fw-semibold">{{ $w->user->name ?? '-' }}</div>
                                     <small class="text-muted">{{ $w->user->email ?? '' }}</small>
                                 </td>
-                                <td class="fw-bold text-success">₹{{ number_format($w->amount, 2) }}</td>
+                                <td class="fw-bold text-success">&#8377;{{ number_format($w->amount, 2) }}</td>
                                 <td><span class="badge bg-secondary">{{ strtoupper($w->payment_method) }}</span></td>
                                 <td>
                                     @if ($w->payment_method === 'upi')
                                         <small>{{ $w->upi_id }}</small>
                                     @else
-                                        <small>{{ $w->bank_name }} | {{ $w->account_number }}<br>IFSC:
-                                            {{ $w->ifsc }}</small>
+                                        <small>{{ $w->bank_name }} | {{ $w->account_number }}<br>IFSC: {{ $w->ifsc }}</small>
                                     @endif
                                 </td>
                                 <td>
@@ -129,63 +133,78 @@
                                         <span class="badge bg-danger">Rejected</span>
                                     @endif
                                 </td>
+                                <td>
+                                    @if ($w->razorpay_payout_id)
+                                        <div class="fw-semibold small">{{ strtoupper($w->payout_status ?? 'created') }}</div>
+                                        <div class="text-muted small">{{ $w->razorpay_payout_id }}</div>
+                                        @if ($w->utr)
+                                            <div class="text-muted small">UTR: {{ $w->utr }}</div>
+                                        @endif
+                                    @else
+                                        <span class="text-muted small">Not initiated</span>
+                                    @endif
+                                </td>
                                 <td><small>{{ $w->created_at->format('d M Y, h:i A') }}</small></td>
                                 <td>
-                                    @if ($w->status === 'pending')
+                                    @if ($w->status === 'pending' && !$w->razorpay_payout_id)
                                         <button class="btn btn-xs btn-success" data-bs-toggle="modal"
                                             data-bs-target="#approveModal{{ $w->id }}">
-                                            <i class="fas fa-check"></i> Approve
+                                            <i class="fas fa-check"></i> Pay via RazorpayX
                                         </button>
                                         <button class="btn btn-xs btn-danger" data-bs-toggle="modal"
                                             data-bs-target="#rejectModal{{ $w->id }}">
                                             <i class="fas fa-times"></i> Reject
                                         </button>
                                     @else
-                                        <small class="text-muted">{{ $w->admin_remark ?? '—' }}</small>
+                                        <small class="text-muted d-block">{{ $w->admin_remark ?? '-' }}</small>
+                                    @endif
+
+                                    @if ($w->razorpay_payout_id && in_array($w->payout_status, ['queued', 'processing', 'initiated']))
+                                        <form method="POST" action="{{ route('admin.withdrawals.sync', $w->id) }}" class="mt-1">
+                                            @csrf
+                                            <button type="submit" class="btn btn-xs btn-primary">
+                                                <i class="fas fa-sync"></i> Sync
+                                            </button>
+                                        </form>
                                     @endif
                                 </td>
                             </tr>
 
-                            {{-- Approve Modal --}}
-                            @if ($w->status === 'pending')
+                            @if ($w->status === 'pending' && !$w->razorpay_payout_id)
                                 <div class="modal fade" id="approveModal{{ $w->id }}" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <form method="POST" action="{{ route('admin.withdrawals.approve', $w->id) }}">
                                                 @csrf
                                                 <div class="modal-header bg-success text-white">
-                                                    <h5 class="modal-title">Approve Withdrawal #{{ $w->id }}</h5>
+                                                    <h5 class="modal-title">Start Payout #{{ $w->id }}</h5>
                                                     <button type="button" class="btn-close btn-close-white"
                                                         data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Approve <strong>₹{{ number_format($w->amount, 2) }}</strong> for
-                                                        <strong>{{ $w->user->name }}</strong>?</p>
-                                                    <p class="text-muted small">This will deduct the amount from their
-                                                        wallet balance.</p>
+                                                    <p>Initiate RazorpayX test payout of <strong>&#8377;{{ number_format($w->amount, 2) }}</strong> for <strong>{{ $w->user->name }}</strong>?</p>
+                                                    <p class="text-muted small mb-3">
+                                                        This will create a payout to the saved bank account and deduct the amount from the member's main wallet when the payout is initiated.
+                                                    </p>
                                                     <div class="mb-3">
                                                         <label class="form-label">Remark (optional)</label>
                                                         <input type="text" name="admin_remark" class="form-control"
-                                                            placeholder="e.g. Transferred via NEFT">
+                                                            placeholder="e.g. Test payout via RazorpayX">
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-success">Confirm
-                                                        Approve</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-success">Start Payout</button>
                                                 </div>
                                             </form>
                                         </div>
                                     </div>
                                 </div>
 
-                                {{-- Reject Modal --}}
                                 <div class="modal fade" id="rejectModal{{ $w->id }}" tabindex="-1">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form method="POST"
-                                                action="{{ route('admin.withdrawals.reject', $w->id) }}">
+                                            <form method="POST" action="{{ route('admin.withdrawals.reject', $w->id) }}">
                                                 @csrf
                                                 <div class="modal-header bg-danger text-white">
                                                     <h5 class="modal-title">Reject Withdrawal #{{ $w->id }}</h5>
@@ -193,18 +212,14 @@
                                                         data-bs-dismiss="modal"></button>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Reject withdrawal of
-                                                        <strong>₹{{ number_format($w->amount, 2) }}</strong> for
-                                                        <strong>{{ $w->user->name }}</strong>?</p>
+                                                    <p>Reject withdrawal of <strong>&#8377;{{ number_format($w->amount, 2) }}</strong> for <strong>{{ $w->user->name }}</strong>?</p>
                                                     <div class="mb-3">
-                                                        <label class="form-label">Reason <span
-                                                                class="text-danger">*</span></label>
+                                                        <label class="form-label">Reason <span class="text-danger">*</span></label>
                                                         <textarea name="admin_remark" class="form-control" rows="3" required placeholder="Provide a reason..."></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-danger">Confirm Reject</button>
                                                 </div>
                                             </form>
@@ -214,7 +229,7 @@
                             @endif
                         @empty
                             <tr>
-                                <td colspan="8" class="text-center text-muted py-4">No withdrawal requests found.</td>
+                                <td colspan="9" class="text-center text-muted py-4">No withdrawal requests found.</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -224,8 +239,7 @@
         @if ($withdrawals->hasPages())
             <div class="card-footer">
                 <div class="pagination-wrapper">
-                    <span class="text-muted small">Showing {{ $withdrawals->firstItem() }}–{{ $withdrawals->lastItem() }}
-                        of {{ $withdrawals->total() }}</span>
+                    <span class="text-muted small">Showing {{ $withdrawals->firstItem() }}-{{ $withdrawals->lastItem() }} of {{ $withdrawals->total() }}</span>
                     {{ $withdrawals->links() }}
                 </div>
             </div>

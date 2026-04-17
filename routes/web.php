@@ -114,6 +114,7 @@ Route::prefix('member')
         Route::get('/team/tree', [MemberController::class, 'treeJson'])->name('team.tree');
         Route::get('/setup', [MemberController::class, 'setup'])->name('setup');
         Route::get('/wallet', [MemberController::class, 'wallet'])->name('wallet');
+        Route::post('/wallet/withdraw', [MemberController::class, 'submitWithdrawal'])->name('wallet.withdraw');
         Route::get('/profile', [MemberController::class, 'profile'])->name('profile');
         Route::get('/credentials', [MemberController::class, 'credentials'])->name('credentials');
         Route::post('/profile/photo', [MemberController::class, 'updatePhoto'])->name('profile.photo');
@@ -126,8 +127,10 @@ Route::prefix('member')
 
         // Razorpay payment verification and plan activation
         Route::post('/create-order', [MemberController::class, 'createOrder'])->name('member.create.order');
+        Route::post('/wallet/create-order', [MemberController::class, 'createWalletTopupOrder'])->name('wallet.create.order');
         Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
         Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);
+        Route::post('/wallet/verify-payment', [MemberController::class, 'verifyWalletTopupPayment'])->name('wallet.verify.payment');
     });
 
 /*
@@ -223,6 +226,7 @@ Route::prefix('admin')
         Route::post('/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
         Route::post('/withdrawals/{id}/approve', [WithdrawalController::class, 'approve'])->name('withdrawals.approve');
         Route::post('/withdrawals/{id}/reject', [WithdrawalController::class, 'reject'])->name('withdrawals.reject');
+        Route::post('/withdrawals/{id}/sync', [WithdrawalController::class, 'sync'])->name('withdrawals.sync');
         Route::get('/withdrawals/export', [WithdrawalController::class, 'export'])->name('withdrawals.export');
 
         // KYC Verification

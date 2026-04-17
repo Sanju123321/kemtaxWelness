@@ -14,7 +14,7 @@ return new class extends Migration
             $table->string('action');
             $table->string('target_type')->nullable();
             $table->unsignedBigInteger('target_id')->nullable();
-            $table->json('details')->nullable();
+       $table->longText('details')->nullable();
             $table->string('ip', 45)->nullable();
             $table->timestamps();
 

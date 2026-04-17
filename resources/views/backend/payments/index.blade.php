@@ -9,14 +9,13 @@
         <li class="breadcrumb-item active">Payments</li>
     </ol>
 
-    <!-- Stats -->
     <div class="row g-3 mb-4">
         <div class="col-md-4 col-sm-6">
             <div class="card bg-success text-white h-100">
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
                         <div class="small text-white-50">Total Revenue</div>
-                        <div class="h4 mb-0 fw-bold">₹{{ number_format($totalRevenue, 2) }}</div>
+                        <div class="h4 mb-0 fw-bold">&#8377;{{ number_format($totalRevenue, 2) }}</div>
                     </div>
                     <i class="fas fa-rupee-sign fa-2x text-white-50"></i>
                 </div>
@@ -38,9 +37,7 @@
                 <div class="card-body d-flex align-items-center justify-content-between">
                     <div>
                         <div class="small text-white-50">Today's Payments</div>
-                        <div class="h4 mb-0 fw-bold">
-                            {{ \App\Models\Payment::whereDate('created_at', today())->count() }}
-                        </div>
+                        <div class="h4 mb-0 fw-bold">{{ \App\Models\Payment::whereDate('created_at', today())->count() }}</div>
                     </div>
                     <i class="fas fa-calendar-day fa-2x text-white-50"></i>
                 </div>
@@ -63,6 +60,7 @@
                             <th>#</th>
                             <th>Member</th>
                             <th>Payment ID</th>
+                            <th>Purpose</th>
                             <th>Amount</th>
                             <th>Method</th>
                             <th>Status</th>
@@ -78,11 +76,15 @@
                                     <small class="text-muted">{{ $payment->email ?? ($payment->user->email ?? '') }}</small>
                                 </td>
                                 <td><code class="small">{{ $payment->payment_id }}</code></td>
-                                <td><strong>₹{{ number_format($payment->amount, 2) }}</strong></td>
+                                <td>
+                                    <span class="badge bg-{{ ($payment->purpose ?? 'plan') === 'wallet_topup' ? 'info' : 'secondary' }}">
+                                        {{ ($payment->purpose ?? 'plan') === 'wallet_topup' ? 'Wallet Top Up' : 'Plan Purchase' }}
+                                    </span>
+                                </td>
+                                <td><strong>&#8377;{{ number_format($payment->amount, 2) }}</strong></td>
                                 <td>{{ ucfirst($payment->method ?? 'N/A') }}</td>
                                 <td>
-                                    <span
-                                        class="badge bg-{{ $payment->status === 'captured' ? 'success' : ($payment->status === 'failed' ? 'danger' : 'warning') }}">
+                                    <span class="badge bg-{{ $payment->status === 'captured' ? 'success' : ($payment->status === 'failed' ? 'danger' : 'warning') }}">
                                         {{ ucfirst($payment->status) }}
                                     </span>
                                 </td>
@@ -90,15 +92,14 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center text-muted py-4">No payments found.</td>
+                                <td colspan="8" class="text-center text-muted py-4">No payments found.</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
             <div class="pagination-wrapper">
-                <div>Showing {{ $payments->firstItem() }}–{{ $payments->lastItem() }} of {{ $payments->total() }} records
-                </div>
+                <div>Showing {{ $payments->firstItem() }}-{{ $payments->lastItem() }} of {{ $payments->total() }} records</div>
                 {{ $payments->links() }}
             </div>
         </div>
