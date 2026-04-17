@@ -87,7 +87,7 @@ class AdminAuthController extends Controller
         $admin = Admin::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'], // Model's 'hashed' cast handles hashing
         ]);
 
         Auth::guard('admin')->login($admin);
@@ -134,7 +134,7 @@ class AdminAuthController extends Controller
             return back()->withErrors(['current_password' => 'Current password is incorrect.']);
         }
 
-        $admin->update(['password' => Hash::make($request->password)]);
+        $admin->update(['password' => $request->password]); // Model cast handles hashing
 
         return back()->with('success', 'Password changed successfully.');
     }
@@ -190,7 +190,7 @@ class AdminAuthController extends Controller
                     ->withErrors(['email' => 'Account not found.']);
             }
 
-            $admin->update(['password' => Hash::make($request->password)]);
+            $admin->update(['password' => $request->password]); // Model cast handles hashing
             $request->session()->forget('reset_email');
 
             return redirect()->route('admin.login')

@@ -93,7 +93,7 @@
                         class="card-header {{ $reply->is_admin ? 'bg-success text-white' : 'bg-light' }} d-flex justify-content-between">
                         <span>
                             @if ($reply->is_admin)
-                                <i class="fas fa-user-shield me-1"></i> Admin
+                                <i class="fas fa-user-shield me-1"></i> {{ $reply->admin->name ?? 'Admin' }}
                             @else
                                 <i class="fas fa-user me-1"></i> {{ $reply->user->name ?? 'Member' }}
                             @endif

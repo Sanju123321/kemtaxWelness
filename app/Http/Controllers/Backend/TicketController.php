@@ -60,8 +60,8 @@ class TicketController extends Controller
 
     public function show(string $id)
     {
-        $ticket  = Ticket::with(['user', 'replies.user'])->findOrFail($id);
-        $replies = $ticket->replies()->with('user')->orderBy('created_at')->get();
+        $ticket  = Ticket::with(['user', 'replies.user', 'replies.admin'])->findOrFail($id);
+        $replies = $ticket->replies()->with(['user', 'admin'])->orderBy('created_at')->get();
 
         return view('backend.tickets.show', compact('ticket', 'replies'));
     }

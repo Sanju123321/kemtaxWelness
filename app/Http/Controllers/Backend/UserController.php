@@ -145,7 +145,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Prevent blocking a non-existent admin (admin is in separate table now)
+        // Toggle user active/blocked status
         $user->status = ($user->status === 'active') ? 'inactive' : 'active';
         $user->save();
 

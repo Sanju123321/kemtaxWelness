@@ -12,7 +12,8 @@ class Plan extends Model
         'price',
         'base_value',
         'daily_cap',
-        'total_cap'
+        'total_cap',
+        'is_active',
     ];
 
     // 🔗 Users having this as current plan
