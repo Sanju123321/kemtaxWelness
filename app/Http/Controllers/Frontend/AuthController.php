@@ -31,7 +31,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $credentials = $request->validate([
-             'phone' => 'required|digits:10',
+            'user_id' => 'required',
             'password' => ['required'],
         ]);
 
@@ -57,27 +57,27 @@ class AuthController extends Controller
     /**
      * Handle registration request.
      */
-    public function register(Request $request)
+    public function register(Request $request, SmsService $sms)
     {
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
-            'email'          => ['required', 'email', ],
-            'phone'          => ['nullable', 'string', 'max:20', 'unique:users,phone'],
+            'email'          => ['required', 'email',],
+            'phone'          => ['nullable', 'string', 'max:20'],
             'reference_code' => ['nullable', 'string', 'max:50'],
             'password'       => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $verification = PhoneVerification::where('phone', $request->phone)
-    ->where('is_verified', 1)
-    ->first();
+            ->where('is_verified', 1)
+            ->first();
 
-            if (!$verification) {
-                return back()->withErrors([
-                    'phone' => 'Please verify OTP before registration'
-                ]);
-            }
+        if (!$verification) {
+            return back()->withErrors([
+                'phone' => 'Please verify OTP before registration'
+            ]);
+        }
         // Check if reference code exists (if provided)
-       // ✅ Generate UNIQUE USER ID
+        // ✅ Generate UNIQUE USER ID
         do {
             $userId = 'KMW' . strtoupper(Str::random(6));
         } while (User::where('user_id', $userId)->exists());
@@ -91,7 +91,7 @@ class AuthController extends Controller
         if (!empty($validated['reference_code'])) {
             $referrer = User::where('reference_code', $validated['reference_code'])
                 ->first();
-            
+
             if ($referrer) {
                 $referredBy = $referrer->id;
             }
@@ -108,44 +108,50 @@ class AuthController extends Controller
         ]);
 
         Auth::login($user);
- $this->buildTree($user);
+        $this->buildTree($user);
         // Redirect based on reference code
         if (!empty($validated['reference_code'])) {
             return redirect()->route('member.dashboard')
                 ->with('success', 'Welcome! Please complete your plan payment to activate your account.');
         }
+        $message = "Welcome to Kemtex Wellness!\n" .
+            "User ID: " . $userId . "\n" .
+            "Use your password to login.Thank you for joining us!";
 
+        if ($user->phone) {
+            $sms->sendSMS( $user->phone, $message);
+        }
         return redirect()->route('member.dashboard')
             ->with('success', 'Welcome to Kemtex Wellness! Your account has been created successfully.');
     }
 
-public function buildTree($user)
-{
-    $sponsor = User::find($user->referred_by);
+    public function buildTree($user)
+    {
+        $sponsor = User::find($user->referred_by);
 
-    $level = 1;
+        $level = 1;
 
-    while ($sponsor && $level <= 20) {
+        while ($sponsor && $level <= 20) {
 
-        UserTree::create([
-            'user_id' => $user->id,
-            'upline_id' => $sponsor->id,
-            'level' => $level,
-        ]);
+            UserTree::create([
+                'user_id' => $user->id,
+                'upline_id' => $sponsor->id,
+                'level' => $level,
+            ]);
 
- $sponsor = User::find($sponsor->referred_by);
-         $level++;
+            $sponsor = User::find($sponsor->referred_by);
+            $level++;
+        }
     }
-}
     // Check if phone number is already registered
-    public function checkPhone(Request $request)
-{
-    $exists =User::where('phone', $request->phone)->exists();
+//     public function checkPhone(Request $request)
+// {
+//     $exists =User::where('phone', $request->phone)->exists();
 
-    return response()->json([
-        'exists' => $exists
-    ]);
-}
+//     return response()->json([
+//         'exists' => $exists
+//     ]);
+// }
     /**
      * Show forgot password form.
      */
@@ -185,94 +191,93 @@ public function buildTree($user)
      * Send OTP to phone number.
      */
     public function sendOtp(Request $request, SmsService $sms)
-{
-    $request->validate([
-        'phone' => ['required', 'digits:10'],
-    ]);
-
-    try {
-        $otp = rand(100000, 999999);
-
-        $verification = PhoneVerification::updateOrCreate(
-            ['phone' => $request->phone],
-            [
-                'otp' => $otp,
-                'is_verified' => false,
-                'expires_at' => now()->addMinutes(10)
-            ]
-        );
-        $sms->sendOTP($request->phone, $otp);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'OTP sent successfully',
-            'phone' => $request->phone
+    {
+        $request->validate([
+            'phone' => ['required', 'digits:10'],
         ]);
 
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to send OTP'
-        ], 500);
+        try {
+            $otp = rand(100000, 999999);
+
+            $verification = PhoneVerification::updateOrCreate(
+                ['phone' => $request->phone],
+                [
+                    'otp' => $otp,
+                    'is_verified' => false,
+                    'expires_at' => now()->addMinutes(10)
+                ]
+            );
+            $sms->sendOTP($request->phone, $otp);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OTP sent successfully',
+                'phone' => $request->phone
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send OTP'
+            ], 500);
+        }
     }
-}
 
-public function verifyOtp(Request $request)
-{
-    $record = PhoneVerification::where('phone', $request->phone)
-        ->where('otp', $request->otp)
-        ->where('expires_at', '>', now())
-        ->first();
+    public function verifyOtp(Request $request)
+    {
+        $record = PhoneVerification::where('phone', $request->phone)
+            ->where('otp', $request->otp)
+            ->where('expires_at', '>', now())
+            ->first();
 
-    if (!$record) {
+        if (!$record) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid or expired OTP'
+            ]);
+        }
+
+        $record->update([
+            'is_verified' => true
+        ]);
+
         return response()->json([
-            'success' => false,
-            'message' => 'Invalid or expired OTP'
+            'success' => true
         ]);
     }
 
-    $record->update([
-        'is_verified' => true
-    ]);
-
-    return response()->json([
-        'success' => true
-    ]);
-}
 
 
 
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required',
+            'password' => 'required|confirmed|min:6'
+        ]);
 
-public function resetPassword(Request $request)
-{
-    $request->validate([
-        'phone' => 'required',
-        'password' => 'required|confirmed|min:6'
-    ]);
+        // ✅ Check if phone is verified
+        $record = PhoneVerification::where('phone', $request->phone)
+            ->where('is_verified', true)
+            ->first();
 
-    // ✅ Check if phone is verified
-    $record = PhoneVerification::where('phone', $request->phone)
-        ->where('is_verified', true)
-        ->first();
+        if (!$record) {
+            return back()->withErrors(['otp' => 'OTP not verified']);
+        }
 
-    if (!$record) {
-        return back()->withErrors(['otp' => 'OTP not verified']);
+        // ✅ Find user
+        $user = User::where('phone', $request->phone)->first();
+
+        if (!$user) {
+            return back()->withErrors(['phone' => 'User not found']);
+        }
+
+        // ✅ Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        // ✅ Clean OTP record
+        $record->delete();
+
+        return redirect('/login')->with('success', 'Password reset successful');
     }
-
-    // ✅ Find user
-    $user = User::where('phone', $request->phone)->first();
-
-    if (!$user) {
-        return back()->withErrors(['phone' => 'User not found']);
-    }
-
-    // ✅ Update password
-    $user->password = Hash::make($request->password);
-    $user->save();
-
-    // ✅ Clean OTP record
-    $record->delete();
-
-    return redirect('/login')->with('success', 'Password reset successful');
-}
 }
