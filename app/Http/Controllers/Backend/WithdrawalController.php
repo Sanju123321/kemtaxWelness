@@ -51,7 +51,7 @@ class WithdrawalController extends Controller
             $withdrawal->update([
                 'status'       => 'approved',
                 'admin_remark' => $request->admin_remark,
-                'processed_by' => Auth::id(),
+                'processed_by' => auth('admin')->id(),
                 'processed_at' => now(),
             ]);
 
@@ -79,7 +79,7 @@ class WithdrawalController extends Controller
         $withdrawal->update([
             'status'       => 'rejected',
             'admin_remark' => $request->admin_remark,
-            'processed_by' => Auth::id(),
+            'processed_by' => auth('admin')->id(),
             'processed_at' => now(),
         ]);
 
@@ -94,8 +94,7 @@ class WithdrawalController extends Controller
 
     public function create()
     {
-        $users = User::where('email', '!=', 'admin@kemtex.com')
-            ->orderBy('name')
+        $users = User::orderBy('name')
             ->get(['id', 'name', 'email', 'wallet_balance']);
 
         return view('backend.withdrawals.create', compact('users'));

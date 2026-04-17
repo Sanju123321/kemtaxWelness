@@ -13,7 +13,7 @@ class CheckMaintenanceMode
     public function handle(Request $request, Closure $next): Response
     {
         // Admin users bypass maintenance mode
-        if (Auth::check() && Auth::user()->email === 'admin@kemtex.com') {
+        if (Auth::guard('admin')->check()) {
             return $next($request);
         }
 

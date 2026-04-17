@@ -17,7 +17,6 @@ class DashboardController extends Controller
         // Member Growth: signups per month this year
         $growthRaw = User::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
             ->whereYear('created_at', $year)
-            ->where('email', '!=', 'admin@kemtex.com')
             ->groupBy('month')
             ->pluck('total', 'month')
             ->toArray();

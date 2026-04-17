@@ -35,7 +35,7 @@ class KycController extends Controller
 
     public function create()
     {
-        $users = User::where('email', '!=', 'admin@kemtex.com')->orderBy('name')->get(['id', 'name', 'email']);
+        $users = User::orderBy('name')->get(['id', 'name', 'email']);
         return view('backend.kyc.create', compact('users'));
     }
 
@@ -51,7 +51,7 @@ class KycController extends Controller
 
         $data = $validated;
         if ($validated['status'] === 'verified') {
-            $data['verified_by'] = Auth::id();
+            $data['verified_by'] = auth('admin')->id();
             $data['verified_at'] = now();
         }
 
@@ -67,7 +67,7 @@ class KycController extends Controller
         $kyc->update([
             'status'      => 'verified',
             'admin_note'  => $request->admin_note,
-            'verified_by' => Auth::id(),
+            'verified_by' => auth('admin')->id(),
             'verified_at' => now(),
         ]);
 
@@ -88,7 +88,7 @@ class KycController extends Controller
         $kyc->update([
             'status'      => 'rejected',
             'admin_note'  => $request->admin_note,
-            'verified_by' => Auth::id(),
+            'verified_by' => auth('admin')->id(),
             'verified_at' => now(),
         ]);
 

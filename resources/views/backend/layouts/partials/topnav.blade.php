@@ -19,10 +19,13 @@
             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="fas fa-user fa-fw"></i>
-                @auth {{ Auth::user()->name }} @endauth
+                @auth('admin')
+                    {{ auth('admin')->user()->name }}
+                @endauth
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><span class="dropdown-item-text small text-muted">{{ Auth::user()->email ?? '' }}</span></li>
+                <li><span class="dropdown-item-text small text-muted">{{ auth('admin')->user()->email ?? '' }}</span>
+                </li>
                 <li>
                     <hr class="dropdown-divider" />
                 </li>

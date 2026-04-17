@@ -37,7 +37,7 @@ class TicketController extends Controller
 
     public function create()
     {
-        $users = \App\Models\User::where('email', '!=', 'admin@kemtex.com')->orderBy('name')->get(['id', 'name', 'email']);
+        $users = \App\Models\User::orderBy('name')->get(['id', 'name', 'email']);
         return view('backend.tickets.create', compact('users'));
     }
 
@@ -74,7 +74,7 @@ class TicketController extends Controller
 
         TicketReply::create([
             'ticket_id' => $ticket->id,
-            'user_id'   => Auth::id(),
+            'admin_id'  => auth('admin')->id(),
             'message'   => $request->message,
             'is_admin'  => true,
         ]);

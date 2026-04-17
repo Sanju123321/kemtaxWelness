@@ -24,6 +24,6 @@ class WithdrawalRequest extends Model
 
     public function processedBy()
     {
-        return $this->belongsTo(User::class, 'processed_by');
+        return $this->belongsTo(Admin::class, 'processed_by');
     }
 }

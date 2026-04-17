@@ -194,7 +194,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (\App\Models\User::where('email', '!=', 'admin@kemtex.com')->latest()->take(10)->get() as $user)
+                        @foreach (\App\Models\User::latest()->take(10)->get() as $user)
                             <tr>
                                 <td>{{ $user->id }}</td>
                                 <td>{{ $user->name }}</td>

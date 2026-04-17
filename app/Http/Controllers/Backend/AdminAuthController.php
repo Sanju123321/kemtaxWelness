@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Backend;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -48,7 +48,7 @@ class AdminAuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
             RateLimiter::clear($throttleKey);
             $request->session()->regenerate();
 
@@ -80,17 +80,17 @@ class AdminAuthController extends Controller
     {
         $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users,email'],
+            'email'    => ['required', 'email', 'unique:admins,email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $admin = Admin::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
+        Auth::guard('admin')->login($admin);
 
         return redirect()->route('admin.dashboard')
             ->with('success', 'Admin account created successfully.');
@@ -101,7 +101,7 @@ class AdminAuthController extends Controller
      */
     public function logout(Request $request)
     {
-        Auth::logout();
+        Auth::guard('admin')->logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
@@ -128,7 +128,7 @@ class AdminAuthController extends Controller
             'password'         => ['required', 'confirmed', 'min:8'],
         ]);
 
-        $admin = Auth::user();
+        $admin = Auth::guard('admin')->user();
 
         if (!Hash::check($request->current_password, $admin->password)) {
             return back()->withErrors(['current_password' => 'Current password is incorrect.']);
@@ -155,9 +155,9 @@ class AdminAuthController extends Controller
         if ($request->input('step') === 'verify_email') {
             $request->validate(['email' => ['required', 'email']]);
 
-            $user = User::where('email', $request->email)->first();
+            $admin = Admin::where('email', $request->email)->first();
 
-            if (!$user) {
+            if (!$admin) {
                 return back()->withErrors(['email' => 'No admin account found with this email address.']);
             }
 
@@ -182,15 +182,15 @@ class AdminAuthController extends Controller
                     ->withErrors(['email' => 'Session expired. Please start again.']);
             }
 
-            $user = User::where('email', $resetEmail)->first();
+            $admin = Admin::where('email', $resetEmail)->first();
 
-            if (!$user) {
+            if (!$admin) {
                 $request->session()->forget('reset_email');
                 return redirect()->route('admin.forgot.password')
                     ->withErrors(['email' => 'Account not found.']);
             }
 
-            $user->update(['password' => Hash::make($request->password)]);
+            $admin->update(['password' => Hash::make($request->password)]);
             $request->session()->forget('reset_email');
 
             return redirect()->route('admin.login')

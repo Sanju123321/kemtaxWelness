@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::where('email', '!=', 'admin@kemtex.com')->latest()->get();
+        $users = User::latest()->get();
 
         return view('backend.users.index', compact('users'));
     }
@@ -145,11 +145,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Prevent blocking the admin account
-        if ($user->email === 'admin@kemtex.com') {
-            return redirect()->back()->with('error', 'Cannot change admin status.');
-        }
-
+        // Prevent blocking a non-existent admin (admin is in separate table now)
         $user->status = ($user->status === 'active') ? 'inactive' : 'active';
         $user->save();
 

@@ -14,7 +14,7 @@ class ActivityLogger
         array  $details    = []
     ): void {
         AdminActivityLog::create([
-            'admin_id'    => Auth::id(),
+            'admin_id'    => auth('admin')->id(),
             'action'      => $action,
             'target_type' => $targetType,
             'target_id'   => $targetId,

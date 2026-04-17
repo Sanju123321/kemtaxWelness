@@ -16,15 +16,13 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         // Top 20 earners
-        $topEarners = User::where('email', '!=', 'admin@kemtex.com')
-            ->where('total_earned', '>', 0)
+        $topEarners = User::where('total_earned', '>', 0)
             ->orderByDesc('total_earned')
             ->limit(20)
             ->get(['id', 'name', 'email', 'total_earned', 'wallet_balance', 'has_plan']);
 
         // Inactive members (registered but no plan)
-        $inactiveMembers = User::where('email', '!=', 'admin@kemtex.com')
-            ->where(function ($q) {
+        $inactiveMembers = User::where(function ($q) {
                 $q->where('has_plan', 0)->orWhereNull('has_plan');
             })
             ->latest()
@@ -52,8 +50,7 @@ class ReportController extends Controller
             ->get();
 
         // Member growth (last 12 months)
-        $memberGrowth = User::where('email', '!=', 'admin@kemtex.com')
-            ->where('created_at', '>=', now()->subMonths(12))
+        $memberGrowth = User::where('created_at', '>=', now()->subMonths(12))
             ->selectRaw("DATE_FORMAT(created_at, '%Y-%m') as month, COUNT(*) as count")
             ->groupBy('month')
             ->orderBy('month')

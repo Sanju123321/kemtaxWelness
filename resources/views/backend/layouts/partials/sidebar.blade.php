@@ -170,7 +170,9 @@
         </div>
         <div class="sb-sidenav-footer">
             <div class="small">Logged in as:</div>
-            @auth {{ Auth::user()->name }} @endauth
+            @auth('admin')
+                {{ auth('admin')->user()->name }}
+            @endauth
         </div>
     </nav>
 </div>
