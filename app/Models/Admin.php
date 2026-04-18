@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
+use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class Admin extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, CanResetPassword;
 
     protected $guard = 'admin';
 
@@ -27,5 +29,18 @@ class Admin extends Authenticatable
         return [
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Override the reset password notification to point to the admin reset route.
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        ResetPasswordNotification::createUrlUsing(function ($notifiable, $token) {
+            return route('admin.reset.password', ['token' => $token])
+                . '?email=' . urlencode($notifiable->email);
+        });
+
+        $this->notify(new ResetPasswordNotification($token));
     }
 }

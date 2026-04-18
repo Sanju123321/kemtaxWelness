@@ -8,6 +8,7 @@ use App\Http\Controllers\Frontend\WishlistController;
 use App\Http\Controllers\Frontend\BlogController;
 use App\Http\Controllers\Frontend\AuthController;
 use App\Http\Controllers\Frontend\MemberController;
+use App\Http\Controllers\Frontend\MemberKycController;
 use App\Http\Controllers\Backend\AdminEarningController;
 use App\Http\Controllers\Backend\DashboardController;
 use App\Http\Controllers\Backend\UserController;
@@ -22,6 +23,8 @@ use App\Http\Controllers\Backend\TicketController;
 use App\Http\Controllers\Backend\AnnouncementController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\ContactMessageController;
+use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\ActivityLogController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -105,7 +108,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 */
 Route::prefix('member')
     ->name('member.')
-    ->middleware(['maintenance', 'auth'])
+    ->middleware(['maintenance', 'auth', 'kyc.verified'])
     ->group(function () {
 
         Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
@@ -131,6 +134,11 @@ Route::prefix('member')
         Route::post('/razorpay/webhook', [MemberController::class, 'webhook']);
         Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);
         Route::post('/wallet/verify-payment', [MemberController::class, 'verifyWalletTopupPayment'])->name('wallet.verify.payment');
+
+        // Member KYC Documents
+        Route::get('/kyc', [MemberKycController::class, 'index'])->name('kyc.index');
+        Route::post('/kyc', [MemberKycController::class, 'store'])->name('kyc.store');
+        Route::delete('/kyc/{id}', [MemberKycController::class, 'destroy'])->name('kyc.destroy');
     });
 
 /*
@@ -160,6 +168,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/forgot-password', [AdminAuthController::class, 'showForgotPassword'])->name('forgot.password');
     Route::post('/forgot-password', [AdminAuthController::class, 'forgotPassword'])->name('forgot.password.post');
+    Route::get('/reset-password/{token}', [AdminAuthController::class, 'showResetPassword'])->name('reset.password');
+    Route::post('/reset-password', [AdminAuthController::class, 'resetPassword'])->name('reset.password.post');
 });
 
 /*
@@ -235,7 +245,22 @@ Route::prefix('admin')
         Route::post('/kyc', [KycController::class, 'store'])->name('kyc.store');
         Route::post('/kyc/{id}/approve', [KycController::class, 'approve'])->name('kyc.approve');
         Route::post('/kyc/{id}/reject', [KycController::class, 'reject'])->name('kyc.reject');
+        Route::patch('/kyc/{id}/status', [KycController::class, 'updateStatus'])->name('kyc.status');
         Route::delete('/kyc/{id}', [KycController::class, 'destroy'])->name('kyc.destroy');
+
+        // Blog Posts
+        Route::get('/posts', [PostController::class, 'index'])->name('posts.index');
+        Route::get('/posts/create', [PostController::class, 'create'])->name('posts.create');
+        Route::post('/posts', [PostController::class, 'store'])->name('posts.store');
+        Route::get('/posts/{id}/edit', [PostController::class, 'edit'])->name('posts.edit');
+        Route::put('/posts/{id}', [PostController::class, 'update'])->name('posts.update');
+        Route::patch('/posts/{id}/toggle', [PostController::class, 'toggleStatus'])->name('posts.toggle');
+        Route::delete('/posts/{id}', [PostController::class, 'destroy'])->name('posts.destroy');
+
+        // Contact Messages (from public contact form)
+        Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact.index');
+        Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])->name('contact.show');
+        Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy'])->name('contact.destroy');
 
         // Support Tickets
         Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');

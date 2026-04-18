@@ -7,6 +7,7 @@ use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
@@ -148,55 +149,57 @@ class AdminAuthController extends Controller
     }
 
     /**
-     * Handle forgot password — two-step: verify email, then reset password.
+     * Send password reset link to admin email.
      */
     public function forgotPassword(Request $request)
     {
-        if ($request->input('step') === 'verify_email') {
-            $request->validate(['email' => ['required', 'email']]);
+        $request->validate(['email' => ['required', 'email']]);
 
-            $admin = Admin::where('email', $request->email)->first();
+        $status = Password::broker('admins')->sendResetLink(
+            $request->only('email')
+        );
 
-            if (!$admin) {
-                return back()->withErrors(['email' => 'No admin account found with this email address.']);
-            }
-
-            // Store verified email in session for step 2
-            $request->session()->put('reset_email', $request->email);
-
-            return back()->with('success', 'Email verified. Please set your new password.');
+        if ($status === Password::RESET_LINK_SENT) {
+            return back()->with('success', 'A password reset link has been sent to your email address.');
         }
 
-        if ($request->input('step') === 'reset_password') {
-            $request->validate([
-                'email'    => ['required', 'email'],
-                'password' => ['required', 'confirmed', 'min:8'],
-            ]);
+        return back()->withErrors(['email' => __($status)]);
+    }
 
-            $resetEmail = $request->session()->get('reset_email');
+    /**
+     * Show the reset password form (from the email link).
+     */
+    public function showResetPassword(Request $request, string $token)
+    {
+        return view('backend.auth.reset-password', [
+            'token' => $token,
+            'email' => $request->query('email', ''),
+        ]);
+    }
 
-            // Ensure the posted email matches the session-verified one
-            if (!$resetEmail || $resetEmail !== $request->email) {
-                $request->session()->forget('reset_email');
-                return redirect()->route('admin.forgot.password')
-                    ->withErrors(['email' => 'Session expired. Please start again.']);
+    /**
+     * Handle the new password submission.
+     */
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token'    => ['required'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $status = Password::broker('admins')->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function (Admin $admin, string $password) {
+                $admin->forceFill(['password' => $password])->save();
             }
+        );
 
-            $admin = Admin::where('email', $resetEmail)->first();
-
-            if (!$admin) {
-                $request->session()->forget('reset_email');
-                return redirect()->route('admin.forgot.password')
-                    ->withErrors(['email' => 'Account not found.']);
-            }
-
-            $admin->update(['password' => $request->password]); // Model cast handles hashing
-            $request->session()->forget('reset_email');
-
+        if ($status === Password::PASSWORD_RESET) {
             return redirect()->route('admin.login')
-                ->with('success', 'Password updated successfully. Please login with your new password.');
+                ->with('success', 'Password reset successfully. Please log in.');
         }
 
-        return redirect()->route('admin.forgot.password');
+        return back()->withErrors(['email' => __($status)]);
     }
 }

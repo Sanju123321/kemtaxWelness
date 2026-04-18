@@ -609,6 +609,14 @@
             class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
             <i class="fas fa-award nav-icon"></i> My Achievements
         </a>
+        <div class="nav-label">Account</div>
+        <a href="{{ route('member.kyc.index') }}" class="{{ request()->routeIs('member.kyc*') ? 'active' : '' }}">
+            <i class="fas fa-id-card nav-icon"></i> KYC Documents
+        </a>
+        <a href="{{ route('member.profile') }}"
+            class="{{ request()->routeIs('member.profile') ? 'active' : '' }}">
+            <i class="fas fa-user-edit nav-icon"></i> My Profile
+        </a>
         <div class="nav-label">More</div>
 
         <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">

@@ -34,85 +34,57 @@
             </div>
 
             <div class="row">
-                @php
-                    $posts = [
-                        [
-                            'title' => 'How to Build a 1000-Person Network in 90 Days',
-                            'date' => 'January 15, 2026',
-                            'cat' => 'Network Building',
-                            'excerpt' =>
-                                'Discover the proven strategies our top distributors use to rapidly expand their networks while maintaining quality relationships.',
-                            'img' => 'blog-1.jpg',
-                        ],
-                        [
-                            'title' => 'Top 5 Wellness Products That Sell Themselves',
-                            'date' => 'January 10, 2026',
-                            'cat' => 'Products',
-                            'excerpt' =>
-                                'Learn which products generate the most repeat orders and why customers love them. Your commission income depends on product retention.',
-                            'img' => 'blog-2.jpg',
-                        ],
-                        [
-                            'title' => 'From ₹0 to ₹1L Monthly: A Distributor\'s Journey',
-                            'date' => 'January 5, 2026',
-                            'cat' => 'Success Stories',
-                            'excerpt' =>
-                                'Read how Anita went from a homemaker to earning ₹1 lakh per month using our step-by-step system and dedicated mentorship.',
-                            'img' => 'blog-3.jpg',
-                        ],
-                        [
-                            'title' => 'Understanding the 20-Level Income Structure',
-                            'date' => 'December 28, 2025',
-                            'cat' => 'Education',
-                            'excerpt' =>
-                                'A detailed breakdown of how commissions flow through 20 levels in our compensation plan and strategies to maximize every level.',
-                            'img' => 'blog-4.jpg',
-                        ],
-                        [
-                            'title' => 'Social Media Strategies for MLM Success in 2026',
-                            'date' => 'December 20, 2025',
-                            'cat' => 'Marketing',
-                            'excerpt' =>
-                                'Master Instagram, WhatsApp, and YouTube to attract quality leads and build your network faster than ever before.',
-                            'img' => 'blog-5.jpg',
-                        ],
-                        [
-                            'title' => 'The Science Behind Our Immunity Booster Kit',
-                            'date' => 'December 15, 2025',
-                            'cat' => 'Health',
-                            'excerpt' =>
-                                'Explore the research and ingredients behind our best-selling immunity product and why customers reorder month after month.',
-                            'img' => 'blog-6.jpg',
-                        ],
-                    ];
-                @endphp
-                @foreach ($posts as $post)
+                @forelse ($posts as $post)
                     <div class="col-lg-4 col-md-6 mb-5">
                         <div class="post-item">
-                            <div class="post-thumb mb-3"
-                                style="height:200px;background:#f0f4f8;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                                <i class="ti-write text-color" style="font-size:4rem;opacity:.3;"></i>
+                            <div class="post-thumb mb-3" style="height:200px;border-radius:8px;overflow:hidden;">
+                                @if ($post->featured_image)
+                                    <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}"
+                                        style="width:100%;height:100%;object-fit:cover;">
+                                @else
+                                    <div
+                                        style="width:100%;height:100%;background:#f0f4f8;display:flex;align-items:center;justify-content:center;">
+                                        <i class="ti-write text-color" style="font-size:4rem;opacity:.3;"></i>
+                                    </div>
+                                @endif
                             </div>
                             <div class="post-content">
                                 <div class="post-meta mb-2">
-                                    <span class="badge badge-light text-color mr-2">{{ $post['cat'] }}</span>
-                                    <span class="text-muted small">{{ $post['date'] }}</span>
+                                    <span class="badge badge-light text-color mr-2">{{ $post->category }}</span>
+                                    <span class="text-muted small">{{ $post->published_at?->format('d M Y') }}</span>
                                 </div>
-                                <h5 class="mb-3"><a href="{{ route('blog') }}" class="text-dark">{{ $post['title'] }}</a>
+                                <h5 class="mb-3">
+                                    <a href="{{ route('blog.show', $post->slug) }}"
+                                        class="text-dark">{{ $post->title }}</a>
                                 </h5>
-                                <p class="text-muted">{{ $post['excerpt'] }}</p>
-                                <a href="{{ route('blog') }}"
+                                @if ($post->excerpt)
+                                    <p class="text-muted">{{ $post->excerpt }}</p>
+                                @endif
+                                <a href="{{ route('blog.show', $post->slug) }}"
                                     class="btn btn-small btn-solid-border btn-round-full mt-2">Read More</a>
                             </div>
                         </div>
                     </div>
-                @endforeach
+                @empty
+                    <div class="col-12 text-center py-5">
+                        <i class="ti-write text-color" style="font-size:4rem;opacity:.3;"></i>
+                        <p class="text-muted mt-3">No posts published yet. Check back soon!</p>
+                    </div>
+                @endforelse
             </div>
 
-            <div class="text-center mt-4">
-                <p class="text-muted">Ready to start your own success story?</p>
-                <a href="{{ route('pricing') }}" class="btn btn-main btn-round-full">Join Now</a>
-            </div>
+            @if ($posts->hasPages())
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-center">
+                        {{ $posts->links() }}
+                    </div>
+                </div>
+            @else
+                <div class="text-center mt-4">
+                    <p class="text-muted">Ready to start your own success story?</p>
+                    <a href="{{ route('pricing') }}" class="btn btn-main btn-round-full">Join Now</a>
+                </div>
+            @endif
         </div>
     </section>
 

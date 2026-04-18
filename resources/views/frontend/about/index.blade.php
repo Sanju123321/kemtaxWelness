@@ -74,7 +74,8 @@
                 <div class="col-lg-4 col-md-6 col-sm-6">
                     <div class="about-info-item mb-4 mb-lg-0">
                         <h3 class="mb-3"><span class="text-color mr-2 text-md">03.</span>Our Approach</h3>
-                        <p>At KemtexWellness, we unite wellness and entrepreneurship. Our MLM model empowers individuals to
+                        <p>At KemtexWellness, we unite wellness and entrepreneurship. Our direct selling model empowers
+                            individuals to
                             build businesses, earn
                             through teamwork, and promote healthier living with integrity, innovation, and community
                             support.</p>

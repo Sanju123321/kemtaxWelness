@@ -2,6 +2,14 @@
 
 @section('title', 'KYC Verification')
 
+@push('styles')
+    <style>
+        .table td {
+            vertical-align: middle;
+        }
+    </style>
+@endpush
+
 @section('content')
     <h1 class="mt-4">KYC Verification</h1>
     <ol class="breadcrumb mb-4">
@@ -113,27 +121,89 @@
                                 </td>
                                 <td><small>{{ $doc->admin_note ?? '—' }}</small></td>
                                 <td><small>{{ $doc->created_at->format('d M Y') }}</small></td>
-                                <td>
-                                    @if ($doc->status === 'pending')
-                                        <button class="btn btn-xs btn-success" data-bs-toggle="modal"
-                                            data-bs-target="#approveKyc{{ $doc->id }}">
-                                            <i class="fas fa-check"></i>
-                                        </button>
-                                        <button class="btn btn-xs btn-danger" data-bs-toggle="modal"
-                                            data-bs-target="#rejectKyc{{ $doc->id }}">
-                                            <i class="fas fa-times"></i>
+                                <td class="text-nowrap">
+                                    {{-- View file --}}
+                                    @if ($doc->file_path)
+                                        <a href="{{ Storage::url($doc->file_path) }}" target="_blank"
+                                            class="btn btn-sm btn-outline-info" title="View Document">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    @endif
+
+                                    {{-- Verify (only when not already verified) --}}
+                                    @if ($doc->status !== 'verified')
+                                        <form method="POST" action="{{ route('admin.kyc.status', $doc->id) }}"
+                                            class="d-inline">
+                                            @csrf @method('PATCH')
+                                            <input type="hidden" name="status" value="verified">
+                                            <button type="submit" class="btn btn-sm btn-success" title="Verify">
+                                                <i class="fas fa-check me-1"></i>Verify
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- Reject (only when not already rejected) --}}
+                                    @if ($doc->status !== 'rejected')
+                                        <button type="button" class="btn btn-sm btn-danger" title="Reject"
+                                            data-bs-toggle="modal" data-bs-target="#rejectKyc{{ $doc->id }}">
+                                            <i class="fas fa-times me-1"></i>Reject
                                         </button>
                                     @endif
+
+                                    {{-- Set Pending (only when verified or rejected) --}}
+                                    @if ($doc->status !== 'pending')
+                                        <form method="POST" action="{{ route('admin.kyc.status', $doc->id) }}"
+                                            class="d-inline">
+                                            @csrf @method('PATCH')
+                                            <input type="hidden" name="status" value="pending">
+                                            <button type="submit" class="btn btn-sm btn-warning text-dark"
+                                                title="Set Pending">
+                                                <i class="fas fa-clock me-1"></i>Pending
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    {{-- Delete --}}
                                     <form method="POST" action="{{ route('admin.kyc.destroy', $doc->id) }}"
                                         class="d-inline" onsubmit="return confirm('Delete this KYC record?')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-xs btn-outline-danger"><i
-                                                class="fas fa-trash"></i></button>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
 
-                            @if ($doc->status === 'pending')
+                            {{-- Reject Modal (always available) --}}
+                            <div class="modal fade" id="rejectKyc{{ $doc->id }}" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form method="POST" action="{{ route('admin.kyc.status', $doc->id) }}">
+                                            @csrf @method('PATCH')
+                                            <input type="hidden" name="status" value="rejected">
+                                            <div class="modal-header bg-danger text-white">
+                                                <h5 class="modal-title">Reject KYC</h5>
+                                                <button type="button" class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Reason <span
+                                                            class="text-danger">*</span></label>
+                                                    <textarea name="admin_note" class="form-control" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Reject</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- (legacy approve/reject modals placeholder removed) --}}
+                            @if (false)
                                 {{-- Approve --}}
                                 <div class="modal fade" id="approveKyc{{ $doc->id }}" tabindex="-1">
                                     <div class="modal-dialog">
@@ -147,7 +217,8 @@
                                                 </div>
                                                 <div class="modal-body">
                                                     <p>Verify <strong>{{ strtoupper($doc->doc_type) }}</strong> for
-                                                        <strong>{{ $doc->user->name }}</strong>?</p>
+                                                        <strong>{{ $doc->user->name }}</strong>?
+                                                    </p>
                                                     <input type="text" name="admin_note" class="form-control"
                                                         placeholder="Note (optional)">
                                                 </div>
@@ -155,34 +226,6 @@
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal">Cancel</button>
                                                     <button type="submit" class="btn btn-success">Verify</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {{-- Reject --}}
-                                <div class="modal fade" id="rejectKyc{{ $doc->id }}" tabindex="-1">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <form method="POST" action="{{ route('admin.kyc.reject', $doc->id) }}">
-                                                @csrf
-                                                <div class="modal-header bg-danger text-white">
-                                                    <h5 class="modal-title">Reject KYC</h5>
-                                                    <button type="button" class="btn-close btn-close-white"
-                                                        data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Reason <span
-                                                                class="text-danger">*</span></label>
-                                                        <textarea name="admin_note" class="form-control" rows="3" required></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary"
-                                                        data-bs-dismiss="modal">Cancel</button>
-                                                    <button type="submit" class="btn btn-danger">Reject</button>
                                                 </div>
                                             </form>
                                         </div>

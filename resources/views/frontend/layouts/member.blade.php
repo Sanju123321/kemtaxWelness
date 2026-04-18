@@ -153,6 +153,10 @@
                                                 style="font-size:13px;">
                                                 <i class="fas fa-user-cog mr-2 text-color"></i>Profile
                                             </a>
+                                            <a class="dropdown-item" href="{{ route('member.kyc.index') }}"
+                                                style="font-size:13px;">
+                                                <i class="fas fa-id-card mr-2 text-color"></i>KYC Documents
+                                            </a>
                                             <a class="dropdown-item" href="{{ route('products') }}"
                                                 style="font-size:13px;">
                                                 <i class="fas fa-shopping-bag mr-2 text-color"></i>Shop Products
@@ -302,7 +306,7 @@
                                     } else {
                                         alert('Payment failed: ' + (res.message ||
                                             'Unknown error. Please contact support.'
-                                            ));
+                                        ));
                                     }
                                 });
                             }

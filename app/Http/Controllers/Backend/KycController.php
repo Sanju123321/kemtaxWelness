@@ -100,6 +100,39 @@ class KycController extends Controller
         return redirect()->back()->with('success', 'KYC document rejected.');
     }
 
+    public function updateStatus(Request $request, string $id)
+    {
+        $validated = $request->validate([
+            'status'     => 'required|in:pending,verified,rejected',
+            'admin_note' => 'nullable|string|max:500',
+        ]);
+
+        if ($validated['status'] === 'rejected') {
+            $request->validate(['admin_note' => 'required|string|max:500']);
+        }
+
+        $kyc = KycDocument::with('user')->findOrFail($id);
+
+        $data = [
+            'status'     => $validated['status'],
+            'admin_note' => $validated['admin_note'] ?? null,
+        ];
+
+        if ($validated['status'] === 'verified') {
+            $data['verified_by'] = auth('admin')->id();
+            $data['verified_at'] = now();
+        }
+
+        $kyc->update($data);
+
+        ActivityLogger::log('kyc_status_changed', 'KycDocument', $kyc->id, [
+            'user'   => $kyc->user->name ?? '',
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()->back()->with('success', 'KYC status updated to ' . ucfirst($validated['status']) . '.');
+    }
+
     public function destroy(string $id)
     {
         KycDocument::findOrFail($id)->delete();

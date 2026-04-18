@@ -100,6 +100,26 @@
                     @endif
                 </a>
 
+                <div class="sb-sidenav-menu-heading">Content</div>
+
+                {{-- Blog Posts --}}
+                <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePosts"
+                    aria-expanded="{{ request()->routeIs('admin.posts*') ? 'true' : 'false' }}"
+                    aria-controls="collapsePosts">
+                    <div class="sb-nav-link-icon"><i class="fas fa-blog"></i></div>
+                    Blog Posts
+                    <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                </a>
+                <div class="collapse {{ request()->routeIs('admin.posts*') ? 'show' : '' }}" id="collapsePosts"
+                    aria-labelledby="headingPosts" data-bs-parent="#sidenavAccordion">
+                    <nav class="sb-sidenav-menu-nested nav">
+                        <a class="nav-link {{ request()->routeIs('admin.posts.index') ? 'active' : '' }}"
+                            href="{{ route('admin.posts.index') }}">All Posts</a>
+                        <a class="nav-link {{ request()->routeIs('admin.posts.create') ? 'active' : '' }}"
+                            href="{{ route('admin.posts.create') }}">New Post</a>
+                    </nav>
+                </div>
+
                 <div class="sb-sidenav-menu-heading">Compliance</div>
 
                 {{-- KYC --}}
@@ -114,6 +134,17 @@
                 </a>
 
                 <div class="sb-sidenav-menu-heading">Support</div>
+
+                {{-- Contact Messages --}}
+                <a class="nav-link {{ request()->routeIs('admin.contact*') ? 'active' : '' }}"
+                    href="{{ route('admin.contact.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>
+                    Contact Messages
+                    @php $unreadMsgs = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
+                    @if ($unreadMsgs > 0)
+                        <span class="badge bg-danger ms-auto">{{ $unreadMsgs }}</span>
+                    @endif
+                </a>
 
                 {{-- Tickets --}}
                 <a class="nav-link {{ request()->routeIs('admin.tickets*') ? 'active' : '' }}"

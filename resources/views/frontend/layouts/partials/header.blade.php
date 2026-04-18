@@ -1,19 +1,12 @@
 <header class="navigation">
     <div class="header-top">
         <div class="container">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-lg-2 col-md-4">
-                    <div class="header-top-socials text-center text-lg-left text-md-left">
-                        <a href="https://www.facebook.com/" aria-label="facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="https://twitter.com/" aria-label="twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="https://github.com/" aria-label="github"><i class="fab fa-github"></i></a>
-                    </div>
-                </div>
-                <div class="col-lg-10 col-md-8 text-center text-lg-right text-md-right">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-lg-12 col-md-12 text-center text-lg-right text-md-right">
                     <div class="header-top-info mb-2 mb-md-0">
                         <a href="tel:+91-456-6588">Call Us : <span>+91-456-6588</span></a>
-                        <a href="mailto:kemtexwellness@gmail.com"><i
-                                class="fas fa-envelope mr-2"></i><span>kemtexwellness@gmail.com</span></a>
+                        <a href="mailto:support@kemtexwellness.com"><i
+                                class="fas fa-envelope mr-2"></i><span>support@kemtexwellness.com</span></a>
                     </div>
                 </div>
             </div>

@@ -169,7 +169,7 @@
                         <div class="sidebar-widget bg-white rounded tags p-4 mb-3">
                             <h5 class="mb-4">Tags</h5>
                             <a href="#">Wellness</a>
-                            <a href="#">MLM</a>
+                            <a href="#">Ayurveda</a>
                             <a href="#">Network</a>
                             <a href="#">Income</a>
                             <a href="#">Training</a>

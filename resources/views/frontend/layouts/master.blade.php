@@ -6,7 +6,8 @@
     <title>@yield('title', 'KemtexWellness')</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="KemtexWellness - Build Your Wellness Empire & Earn Unlimited Income">
+    <meta name="description"
+        content="KemtexWellness – Authentic Ayurvedic Products for Vaat, Pitta & Kapha Balance. 100% Natural, FSSAI Certified.">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-name" content="megakit" />
 
@@ -23,7 +24,7 @@
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}">
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('frontend/images/favicon.png') }}" type="image/x-icon">
-@livewireStyles
+    @livewireStyles
     @stack('styles')
 </head>
 
@@ -55,7 +56,7 @@
     @yield('scripts')
 
     <script src="{{ asset('frontend/js/script.js') }}"></script>
-@livewireScripts
+    @livewireScripts
 </body>
 
 </html>

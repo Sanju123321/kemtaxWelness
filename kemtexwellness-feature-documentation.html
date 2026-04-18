@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body{font-family:Calibri,Arial,sans-serif;font-size:11pt;margin:2cm;}
+h1{font-size:18pt;color:#1f4e79;border-bottom:3px solid #1f4e79;padding-bottom:6px;}
+h2{font-size:14pt;color:#2e74b5;margin-top:24px;border-bottom:1px solid #bdd6ee;padding-bottom:4px;}
+h3{font-size:12pt;color:#404040;margin-top:14px;}
+table{border-collapse:collapse;width:100%;margin:10px 0 20px;}
+th{background:#1f4e79;color:#fff;padding:7px 10px;text-align:left;font-size:10pt;}
+td{padding:6px 10px;border:1px solid #bdd6ee;font-size:10pt;vertical-align:top;}
+tr:nth-child(even) td{background:#dbe5f1;}
+.gap{color:#c00000;font-weight:bold;}
+.done{color:#375623;}
+.warn{color:#7f6000;}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:9pt;font-weight:bold;}
+.badge-admin{background:#fce4d6;color:#c00000;}
+.badge-frontend{background:#e2efda;color:#375623;}
+.badge-both{background:#fff2cc;color:#7f6000;}
+.badge-public{background:#dae8fc;color:#003366;}
+p{margin:6px 0;}
+</style>
+</head>
+<body>
+
+<h1>KemtexWellness &mdash; Feature Implementation Documentation</h1>
+<p><strong>Project:</strong> KemtexWellness MLM Platform &nbsp;|&nbsp; <strong>Framework:</strong> Laravel 12 &nbsp;|&nbsp; <strong>Date:</strong> April 18, 2026</p>
+
+<!-- ===== SECTION 1 ===== -->
+<h2>1. Master Summary &mdash; Feature Status by Side</h2>
+<table>
+<tr><th>Feature</th><th>Admin / Backend</th><th>Member / Frontend</th><th>Public</th><th>Status</th></tr>
+<tr><td>Authentication (login / register / forgot / reset)</td><td class="done">&#10003; Full</td><td class="done">&#10003; Full (phone OTP)</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>Dashboard</td><td class="done">&#10003; Charts (growth, revenue)</td><td class="done">&#10003; Stats, caps, cart, wishlist</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>User Management (CRUD, toggle, export)</td><td class="done">&#10003; Full</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Plan Management (CRUD, export)</td><td class="done">&#10003; Full</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Plan Purchase / Upgrade (Razorpay)</td><td>&mdash;</td><td class="done">&#10003; Full</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Products (CRUD, browse, filter, detail)</td><td class="done">&#10003; Full</td><td class="done">&#10003; Browse + detail</td><td class="done">&#10003; Public browse</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>Cart (add, update, remove)</td><td>&mdash;</td><td class="done">&#10003; AJAX/JSON</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Wishlist (toggle, remove)</td><td>&mdash;</td><td class="done">&#10003; AJAX/JSON</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Wallet (balance, topup, transactions)</td><td>&mdash;</td><td class="done">&#10003; Full</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Withdrawal Requests</td><td class="done">&#10003; Full (approve/reject/RazorpayX)</td><td class="done">&#10003; Submit only</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>KYC Verification</td><td class="done">&#10003; Full (create/approve/reject)</td><td class="gap">&#10007; Not implemented</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY &mdash; GAP</span></td></tr>
+<tr><td>Support Tickets</td><td class="done">&#10003; Full (CRUD, reply, status)</td><td class="gap">&#10007; Not implemented</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY &mdash; GAP</span></td></tr>
+<tr><td>Announcements</td><td class="done">&#10003; Full (CRUD, toggle, expire)</td><td class="done">&#10003; Display only</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>Income / Commissions</td><td class="done">&#10003; List + export</td><td class="done">&#10003; AJAX / dashboard view</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>Admin Earnings (lost income capture)</td><td class="done">&#10003; Full</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Payments Log</td><td class="done">&#10003; List + export</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Reports</td><td class="done">&#10003; Full (6 report types)</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Site Settings</td><td class="done">&#10003; Full</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>Activity Log</td><td class="done">&#10003; Full</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN ONLY</span></td></tr>
+<tr><td>MLM Genealogy Tree</td><td class="done">&#10003; Per-user admin view</td><td class="done">&#10003; Own tree (JSON)</td><td>&mdash;</td><td><span class="badge badge-both">BOTH</span></td></tr>
+<tr><td>Profile (update, photo, password, bank)</td><td>&mdash;</td><td class="done">&#10003; Full</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Credentials / Achievements</td><td>&mdash;</td><td class="done">&#10003; View</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Home / About / Services / Portfolio</td><td>&mdash;</td><td>&mdash;</td><td class="done">&#10003; Public</td><td><span class="badge badge-public">PUBLIC</span></td></tr>
+<tr><td>Blog</td><td>&mdash;</td><td>&mdash;</td><td class="warn">&#9888; Scaffolded, no DB model yet</td><td><span class="badge badge-public">PUBLIC &mdash; INCOMPLETE</span></td></tr>
+<tr><td>Contact Form</td><td>&mdash;</td><td>&mdash;</td><td class="warn">&#9888; Form exists, email send TODO</td><td><span class="badge badge-public">PUBLIC &mdash; INCOMPLETE</span></td></tr>
+<tr><td>Pricing Page</td><td>&mdash;</td><td>&mdash;</td><td class="done">&#10003; Public</td><td><span class="badge badge-public">PUBLIC</span></td></tr>
+<tr><td>SMS / OTP (registration)</td><td>&mdash;</td><td class="done">&#10003; Twilio</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+<tr><td>Cap Warning Email Notification</td><td class="done">&#10003; Class exists</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN-TRIGGERED</span></td></tr>
+<tr><td>Maintenance Mode</td><td class="done">&#10003; Bypass (always accessible)</td><td class="done">&#10003; Blocked when on</td><td class="done">&#10003; Blocked when on</td><td><span class="badge badge-both">BOTH</span></td></tr>
+</table>
+
+<!-- ===== SECTION 2 ===== -->
+<h2>2. Admin-Only Features (Not Available to Members)</h2>
+<table>
+<tr><th>Feature</th><th>Route Prefix</th><th>Operations Available</th></tr>
+<tr><td><strong>User Management</strong></td><td>/admin/users</td><td>List, Create, Edit, Delete, Export CSV, Toggle Active/Inactive/Blocked, View Income History, View MLM Tree, View Plan History, Assign Plan</td></tr>
+<tr><td><strong>Plan Management</strong></td><td>/admin/plans</td><td>List, Create, Edit, Delete, Export CSV</td></tr>
+<tr><td><strong>KYC Verification</strong></td><td>/admin/kyc</td><td>List (filter by status &amp; doc type), Create, Approve (with activity log), Reject (requires note), Delete. Doc types: Aadhaar, PAN, Selfie, Other</td></tr>
+<tr><td><strong>Support Tickets</strong></td><td>/admin/tickets</td><td>List (filter by status &amp; priority), Create on behalf of member, Show full thread, Admin reply (auto sets status to in_progress), Change status (open / in_progress / resolved / closed), Delete</td></tr>
+<tr><td><strong>Announcements</strong></td><td>/admin/announcements</td><td>List, Create, Update, Toggle Active/Inactive, Delete. Targets: all / active / inactive / with_plan / without_plan. Types: info / warning / success / danger</td></tr>
+<tr><td><strong>Payments Log</strong></td><td>/admin/payments</td><td>List all Razorpay payments (plan + wallet topup), Total revenue summary, Export CSV</td></tr>
+<tr><td><strong>Admin Earnings (Lost Capture)</strong></td><td>/admin/admin-earnings</td><td>List lost-capture &amp; maintenance-fee earnings with totals, Export CSV</td></tr>
+<tr><td><strong>Reports</strong></td><td>/admin/reports</td><td>Top 20 earners, Inactive members (no plan), Revenue by plan, Monthly commissions (12 months), Level distribution, Member growth (12 months)</td></tr>
+<tr><td><strong>Site Settings</strong></td><td>/admin/settings</td><td>View &amp; batch-update all key-value settings grouped by category (min withdrawal amount, maintenance mode, etc.)</td></tr>
+<tr><td><strong>Activity Log</strong></td><td>/admin/activity-log</td><td>View all admin audit trail: user block/unblock, KYC approve/reject, ticket status change, withdrawal approve/reject, settings update</td></tr>
+</table>
+
+<!-- ===== SECTION 3 ===== -->
+<h2>3. Member-Only Features (Not in Admin)</h2>
+<table>
+<tr><th>Feature</th><th>Route Prefix</th><th>Operations Available</th></tr>
+<tr><td><strong>Plan Purchase / Upgrade</strong></td><td>/member/create-order<br>/member/verify-payment</td><td>Create Razorpay order, Verify payment, Auto-activate plan, Trigger MLM income distribution job</td></tr>
+<tr><td><strong>Wallet Topup</strong></td><td>/member/wallet/create-order<br>/member/wallet/verify-payment</td><td>Create Razorpay order for wallet topup, Verify &amp; credit wallet balance</td></tr>
+<tr><td><strong>Profile Management</strong></td><td>/member/profile</td><td>Update personal info (name, email, phone, city, state, pincode), Upload profile photo, Change password, Save bank details (account no, IFSC, bank name, UPI)</td></tr>
+<tr><td><strong>Credentials / Achievements</strong></td><td>/member/credentials</td><td>View achievements page</td></tr>
+<tr><td><strong>Cart</strong></td><td>/cart</td><td>Add item, Update quantity, Remove item, View cart (AJAX/JSON only)</td></tr>
+<tr><td><strong>Wishlist</strong></td><td>/wishlist</td><td>Toggle product (add/remove), Remove item, View wishlist (AJAX/JSON only)</td></tr>
+<tr><td><strong>SMS / OTP (Registration)</strong></td><td>/send-otp, /verify-otp, /check-phone</td><td>Send OTP to phone via Twilio, Verify OTP code, Check phone uniqueness before registration</td></tr>
+</table>
+
+<!-- ===== SECTION 4 ===== -->
+<h2>4. Gaps &mdash; Admin Features NOT Yet Available to Members</h2>
+<p>These features are fully built on the admin side but have no corresponding frontend routes or views for members.</p>
+<table>
+<tr><th>Feature</th><th>Admin Status</th><th>Member Status</th><th>What Needs to Be Built for Members</th></tr>
+<tr>
+  <td><strong>Support Tickets</strong></td>
+  <td class="done">&#10003; Fully implemented (CRUD, reply, status management)</td>
+  <td class="gap">&#10007; No routes or views</td>
+  <td>
+    - Member ticket creation form (subject, category, priority, message)<br>
+    - Member ticket list page (view own tickets with status)<br>
+    - Ticket thread/detail page<br>
+    - Member reply form
+  </td>
+</tr>
+<tr>
+  <td><strong>KYC Self-Submission</strong></td>
+  <td class="done">&#10003; Admin can create, approve, reject KYC docs</td>
+  <td class="gap">&#10007; No routes or views</td>
+  <td>
+    - Member KYC upload form (Aadhaar, PAN, selfie, other)<br>
+    - Doc number input + file upload<br>
+    - Member KYC status page (show pending/verified/rejected with notes)
+  </td>
+</tr>
+<tr>
+  <td><strong>Contact Form Email</strong></td>
+  <td>&mdash;</td>
+  <td class="warn">&#9888; Form exists, Mail::to() is TODO in PageController</td>
+  <td>Implement actual email sending in PageController::contactSend()</td>
+</tr>
+<tr>
+  <td><strong>Blog (DB-driven)</strong></td>
+  <td>&mdash;</td>
+  <td class="warn">&#9888; Static views only; no Post model</td>
+  <td>Create Post model + migration + admin CRUD, connect BlogController to DB</td>
+</tr>
+<tr>
+  <td><strong>Recently Viewed Products</strong></td>
+  <td>&mdash;</td>
+  <td class="warn">&#9888; Tracked in DB (RecentlyViewed model) but never displayed</td>
+  <td>Show recently viewed section on member dashboard or product listing page</td>
+</tr>
+<tr>
+  <td><strong>Razorpay Webhook</strong></td>
+  <td>&mdash;</td>
+  <td class="warn">&#9888; Route exists but handler is commented out</td>
+  <td>Implement webhook handler for async payment confirmation from Razorpay</td>
+</tr>
+</table>
+
+<!-- ===== SECTION 5 ===== -->
+<h2>5. Detailed Feature Breakdown</h2>
+
+<h3>5.1 Authentication</h3>
+<table>
+<tr><th>Operation</th><th>Admin (/admin)</th><th>Member (/)</th></tr>
+<tr><td>Login</td><td>&#10003; Email + Password (rate-limited: 5 attempts/min)</td><td>&#10003; User ID (KMW######) + Password</td></tr>
+<tr><td>Register</td><td>&#10003; Admin creates other admin accounts</td><td>&#10003; With phone OTP verification + referral code</td></tr>
+<tr><td>Forgot Password</td><td>&#10003; Email reset link via GoDaddy SMTP</td><td>&#10003; Phone OTP-based reset</td></tr>
+<tr><td>Reset Password</td><td>&#10003; /admin/reset-password/{token}</td><td>&#10003; Via phone OTP verification</td></tr>
+<tr><td>Change Password</td><td>&#10003; While logged in (/admin/change-password)</td><td>&#10003; From member profile page</td></tr>
+<tr><td>Logout</td><td>&#10003;</td><td>&#10003;</td></tr>
+</table>
+
+<h3>5.2 MLM / Commission System</h3>
+<table>
+<tr><th>Aspect</th><th>Detail</th></tr>
+<tr><td>Tree Structure</td><td>UserTree model: user_id, upline_id, level. Unlimited depth. Built automatically on member registration.</td></tr>
+<tr><td>Income Distribution</td><td>DistributeIncomeJob dispatched async on plan activation. Walks up tree distributing commission to each upline based on plan base_value and level multipliers.</td></tr>
+<tr><td>Daily Cap</td><td>Per-plan setting. Excess income is "lost" and absorbed as AdminEarning (type: lost_capture).</td></tr>
+<tr><td>Total Cap (Lifetime)</td><td>Per-plan setting. Once hit, no more income credited. Admin absorbs overflow.</td></tr>
+<tr><td>Repurchase Wallet</td><td>10% of total_earned deducted and stored as repurchase balance for shopping.</td></tr>
+<tr><td>Admin View</td><td>/admin/incomes — full paginated list with earner and from-member details, export CSV</td></tr>
+<tr><td>Member View</td><td>/member/commissions — AJAX paginated JSON, displayed as commission table on dashboard</td></tr>
+</table>
+
+<h3>5.3 Withdrawal &amp; RazorpayX Payout Flow</h3>
+<table>
+<tr><th>Step</th><th>Who</th><th>Detail</th></tr>
+<tr><td>1. Submit withdrawal request</td><td>Member</td><td>POST /member/wallet/withdraw. Validated: active status required, bank details must be saved, RazorpayX must be configured, amount &gt;= min_withdrawal, sufficient available balance.</td></tr>
+<tr><td>2. Approve request</td><td>Admin</td><td>POST /admin/withdrawals/{id}/approve. Creates RazorpayX Contact &rarr; Fund Account &rarr; Payout. Deducts from member wallet_balance.</td></tr>
+<tr><td>3. Reject request</td><td>Admin</td><td>POST /admin/withdrawals/{id}/reject. Updates status, no payout initiated.</td></tr>
+<tr><td>4. Sync payout status</td><td>Admin</td><td>POST /admin/withdrawals/{id}/sync. Fetches latest status from RazorpayX API and updates record.</td></tr>
+<tr><td>5. Export</td><td>Admin</td><td>GET /admin/withdrawals/export &mdash; CSV with all withdrawal fields including UTR.</td></tr>
+</table>
+
+<h3>5.4 Products &amp; E-Commerce</h3>
+<table>
+<tr><th>Operation</th><th>Admin</th><th>Member / Public</th></tr>
+<tr><td>List products</td><td>&#10003; Full admin table with all fields</td><td>&#10003; Public grid with filter (category, price range, search, sort, on-sale)</td></tr>
+<tr><td>Product detail page</td><td>&mdash;</td><td>&#10003; /products/{slug}</td></tr>
+<tr><td>Add to Cart</td><td>&mdash;</td><td>&#10003; AJAX (auth required)</td></tr>
+<tr><td>Add to Wishlist</td><td>&mdash;</td><td>&#10003; AJAX (auth required)</td></tr>
+<tr><td>Recently Viewed tracking</td><td>&mdash;</td><td>&#9888; Tracked in DB but not yet displayed</td></tr>
+<tr><td>Create / Edit / Delete product</td><td>&#10003; With image upload to storage</td><td>&mdash;</td></tr>
+<tr><td>Export CSV</td><td>&#10003;</td><td>&mdash;</td></tr>
+</table>
+
+<h3>5.5 Wallet Page &mdash; Data Shown</h3>
+<table>
+<tr><th>Data Point</th><th>Source</th></tr>
+<tr><td>Wallet balance</td><td>users.wallet_balance</td></tr>
+<tr><td>Total earned</td><td>users.total_earned</td></tr>
+<tr><td>Repurchase wallet</td><td>10% of total_earned (calculated)</td></tr>
+<tr><td>Daily cap / usage</td><td>plans.daily_cap vs incomes sum for today</td></tr>
+<tr><td>Total cap / usage</td><td>plans.total_cap vs users.total_earned</td></tr>
+<tr><td>Today earned / today lost</td><td>incomes table (credited vs lost, today)</td></tr>
+<tr><td>Pending withdrawal amount</td><td>withdrawal_requests (status=pending, sum)</td></tr>
+<tr><td>Approved withdrawal amount</td><td>withdrawal_requests (status=approved, sum)</td></tr>
+<tr><td>Available withdrawal balance</td><td>wallet_balance - pending_withdrawal</td></tr>
+<tr><td>Recent transactions</td><td>Merged: Income credits + Withdrawal requests + Wallet topup payments, sorted by date desc</td></tr>
+</table>
+
+<!-- ===== SECTION 6 ===== -->
+<h2>6. Data Models Reference</h2>
+<table>
+<tr><th>Model</th><th>Key Fields</th><th>Purpose</th></tr>
+<tr><td>User</td><td>user_id, name, email, phone, reference_code, referred_by, status, has_plan, current_plan_id, wallet_balance, total_earned, profile_photo, city, state, pincode</td><td>MLM member accounts</td></tr>
+<tr><td>Admin</td><td>email, password</td><td>Separate admin guard</td></tr>
+<tr><td>AdminActivityLog</td><td>admin_id, action, model_type, model_id, data</td><td>Admin audit trail</td></tr>
+<tr><td>Plan</td><td>name, code, price, base_value, daily_cap, total_cap, is_active</td><td>MLM membership tiers</td></tr>
+<tr><td>UserPlan</td><td>user_id, plan_id, amount_paid, status, activated_at</td><td>Plan purchase/upgrade history</td></tr>
+<tr><td>UserTree</td><td>user_id, upline_id, level</td><td>MLM genealogy tree</td></tr>
+<tr><td>Income</td><td>user_id, from_user_id, level, amount, type, status (credited/lost), remark</td><td>Commission and level income records</td></tr>
+<tr><td>AdminEarning</td><td>from_user_id, beneficiary_user_id, type (lost_capture/maintenance_fee), amount</td><td>Admin captures of lost/overflow income</td></tr>
+<tr><td>Payment</td><td>user_id, payment_id, order_id, amount, status, method, purpose (plan/wallet_topup)</td><td>All Razorpay payment records</td></tr>
+<tr><td>WithdrawalRequest</td><td>user_id, amount, status, payment_method, bank fields, razorpay payout fields, utr</td><td>Withdrawal requests + RazorpayX payout tracking</td></tr>
+<tr><td>UserBankDetail</td><td>user_id, account_holder, account_number, ifsc, bank_name, upi_id</td><td>Bank info for payouts</td></tr>
+<tr><td>KycDocument</td><td>user_id, doc_type, doc_number, file_path, status, admin_note</td><td>KYC document management</td></tr>
+<tr><td>Ticket</td><td>user_id, ticket_number, subject, message, category, priority, status</td><td>Support ticket system</td></tr>
+<tr><td>TicketReply</td><td>ticket_id, admin_id/user_id, message, is_admin</td><td>Support ticket thread replies</td></tr>
+<tr><td>Announcement</td><td>title, body, type, target, is_active, expires_at</td><td>Targeted member announcements</td></tr>
+<tr><td>Setting</td><td>key, value, group, label, type</td><td>Key-value site configuration</td></tr>
+<tr><td>Product</td><td>name, slug, sku, category, price, original_price, stock, description, image, status, sort_order</td><td>E-commerce products</td></tr>
+<tr><td>Cart</td><td>user_id, product_id, quantity</td><td>Shopping cart</td></tr>
+<tr><td>Wishlist</td><td>user_id, product_id</td><td>Product wishlist</td></tr>
+<tr><td>RecentlyViewed</td><td>user_id, product_id</td><td>Recently viewed product tracking</td></tr>
+<tr><td>PhoneVerification</td><td>phone, otp, is_verified</td><td>Phone OTP for registration</td></tr>
+</table>
+
+<!-- ===== SECTION 7 ===== -->
+<h2>7. Email &amp; SMS Configuration</h2>
+<table>
+<tr><th>Setting</th><th>Value</th></tr>
+<tr><td>Mail Mailer</td><td>smtp</td></tr>
+<tr><td>Mail Host</td><td>smtpout.secureserver.net (GoDaddy Professional Email)</td></tr>
+<tr><td>Mail Port</td><td>465</td></tr>
+<tr><td>Mail Scheme</td><td>smtps</td></tr>
+<tr><td>From Address</td><td>support@kemtexwellness.com</td></tr>
+<tr><td>From Name</td><td>KemtexWellness</td></tr>
+<tr><td>Email Usage</td><td>Admin forgot-password reset link; Cap warning notifications</td></tr>
+<tr><td>SMS Provider</td><td>Twilio (via SmsService)</td></tr>
+<tr><td>SMS Usage</td><td>Member registration OTP; Welcome SMS with user_id after registration</td></tr>
+</table>
+
+</body>
+</html>

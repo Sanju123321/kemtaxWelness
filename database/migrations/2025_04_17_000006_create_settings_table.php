@@ -23,7 +23,7 @@ return new class extends Migration
         $defaults = [
             // General
             ['key' => 'company_name',          'value' => 'KemtexWellness',      'group' => 'general',  'label' => 'Company Name',                'type' => 'text'],
-            ['key' => 'company_email',          'value' => 'admin@kemtex.com',    'group' => 'general',  'label' => 'Company Email',               'type' => 'text'],
+            ['key' => 'company_email',          'value' => 'support@kemtexwellness.com', 'group' => 'general',  'label' => 'Company Email',               'type' => 'text'],
             ['key' => 'company_phone',          'value' => '',                    'group' => 'general',  'label' => 'Company Phone',               'type' => 'text'],
             ['key' => 'min_withdrawal_amount',  'value' => '500',                 'group' => 'financial','label' => 'Min Withdrawal Amount (₹)',   'type' => 'number'],
             ['key' => 'maintenance_mode',       'value' => '0',                   'group' => 'general',  'label' => 'Maintenance Mode',            'type' => 'boolean'],

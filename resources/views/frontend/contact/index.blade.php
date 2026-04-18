@@ -91,7 +91,7 @@
                             <li><i class="ti-location-pin mr-3 text-color"></i><strong>Headquarter:</strong> Mumbai, India
                             </li>
                             <li><i class="ti-email mr-3 text-color"></i><strong>Email:</strong> <a
-                                    href="mailto:kemtexwellness@gmail.com">kemtexwellness@gmail.com</a></li>
+                                    href="mailto:support@kemtexwellness.com">support@kemtexwellness.com</a></li>
                             <li><i class="ti-mobile mr-3 text-color"></i><strong>Enrollment Line:</strong> <a
                                     href="tel:+919999999999">+91-9999-999-999</a></li>
                             <li><i class="ti-time mr-3 text-color"></i><strong>Hours:</strong> Mon-Fri 10AM-8PM, Sat

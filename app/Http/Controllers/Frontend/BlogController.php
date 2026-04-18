@@ -3,27 +3,31 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 
 class BlogController extends Controller
 {
-    /**
-     * Display all blog posts.
-     */
     public function index()
     {
-        // $posts = Post::where('status', 'published')->latest()->paginate(9);
+        $posts   = Post::published()->latest('published_at')->paginate(9);
+        $categories = Post::published()->distinct()->pluck('category')->sort()->values();
+        $recent  = Post::published()->latest('published_at')->take(5)->get();
 
-        return view('frontend.blog.index');
+        return view('frontend.blog.index', compact('posts', 'categories', 'recent'));
     }
 
-    /**
-     * Display a single blog post.
-     */
     public function show(string $slug)
     {
-        // $post = Post::where('slug', $slug)->where('status', 'published')->firstOrFail();
-        // $related = Post::where('status', 'published')->where('id', '!=', $post->id)->take(3)->get();
+        $post    = Post::published()->where('slug', $slug)->firstOrFail();
+        $related = Post::published()
+                       ->where('id', '!=', $post->id)
+                       ->where('category', $post->category)
+                       ->latest('published_at')
+                       ->take(3)
+                       ->get();
+        $recent  = Post::published()->latest('published_at')->take(5)->get();
 
-        return view('frontend.blog.show');
+        return view('frontend.blog.show', compact('post', 'related', 'recent'));
     }
 }
+

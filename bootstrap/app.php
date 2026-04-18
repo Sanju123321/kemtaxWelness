@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin.auth'  => \App\Http\Middleware\AdminAuthenticate::class,
             'maintenance' => \App\Http\Middleware\CheckMaintenanceMode::class,
+            'kyc.verified' => \App\Http\Middleware\CheckKycVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
