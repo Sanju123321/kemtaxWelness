@@ -19,7 +19,6 @@ use App\Http\Controllers\Backend\PaymentController;
 use App\Http\Controllers\Backend\IncomeController;
 use App\Http\Controllers\Backend\WithdrawalController;
 use App\Http\Controllers\Backend\KycController;
-use App\Http\Controllers\Backend\TicketController;
 use App\Http\Controllers\Backend\AnnouncementController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\ReportController;
@@ -212,11 +211,8 @@ Route::prefix('admin')
         // Plans
         Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
         Route::get('/plans/export', [PlanController::class, 'export'])->name('plans.export');
-        Route::get('/plans/create', [PlanController::class, 'create'])->name('plans.create');
-        Route::post('/plans', [PlanController::class, 'store'])->name('plans.store');
         Route::get('/plans/{id}/edit', [PlanController::class, 'edit'])->name('plans.edit');
         Route::put('/plans/{id}', [PlanController::class, 'update'])->name('plans.update');
-        Route::delete('/plans/{id}', [PlanController::class, 'destroy'])->name('plans.destroy');
 
         // Payments
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
@@ -261,15 +257,6 @@ Route::prefix('admin')
         Route::get('/contact-messages', [ContactMessageController::class, 'index'])->name('contact.index');
         Route::get('/contact-messages/{id}', [ContactMessageController::class, 'show'])->name('contact.show');
         Route::delete('/contact-messages/{id}', [ContactMessageController::class, 'destroy'])->name('contact.destroy');
-
-        // Support Tickets
-        Route::get('/tickets', [TicketController::class, 'index'])->name('tickets.index');
-        Route::get('/tickets/create', [TicketController::class, 'create'])->name('tickets.create');
-        Route::post('/tickets', [TicketController::class, 'store'])->name('tickets.store');
-        Route::get('/tickets/{id}', [TicketController::class, 'show'])->name('tickets.show');
-        Route::post('/tickets/{id}/reply', [TicketController::class, 'reply'])->name('tickets.reply');
-        Route::post('/tickets/{id}/status', [TicketController::class, 'updateStatus'])->name('tickets.status');
-        Route::delete('/tickets/{id}', [TicketController::class, 'destroy'])->name('tickets.destroy');
 
         // Announcements
         Route::get('/announcements', [AnnouncementController::class, 'index'])->name('announcements.index');

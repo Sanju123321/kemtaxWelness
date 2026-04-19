@@ -30,9 +30,6 @@
                 <a href="{{ route('admin.users.export') }}" class="btn btn-sm btn-success">
                     <i class="fas fa-file-csv me-1"></i> Export CSV
                 </a>
-                <a href="{{ route('admin.users.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus me-1"></i> Add User
-                </a>
             </div>
         </div>
         <div class="card-body">

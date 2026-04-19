@@ -40,6 +40,25 @@
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control @error('phone') is-invalid @enderror" id="phone"
+                        name="phone" value="{{ old('phone') }}">
+                    @error('phone')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="mb-3">
+                    <label for="reference_code" class="form-label">Sponsor Reference Code <span
+                            class="text-muted">(optional)</span></label>
+                    <input type="text" class="form-control @error('reference_code') is-invalid @enderror"
+                        id="reference_code" name="reference_code" value="{{ old('reference_code') }}">
+                    <div class="form-text">Enter an existing member's reference code to place this user under a sponsor.
+                    </div>
+                    @error('reference_code')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="password" class="form-label">Password <span class="text-danger">*</span></label>

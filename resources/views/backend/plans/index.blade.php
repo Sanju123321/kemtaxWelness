@@ -60,9 +60,6 @@
                 <a href="{{ route('admin.plans.export') }}" class="btn btn-sm btn-success">
                     <i class="fas fa-file-csv me-1"></i> Export CSV
                 </a>
-                <a href="{{ route('admin.plans.create') }}" class="btn btn-sm btn-primary">
-                    <i class="fas fa-plus me-1"></i> Add Plan
-                </a>
             </div>
         </div>
         <div class="card-body">
@@ -102,14 +99,6 @@
                                     <a href="{{ route('admin.plans.edit', $plan->id) }}" class="btn btn-sm btn-warning">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form method="POST" action="{{ route('admin.plans.destroy', $plan->id) }}"
-                                        class="d-inline"
-                                        onsubmit="return confirm('Delete this plan? Members on this plan will be affected.')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
                                 </td>
                             </tr>
                         @empty

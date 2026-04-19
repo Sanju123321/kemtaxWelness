@@ -24,8 +24,6 @@
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link {{ request()->routeIs('admin.users.index') ? 'active' : '' }}"
                             href="{{ route('admin.users.index') }}">All Users</a>
-                        <a class="nav-link {{ request()->routeIs('admin.users.create') ? 'active' : '' }}"
-                            href="{{ route('admin.users.create') }}">Add User</a>
                     </nav>
                 </div>
 
@@ -61,8 +59,6 @@
                     <nav class="sb-sidenav-menu-nested nav">
                         <a class="nav-link {{ request()->routeIs('admin.plans.index') ? 'active' : '' }}"
                             href="{{ route('admin.plans.index') }}">All Plans</a>
-                        <a class="nav-link {{ request()->routeIs('admin.plans.create') ? 'active' : '' }}"
-                            href="{{ route('admin.plans.create') }}">Add Plan</a>
                     </nav>
                 </div>
 
@@ -143,17 +139,6 @@
                     @php $unreadMsgs = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
                     @if ($unreadMsgs > 0)
                         <span class="badge bg-danger ms-auto">{{ $unreadMsgs }}</span>
-                    @endif
-                </a>
-
-                {{-- Tickets --}}
-                <a class="nav-link {{ request()->routeIs('admin.tickets*') ? 'active' : '' }}"
-                    href="{{ route('admin.tickets.index') }}">
-                    <div class="sb-nav-link-icon"><i class="fas fa-headset"></i></div>
-                    Support Tickets
-                    @php $openTickets = \App\Models\Ticket::where('status','open')->count(); @endphp
-                    @if ($openTickets > 0)
-                        <span class="badge bg-danger ms-auto">{{ $openTickets }}</span>
                     @endif
                 </a>
 

@@ -12,6 +12,7 @@ use App\Jobs\DistributeIncomeJob;
 use App\Services\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -39,17 +40,55 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name'     => ['required', 'string', 'max:255'],
-            'email'    => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'min:8'],
-            'role'     => ['sometimes', 'string', 'in:user,admin'],
+            'name'           => ['required', 'string', 'max:255'],
+            'email'          => ['required', 'email', 'unique:users,email'],
+            'phone'          => ['nullable', 'string', 'max:20'],
+            'reference_code' => ['nullable', 'string', 'max:50', 'exists:users,reference_code'],
+            'password'       => ['required', 'confirmed', 'min:8'],
         ]);
 
-        User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
+        // Auto-generate unique user_id
+        do {
+            $userId = 'KMW' . strtoupper(Str::random(6));
+        } while (User::where('user_id', $userId)->exists());
+
+        // Auto-generate unique referral code
+        do {
+            $referralCode = 'REF' . strtoupper(Str::random(6));
+        } while (User::where('reference_code', $referralCode)->exists());
+
+        // Resolve sponsor
+        $referredBy = null;
+        if (!empty($validated['reference_code'])) {
+            $referrer = User::where('reference_code', $validated['reference_code'])->first();
+            if ($referrer) {
+                $referredBy = $referrer->id;
+            }
+        }
+
+        $user = User::create([
+            'name'           => $validated['name'],
+            'email'          => $validated['email'],
+            'phone'          => $validated['phone'] ?? null,
+            'user_id'        => $userId,
+            'reference_code' => $referralCode,
+            'referred_by'    => $referredBy,
+            'password'       => Hash::make($validated['password']),
+            'status'         => 'active',
         ]);
+
+        // Build MLM upline tree
+        $sponsor = User::find($user->referred_by);
+        $level   = 1;
+        while ($sponsor && $level <= 20) {
+            UserTree::create([
+                'user_id'   => $user->id,
+                'upline_id' => $sponsor->id,
+                'level'     => $level,
+            ]);
+            $sponsor = User::find($sponsor->referred_by);
+            $level++;
+        }
 
         return redirect()->route('admin.users.index')
             ->with('success', 'User created successfully.');
