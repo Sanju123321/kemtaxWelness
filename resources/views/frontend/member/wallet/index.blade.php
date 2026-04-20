@@ -881,6 +881,35 @@
                 </div>
             </div>
 
+                <div class="wallet-card action-card" style="border-top:4px solid #20c997;">
+                    <form method="POST" action="{{ route('member.wallet.repurchase_topup') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;flex:1;">
+                        @csrf
+                        <div class="action-body">
+                            <div class="card-kicker">Add to Repurchase Wallet</div>
+                            <h5><i class="fas fa-university mr-2" style="color:#20c997;"></i>Bank Transfer Top Up</h5>
+                            <p class="muted-note mt-2 mb-3">Transfer funds from your own bank account to add money in your repurchase wallet. Admin approval required.</p>
+                            <div class="form-group mb-2">
+                                <label for="repurchase_amount">Amount</label>
+                                <input type="number" name="amount" class="form-control" id="repurchase_amount" placeholder="Enter amount" min="100" step="0.01" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="bank_reference">Bank Reference / UTR</label>
+                                <input type="text" name="bank_reference" class="form-control" id="bank_reference" placeholder="Enter bank reference or UTR" required>
+                            </div>
+                            <div class="form-group mb-2">
+                                <label for="proof">Upload Payment Proof</label>
+                                <input type="file" name="proof" class="form-control" id="proof" accept="image/*,application/pdf" required>
+                            </div>
+                            <small class="muted-note">Minimum top up: {!! $currency(100) !!}. Only after admin approval, amount will be credited to your repurchase wallet.</small>
+                        </div>
+                        <div class="action-footer">
+                            <button class="btn btn-success btn-block" type="submit">
+                                <i class="fas fa-university mr-2"></i>Add to Repurchase Wallet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
             <div class="wallet-card action-card" style="border-top:4px solid #ff6b35;">
                 @php $bankDetail = auth()->user()->bankDetail; @endphp
                 @if ($bankDetail)

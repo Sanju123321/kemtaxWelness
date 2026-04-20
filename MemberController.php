@@ -21,8 +21,38 @@ use Illuminate\Support\Facades\DB;
     use Illuminate\Support\Facades\Hash;
     use App\Models\UserBankDetail;
 
+use App\Models\RepurchaseWalletTopup;
+
 
 class MemberController extends Controller{
+
+    /**
+     * Handle repurchase wallet top-up request from user (bank transfer)
+     */
+    public function repurchaseTopup(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:100',
+            'bank_reference' => 'required|string|max:255',
+            'proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:4096',
+        ]);
+
+        $user = auth()->user();
+
+        // Store proof file
+        $proofPath = $request->file('proof')->store('repurchase_proofs', 'public');
+
+        // Create top-up request
+        RepurchaseWalletTopup::create([
+            'user_id' => $user->id,
+            'amount' => $request->amount,
+            'bank_reference' => $request->bank_reference,
+            'proof' => $proofPath,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('member.wallet')->with('success', 'Your top-up request has been submitted and is pending admin approval.');
+    }
     /**
      * Verify Razorpay payment and activate plan for user
      */

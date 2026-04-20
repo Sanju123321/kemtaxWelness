@@ -138,6 +138,9 @@ Route::prefix('member')
         Route::get('/kyc', [MemberKycController::class, 'index'])->name('kyc.index');
         Route::post('/kyc', [MemberKycController::class, 'store'])->name('kyc.store');
         Route::delete('/kyc/{id}', [MemberKycController::class, 'destroy'])->name('kyc.destroy');
+
+            // Repurchase Wallet Top-up
+            Route::post('/wallet/repurchase-topup', [MemberController::class, 'repurchaseTopup'])->name('wallet.repurchase_topup');
     });
 
 /*

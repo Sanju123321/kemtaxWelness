@@ -74,9 +74,6 @@ class SmsService
 
             return $response;
         } catch (\Exception $e) {
-            dd('Error sending SMS: ' . $e->getMessage());
-            throw new \Exception('SMS sending failed: ' . $e->getMessage());
-        } catch (\Exception $e) {
             throw new \Exception('SMS sending failed: ' . $e->getMessage());
         }
     }
