@@ -50,7 +50,7 @@
                         <div class="form-group">
                             <label>Enter OTP</label>
                             <input type="text" id="otp" class="form-control"
-                                placeholder="Enter OTP">
+                                placeholder="Enter 4 digit OTP" maxlength="4" pattern="[0-9]{4}">
                         </div>
 
                         <button type="button" onclick="verifyOtp()"

@@ -72,7 +72,7 @@ class CheckCapWarning extends Command
                 // 1) Database + Email notification
                 $user->notify(new CapWarningNotification($plan, $todayEarned, $totalEarned, $nextPlan));
 
-                // 2) SMS via Twilio
+                // 2) SMS notification
                 if ($user->phone) {
                     $pct     = round($percent, 1);
                     $message = "KemtexWellness Alert: Hi {$user->name}, you've used {$pct}% of your ₹{$dailyCap} daily cap today. Upgrade to earn more before midnight! Login: " . url('/member/dashboard');

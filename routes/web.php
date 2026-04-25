@@ -99,6 +99,7 @@ Route::middleware(['maintenance', 'guest'])->group(function () {
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/dev/fast2sms/test', [AuthController::class, 'testFast2Sms'])->name('dev.fast2sms.test');
 
 /*
 |--------------------------------------------------------------------------

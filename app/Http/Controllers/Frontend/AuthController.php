@@ -9,11 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rules;
 use App\Models\PhoneVerification;
 use Illuminate\Support\Str;
 use App\Models\UserTree;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -42,8 +42,8 @@ class AuthController extends Controller
         }
 
         return back()->withErrors([
-            'phone' => 'The provided credentials do not match our records.',
-        ])->onlyInput('phone');
+            'user_id' => 'The provided credentials do not match our records.',
+        ])->onlyInput('user_id');
     }
 
     /**
@@ -61,13 +61,13 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
-            'email'          => ['required', 'email',],
-            'phone'          => ['nullable', 'string', 'max:20'],
+            'email'          => ['required', 'email', 'unique:users,email'],
+            'phone'          => ['required', 'digits:10', 'unique:users,phone'],
             'reference_code' => ['nullable', 'string', 'max:50'],
             'password'       => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $verification = PhoneVerification::where('phone', $request->phone)
+        $verification = PhoneVerification::where('phone', $validated['phone'])
             ->where('is_verified', 1)
             ->first();
 
@@ -79,7 +79,7 @@ class AuthController extends Controller
         // Check if reference code exists (if provided)
         // ✅ Generate UNIQUE USER ID
         do {
-            $userId = 'KMW' . strtoupper(Str::random(6));
+            $userId = 'KM' . strtoupper(Str::random(6));
         } while (User::where('user_id', $userId)->exists());
 
         // ✅ Generate UNIQUE REFERRAL CODE
@@ -119,7 +119,7 @@ class AuthController extends Controller
             "Use your password to login.Thank you for joining us!";
 
         if ($user->phone) {
-            $sms->sendSMS( $user->phone, $message);
+            $sms->sendSMS($user->phone, $message);
         }
         return redirect()->route('member.dashboard')
             ->with('success', 'Welcome to Kemtex Wellness! Your account has been created successfully.');
@@ -144,14 +144,18 @@ class AuthController extends Controller
         }
     }
     // Check if phone number is already registered
-//     public function checkPhone(Request $request)
-// {
-//     $exists =User::where('phone', $request->phone)->exists();
+    public function checkPhone(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => ['required', 'digits:10'],
+        ]);
 
-//     return response()->json([
-//         'exists' => $exists
-//     ]);
-// }
+        $exists = User::where('phone', $validated['phone'])->exists();
+
+        return response()->json([
+            'exists' => $exists,
+        ]);
+    }
     /**
      * Show forgot password form.
      */
@@ -193,37 +197,95 @@ class AuthController extends Controller
     public function sendOtp(Request $request, SmsService $sms)
     {
         $request->validate([
-            'phone' => ['required', 'digits:10'],
+            'phone' => ['required', 'regex:/^(91\d{10}|\d{10})$/'],
         ]);
 
         try {
-            $otp = rand(100000, 999999);
+            $otp = (string) random_int(1000, 9999);
 
-            $verification = PhoneVerification::updateOrCreate(
+            PhoneVerification::updateOrCreate(
                 ['phone' => $request->phone],
                 [
                     'otp' => $otp,
                     'is_verified' => false,
-                    'expires_at' => now()->addMinutes(10)
+                    'expires_at' => now()->addMinutes(5),
                 ]
             );
-            $sms->sendOTP($request->phone, $otp);
+            $providerResponse = $sms->sendOTP((string) $request->phone, $otp);
 
             return response()->json([
                 'success' => true,
                 'message' => 'OTP sent successfully',
-                'phone' => $request->phone
+                'phone' => $request->phone,
+                'provider_debug' => $providerResponse,
             ]);
         } catch (\Exception $e) {
+            Log::error('OTP dispatch failed', [
+                'phone' => $request->phone,
+                'error' => $e->getMessage(),
+            ]);
+
+            $message = 'Failed to send OTP. Please try again in a moment.';
+            if (str_contains($e->getMessage(), 'website verification')) {
+                $message = 'SMS provider account is not verified for OTP API yet. Please complete Fast2SMS OTP website verification.';
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send OTP'
+                'message' => $message,
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function testFast2Sms(Request $request, SmsService $sms)
+    {
+        abort_unless(app()->isLocal() || config('app.debug'), 404);
+
+        $request->validate([
+            'token' => ['nullable', 'string'],
+            'phone' => ['required', 'regex:/^(91\d{10}|\d{10})$/'],
+            'otp' => ['nullable', 'digits:4'],
+        ]);
+
+        $configuredToken = (string) config('services.fast2sms.test_token', '');
+        if ($configuredToken !== '' && $request->input('token') !== $configuredToken) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid Fast2SMS test token.',
+            ], 403);
+        }
+
+        try {
+            $otp = (string) ($request->input('otp') ?: random_int(1000, 9999));
+            $response = $sms->sendOTP((string) $request->input('phone'), $otp);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Fast2SMS OTP API call succeeded.',
+                'otp' => $otp,
+                'provider_response' => $response,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Fast2SMS test route failed', [
+                'phone' => $request->input('phone'),
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
             ], 500);
         }
     }
 
     public function verifyOtp(Request $request)
     {
+        $request->validate([
+            'phone' => ['required', 'digits:10'],
+            'otp' => ['required', 'digits:4'],
+        ]);
+
         $record = PhoneVerification::where('phone', $request->phone)
             ->where('otp', $request->otp)
             ->where('expires_at', '>', now())

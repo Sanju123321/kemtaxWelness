@@ -57,7 +57,7 @@ p{margin:6px 0;}
 <tr><td>Blog</td><td>&mdash;</td><td>&mdash;</td><td class="warn">&#9888; Scaffolded, no DB model yet</td><td><span class="badge badge-public">PUBLIC &mdash; INCOMPLETE</span></td></tr>
 <tr><td>Contact Form</td><td>&mdash;</td><td>&mdash;</td><td class="warn">&#9888; Form exists, email send TODO</td><td><span class="badge badge-public">PUBLIC &mdash; INCOMPLETE</span></td></tr>
 <tr><td>Pricing Page</td><td>&mdash;</td><td>&mdash;</td><td class="done">&#10003; Public</td><td><span class="badge badge-public">PUBLIC</span></td></tr>
-<tr><td>SMS / OTP (registration)</td><td>&mdash;</td><td class="done">&#10003; Twilio</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
+      <tr><td>SMS / OTP (registration)</td><td>&mdash;</td><td class="done">&#10003; Fast2SMS</td><td>&mdash;</td><td><span class="badge badge-frontend">MEMBER ONLY</span></td></tr>
 <tr><td>Cap Warning Email Notification</td><td class="done">&#10003; Class exists</td><td>&mdash;</td><td>&mdash;</td><td><span class="badge badge-admin">ADMIN-TRIGGERED</span></td></tr>
 <tr><td>Maintenance Mode</td><td class="done">&#10003; Bypass (always accessible)</td><td class="done">&#10003; Blocked when on</td><td class="done">&#10003; Blocked when on</td><td><span class="badge badge-both">BOTH</span></td></tr>
 </table>
@@ -88,7 +88,7 @@ p{margin:6px 0;}
 <tr><td><strong>Credentials / Achievements</strong></td><td>/member/credentials</td><td>View achievements page</td></tr>
 <tr><td><strong>Cart</strong></td><td>/cart</td><td>Add item, Update quantity, Remove item, View cart (AJAX/JSON only)</td></tr>
 <tr><td><strong>Wishlist</strong></td><td>/wishlist</td><td>Toggle product (add/remove), Remove item, View wishlist (AJAX/JSON only)</td></tr>
-<tr><td><strong>SMS / OTP (Registration)</strong></td><td>/send-otp, /verify-otp, /check-phone</td><td>Send OTP to phone via Twilio, Verify OTP code, Check phone uniqueness before registration</td></tr>
+      <tr><td><strong>SMS / OTP (Registration)</strong></td><td>/send-otp, /verify-otp, /check-phone</td><td>Send OTP to phone via Fast2SMS, Verify OTP code, Check phone uniqueness before registration</td></tr>
 </table>
 
 <!-- ===== SECTION 4 ===== -->
@@ -244,7 +244,7 @@ p{margin:6px 0;}
 <tr><td>From Address</td><td>support@kemtexwellness.com</td></tr>
 <tr><td>From Name</td><td>KemtexWellness</td></tr>
 <tr><td>Email Usage</td><td>Admin forgot-password reset link; Cap warning notifications</td></tr>
-<tr><td>SMS Provider</td><td>Twilio (via SmsService)</td></tr>
+        <tr><td>SMS Provider</td><td>Fast2SMS (via SmsService)</td></tr>
 <tr><td>SMS Usage</td><td>Member registration OTP; Welcome SMS with user_id after registration</td></tr>
 </table>
 
