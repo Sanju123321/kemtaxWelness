@@ -71,7 +71,7 @@
 @keyframes slideIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
 </style>
 @endpush
-{{dd($products)}}
+
 @section('content')
 
 <div id="toast-container"></div>
