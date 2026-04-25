@@ -17,15 +17,16 @@ use App\Models\Income;
 use App\Models\UserTree;
 use App\Models\Setting;
 use App\Models\WithdrawalRequest;
+use App\Models\RepurchaseWalletTopup;
 use App\Services\RazorpayXService;
 use App\Jobs\DistributeIncomeJob;
 use Illuminate\Support\Facades\DB;
-    use Illuminate\Support\Facades\Storage;
-    use Illuminate\Support\Facades\Hash;
-    use App\Models\UserBankDetail;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
+use App\Models\UserBankDetail;
 
-
-class MemberController extends Controller{
+class MemberController extends Controller
+{
     /**
      * Verify Razorpay payment and activate plan for user
      */
@@ -88,7 +89,40 @@ public function createWalletTopupOrder(Request $request)
         'contact' => $user->phone,
     ]);
 }
-  
+
+    public function createRepurchaseWalletTopupOrder(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:100'
+        ]);
+
+        $user = auth()->user();
+
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
+
+        $amount = round((float) $request->amount, 2);
+        $order = $api->order->create([
+            'receipt' => 'repurchase_wallet_topup_' . $user->id . '_' . time(),
+            'amount' => (int) round($amount * 100),
+            'currency' => 'INR',
+            'notes' => [
+                'purpose' => 'repurchase_wallet_topup',
+                'user_id' => (string) $user->id,
+            ],
+        ]);
+
+        return response()->json([
+            'order_id' => $order['id'],
+            'amount' => (int) round($amount * 100),
+            'display_amount' => $amount,
+            'name' => $user->name,
+            'email' => $user->email,
+            'contact' => $user->phone,
+        ]);
+    }
 
 // public function verifyPayment(Request $request)
 // {
@@ -185,12 +219,26 @@ public function verifyPayment(Request $request)
                 }
             }
 
-            // 🔴 RULE 2: Only Upgrade
+            // 🔴 RULE 2: Only sequential upgrades
             if ($user->current_plan_id) {
                 $currentPlan = $user->currentPlan;
 
                 if ($plan->price <= $currentPlan->price) {
-                    throw new \Exception("Only upgrade allowed. Please select a higher plan.");
+                    throw new \Exception("Only plan upgrades are allowed. Please choose a higher plan.");
+                }
+
+                $nextPlan = Plan::where('is_active', 1)
+                    ->where('price', '>', $currentPlan->price)
+                    ->orderBy('price')
+                    ->first();
+
+                    
+                if (!$nextPlan) {
+                    throw new \Exception("You already have the highest available plan.");
+                }
+
+                if ($plan->id !== $nextPlan->id) {
+                    throw new \Exception("Please upgrade step-by-step. Your next eligible plan is " . $nextPlan->name . " (₹" . $nextPlan->price . ").");
                 }
             }
 
@@ -306,6 +354,71 @@ public function verifyWalletTopupPayment(Request $request)
         ], 422);
     }
 }
+
+    public function verifyRepurchaseWalletTopupPayment(Request $request)
+    {
+        $request->validate([
+            'razorpay_order_id' => 'required|string',
+            'razorpay_payment_id' => 'required|string',
+            'razorpay_signature' => 'required|string',
+        ]);
+
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
+
+        try {
+            DB::transaction(function () use ($request, $api) {
+                $api->utility->verifyPaymentSignature([
+                    'razorpay_order_id' => $request->razorpay_order_id,
+                    'razorpay_payment_id' => $request->razorpay_payment_id,
+                    'razorpay_signature' => $request->razorpay_signature
+                ]);
+
+                $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+                $user = auth()->user();
+
+                if (Payment::where('payment_id', $paymentData->id)->exists()) {
+                    return;
+                }
+
+                $amount = round($paymentData->amount / 100, 2);
+
+                Payment::create([
+                    'user_id' => $user->id,
+                    'payment_id' => $paymentData->id,
+                    'order_id' => $paymentData->order_id,
+                    'amount' => $amount,
+                    'status' => $paymentData->status,
+                    'method' => $paymentData->method,
+                    'email' => $paymentData->email,
+                    'contact' => $paymentData->contact,
+                    'purpose' => 'repurchase_wallet_topup',
+                ]);
+
+                if ($paymentData->status === 'captured') {
+                    RepurchaseWalletTopup::create([
+                        'user_id' => $user->id,
+                        'amount' => $amount,
+                        'bank_reference' => 'razorpay',
+                        'proof' => null,
+                        'status' => 'approved',
+                    ]);
+                } else {
+                    throw new \Exception('Repurchase wallet top-up payment is not captured.');
+                }
+            });
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
 // public function webhook(Request $request)
 // {
 //     $webhookSecret = env('RAZORPAY_WEBHOOK_SECRET');
@@ -553,10 +666,11 @@ public function saveBank(Request $request)
 
         $walletBalance = $user->wallet_balance ?? 0;
         $totalEarned   = $user->total_earned   ?? 0;
-        $repurchasePercent = 10;
-        $repurchaseWallet  = round($totalEarned * ($repurchasePercent / 100), 2);
+        $repurchaseWallet = RepurchaseWalletTopup::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->sum('amount');
 
-        $plan     = $user->currentPlan;
+        $plan = $user->currentPlan;
         $dailyCap = $plan?->daily_cap  ?? 0;
         $totalCap = $plan?->total_cap  ?? 0;
         $minWithdrawal = (float) Setting::getValue('min_withdrawal_amount', 500);
@@ -667,7 +781,6 @@ public function saveBank(Request $request)
         return view('frontend.member.wallet.index', compact(
             'walletBalance',
             'repurchaseWallet',
-            'repurchasePercent',
             'totalEarned',
             'dailyCap',
             'totalCap',
@@ -682,6 +795,56 @@ public function saveBank(Request $request)
             'lastTransactionAt',
             'recentTransactions',
         ));
+    }
+
+    public function transferToRepurchaseWallet(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:100',
+        ]);
+
+        $user = auth()->user();
+        $amount = round($request->amount, 2);
+
+        if ($amount > ($user->wallet_balance ?? 0)) {
+            return back()->with('error', 'Insufficient main wallet balance to transfer.');
+        }
+
+        DB::transaction(function () use ($user, $amount) {
+            $user->decrement('wallet_balance', $amount);
+
+            RepurchaseWalletTopup::create([
+                'user_id' => $user->id,
+                'amount' => $amount,
+                'bank_reference' => 'main_wallet_transfer',
+                'proof' => null,
+                'status' => 'approved',
+            ]);
+        });
+
+        return back()->with('success', 'Amount transferred from main wallet to repurchase wallet.');
+    }
+
+    public function repurchaseTopup(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:100',
+            'bank_reference' => 'required|string|max:255',
+            'proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:4096',
+        ]);
+
+        $user = auth()->user();
+        $proofPath = $request->file('proof')->store('repurchase_proofs', 'public');
+
+        RepurchaseWalletTopup::create([
+            'user_id' => $user->id,
+            'amount' => round($request->amount, 2),
+            'bank_reference' => $request->bank_reference,
+            'proof' => $proofPath,
+            'status' => 'approved',
+        ]);
+
+        return redirect()->route('member.wallet')->with('success', 'Your repurchase wallet has been topped up successfully.');
     }
 
     public function submitWithdrawal(Request $request, RazorpayXService $razorpayXService)

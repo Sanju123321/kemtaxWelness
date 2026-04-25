@@ -3,16 +3,18 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Models\PhoneVerification;
 use App\Models\User;
+use App\Models\UserTree;
 use App\Services\SmsService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
-use App\Models\PhoneVerification;
+
 use Illuminate\Support\Str;
-use App\Models\UserTree;
+
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
@@ -64,33 +66,31 @@ class AuthController extends Controller
             'email'          => ['required', 'email', 'unique:users,email'],
             'phone'          => ['required', 'digits:10', 'unique:users,phone'],
             'reference_code' => ['nullable', 'string', 'max:50'],
-            'password'       => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $verification = PhoneVerification::where('phone', $validated['phone'])
-            ->where('is_verified', 1)
+        $verification = PhoneVerification::where('phone', $request->phone)
+            ->where('is_verified', true)
+            ->where('expires_at', '>', now())
             ->first();
 
-        if (!$verification) {
+        if (Session::get('verified_registration_phone') !== $request->phone || !$verification) {
             return back()->withErrors([
-                'phone' => 'Please verify OTP before registration'
-            ]);
+                'phone' => 'Please verify OTP before registration',
+            ])->withInput($request->except('password', 'password_confirmation'));
         }
-        // Check if reference code exists (if provided)
-        // ✅ Generate UNIQUE USER ID
+
         do {
-            $userId = 'KM' . strtoupper(Str::random(6));
+            $userId = 'KW' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
         } while (User::where('user_id', $userId)->exists());
 
-        // ✅ Generate UNIQUE REFERRAL CODE
         do {
             $referralCode = 'REF' . strtoupper(Str::random(6));
         } while (User::where('reference_code', $referralCode)->exists());
 
         $referredBy = null;
         if (!empty($validated['reference_code'])) {
-            $referrer = User::where('reference_code', $validated['reference_code'])
-                ->first();
+            $referrer = User::where('reference_code', $validated['reference_code'])->first();
 
             if ($referrer) {
                 $referredBy = $referrer->id;
@@ -98,29 +98,34 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name'          => $validated['name'],
-            'email'         => $validated['email'],
-            'phone'         => $validated['phone'] ?? null,
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'],
             'reference_code' => $referralCode,
-            'user_id'       => $userId,
-            'referred_by'   => $referredBy,
-            'password'      => Hash::make($validated['password']),
+            'user_id' => $userId,
+            'referred_by' => $referredBy,
+            'password' => Hash::make($validated['password']),
         ]);
 
         Auth::login($user);
         $this->buildTree($user);
-        // Redirect based on reference code
+
+        Session::forget('verified_registration_phone');
+        PhoneVerification::where('phone', $request->phone)->delete();
+
         if (!empty($validated['reference_code'])) {
             return redirect()->route('member.dashboard')
                 ->with('success', 'Welcome! Please complete your plan payment to activate your account.');
         }
-        $message = "Welcome to Kemtex Wellness!\n" .
-            "User ID: " . $userId . "\n" .
-            "Use your password to login.Thank you for joining us!";
+
+        $message = "Welcome to Kemtex Wellness!\n"
+            . "User ID: " . $userId . "\n"
+            . "Use your password to login.Thank you for joining us!";
 
         if ($user->phone) {
             $sms->sendSMS($user->phone, $message);
         }
+
         return redirect()->route('member.dashboard')
             ->with('success', 'Welcome to Kemtex Wellness! Your account has been created successfully.');
     }
@@ -132,7 +137,6 @@ class AuthController extends Controller
         $level = 1;
 
         while ($sponsor && $level <= 20) {
-
             UserTree::create([
                 'user_id' => $user->id,
                 'upline_id' => $sponsor->id,
@@ -206,7 +210,7 @@ class AuthController extends Controller
             PhoneVerification::updateOrCreate(
                 ['phone' => $request->phone],
                 [
-                    'otp' => $otp,
+                    'otp' => (string) $otp,
                     'is_verified' => false,
                     'expires_at' => now()->addMinutes(5),
                 ]
@@ -294,52 +298,75 @@ class AuthController extends Controller
         if (!$record) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid or expired OTP'
+                'message' => 'Invalid or expired OTP',
             ]);
         }
 
         $record->update([
-            'is_verified' => true
+            'is_verified' => true,
         ]);
+
+        if ($purpose === 'password_reset') {
+            Session::put('verified_password_reset', [
+                'user_id' => $request->user_id,
+                'phone' => $request->phone,
+            ]);
+        } else {
+            Session::put('verified_registration_phone', $request->phone);
+        }
 
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
     }
-
-
-
 
     public function resetPassword(Request $request)
     {
         $request->validate([
-            'phone' => 'required',
-            'password' => 'required|confirmed|min:6'
+            'user_id' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'digits:10'],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // ✅ Check if phone is verified
+        $verifiedReset = Session::get('verified_password_reset');
+
+        if (
+            !$verifiedReset ||
+            ($verifiedReset['user_id'] ?? null) !== $request->user_id ||
+            ($verifiedReset['phone'] ?? null) !== $request->phone
+        ) {
+            return back()->withErrors([
+                'otp' => 'Please verify OTP for this user ID and phone number first.',
+            ])->withInput($request->except('password', 'password_confirmation'));
+        }
+
         $record = PhoneVerification::where('phone', $request->phone)
             ->where('is_verified', true)
+            ->where('expires_at', '>', now())
             ->first();
 
         if (!$record) {
-            return back()->withErrors(['otp' => 'OTP not verified']);
+            return back()->withErrors([
+                'otp' => 'OTP not verified or expired.',
+            ])->withInput($request->except('password', 'password_confirmation'));
         }
 
-        // ✅ Find user
-        $user = User::where('phone', $request->phone)->first();
+        $user = User::where('user_id', $request->user_id)
+            ->where('phone', $request->phone)
+            ->first();
 
         if (!$user) {
-            return back()->withErrors(['phone' => 'User not found']);
+            return back()->withErrors([
+                'user_id' => 'User ID and phone number do not match our records.',
+            ])->withInput($request->except('password', 'password_confirmation'));
         }
 
-        // ✅ Update password
         $user->password = Hash::make($request->password);
         $user->save();
 
-        // ✅ Clean OTP record
         $record->delete();
+        Session::forget('verified_password_reset');
 
-        return redirect('/login')->with('success', 'Password reset successful');
+        return redirect()->route('login')->with('success', 'Password reset successful');
     }
 }

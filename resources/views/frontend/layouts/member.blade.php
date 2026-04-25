@@ -104,7 +104,7 @@
                                     <li
                                         class="nav-item {{ request()->routeIs('member.credentials') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('member.credentials') }}"><i
-                                                class="fas fa-award mr-1"></i>Credentials</a>
+                                                class="fas fa-award mr-1"></i>My Achievements</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('pricing') }}"><i

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Mail\ContactMail;
 use App\Models\ContactMessage;
+use App\Models\Plan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -39,8 +40,8 @@ class PageController extends Controller
      */
     public function pricing()
     {
-
-        return view('frontend.pricing.index');
+        $packages = Plan::where('is_active', true)->get();
+        return view('frontend.pricing.index', compact('packages'));
     }
 
     /**
@@ -67,11 +68,11 @@ class PageController extends Controller
 
         Mail::to('support@kemtexwellness.com')
             ->send(new ContactMail(
-                senderName:    $validated['name'],
-                senderEmail:   $validated['email'],
-                phone:         $validated['phone'] ?? null,
-                interest:      $validated['interest'] ?? null,
-                userMessage:   $validated['message'],
+                senderName: $validated['name'],
+                senderEmail: $validated['email'],
+                phone: $validated['phone'] ?? null,
+                interest: $validated['interest'] ?? null,
+                userMessage: $validated['message'],
             ));
 
         return back()->with('success', 'Your message has been sent! We will get back to you shortly.');

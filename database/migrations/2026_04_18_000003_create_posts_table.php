@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('admin_id')->nullable()->constrained('admins')->nullOnDelete();
             $table->string('title');
-            $table->string('slug')->unique();
+            $table->string('slug', 191)->unique();
             $table->string('category')->default('General');
             $table->string('featured_image')->nullable();
             $table->text('excerpt')->nullable();

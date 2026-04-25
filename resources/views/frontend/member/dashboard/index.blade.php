@@ -874,7 +874,7 @@
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
                 <a href="#" id="sidebarCommissionLink"
-                    onclick="showSection('referralCommissionSection'); return false;"
+                    onclick="showSection('recentCommissionsSection'); return false;"
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
                 </a>

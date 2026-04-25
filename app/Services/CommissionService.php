@@ -121,6 +121,9 @@ class CommissionService
                     $lost            = round($grossIncome - $creditable, 2);
                     $feeRate         = $this->getMaintenanceFeePercent() / 100;
                     $maintenanceFee  = round($creditable * $feeRate, 2);
+                    $repurchaseRate  = 0.05;
+                    $repurchaseAmt   = round($creditable * $repurchaseRate, 2);
+                    $userNet         = round($creditable - $maintenanceFee - $repurchaseAmt, 2);
 
                     Income::create([
                         'user_id'      => $uplineUser->id,
@@ -160,7 +163,14 @@ class CommissionService
                         'remark'             => "10% fee on ₹{$creditable} credited to user {$uplineUser->id}",
                     ]);
 
-                    $uplineUser->increment('wallet_balance', $creditable);
+                    // 5% to repurchase wallet
+                    \App\Models\RepurchaseWalletTopup::create([
+                        'user_id' => $uplineUser->id,
+                        'amount'  => $repurchaseAmt,
+                        'status'  => 'approved',
+                    ]);
+
+                    $uplineUser->increment('wallet_balance', $userNet);
                     $uplineUser->increment('total_earned', $creditable);
                     return;
                 }
@@ -168,6 +178,9 @@ class CommissionService
                 // ── Full credit ────────────────────────────────────────────────
                 $feeRate        = $this->getMaintenanceFeePercent() / 100;
                 $maintenanceFee = round($grossIncome * $feeRate, 2);
+                $repurchaseRate = 0.05;
+                $repurchaseAmt = round($grossIncome * $repurchaseRate, 2);
+                $userNet       = round($grossIncome - $maintenanceFee - $repurchaseAmt, 2);
 
                 Income::create([
                     'user_id'      => $uplineUser->id,
@@ -188,7 +201,14 @@ class CommissionService
                     'remark'             => "10% fee on ₹{$grossIncome} credited to user {$uplineUser->id}",
                 ]);
 
-                $uplineUser->increment('wallet_balance', $grossIncome);
+                // 5% to repurchase wallet
+                \App\Models\RepurchaseWalletTopup::create([
+                    'user_id' => $uplineUser->id,
+                    'amount'  => $repurchaseAmt,
+                    'status'  => 'approved',
+                ]);
+
+                $uplineUser->increment('wallet_balance', $userNet);
                 $uplineUser->increment('total_earned', $grossIncome);
             });
         }
