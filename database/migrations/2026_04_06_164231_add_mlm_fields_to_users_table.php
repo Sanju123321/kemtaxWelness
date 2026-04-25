@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
+        $table->unsignedBigInteger('referred_by')->nullable()->after('user_id');
 
         $table->unsignedBigInteger('current_plan_id')
               ->nullable();
@@ -36,7 +37,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            //
+            $table->dropForeign(['referred_by']);
+            $table->dropForeign(['current_plan_id']);
+            $table->dropColumn(['referred_by', 'current_plan_id']);
         });
     }
 };

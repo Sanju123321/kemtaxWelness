@@ -35,17 +35,20 @@ return [
         ],
     ],
 
-    'twilio' => [
-    'sid'   => env('TWILIO_SID'),
-    'token' => env('TWILIO_TOKEN'),
-    'from'  => env('TWILIO_FROM'),
-],
-'razorpay' => [
+    'fast2sms' => [
+        'api_key' => env('FAST2SMS_API_KEY'),
+        'base_url' => env('FAST2SMS_BASE_URL', 'https://www.fast2sms.com/dev/bulkV2'),
+        'otp_route' => env('FAST2SMS_OTP_ROUTE', 'otp'),
+        'transactional_route' => env('FAST2SMS_TRANSACTIONAL_ROUTE', 'q'),
+        'sender_id' => env('FAST2SMS_SENDER_ID'),
+        'test_token' => env('FAST2SMS_TEST_TOKEN'),
+    ],
+    'razorpay' => [
     'key' => env('RAZORPAY_KEY_ID'),
     'secret' => env('RAZORPAY_KEY_SECRET'),
     'x_key' => env('RAZORPAYX_KEY_ID', env('RAZORPAY_KEY_ID')),
     'x_secret' => env('RAZORPAYX_KEY_SECRET', env('RAZORPAY_KEY_SECRET')),
     'x_account_number' => env('RAZORPAYX_ACCOUNT_NUMBER'),
     'x_base_url' => env('RAZORPAYX_BASE_URL', 'https://api.razorpay.com/v1'),
-],
+    ],
 ];

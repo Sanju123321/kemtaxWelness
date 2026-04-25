@@ -51,9 +51,9 @@
 
                     <div id="identitySection">
                         <div class="form-group">
-                            <label for="user_id">User ID</label>
-                            <input type="text" id="user_id" class="form-control" placeholder="Enter your user ID"
-                                value="{{ $prefillUserId }}">
+                            <label>Enter OTP</label>
+                            <input type="text" id="otp" class="form-control"
+                                placeholder="Enter 4 digit OTP" maxlength="4" pattern="[0-9]{4}">
                         </div>
 
                         <div class="form-group">
