@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules;
-use App\Models\PhoneVerification;
+
 use Illuminate\Support\Str;
-use App\Models\UserTree;
+
 use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
@@ -81,7 +81,7 @@ class AuthController extends Controller
         }
 
         do {
-            $userId = 'KM' . strtoupper(Str::random(6));
+            $userId = 'KW' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
         } while (User::where('user_id', $userId)->exists());
 
         do {

@@ -751,7 +751,7 @@
                         Plan amount: {!! $currency($plan?->price ?? 0) !!}
                     </div>
                     <div class="muted-note">
-                        Repurchase wallet is shown dynamically as {{ $repurchasePercent }}% of total earned.
+                        Repurchase wallet reflects approved bank transfers, main-wallet transfers, and commission credits.
                     </div>
                 </div>
             </div>
@@ -791,7 +791,7 @@
             <div class="stat-card" style="--accent:#6f42c1;">
                 <div class="card-kicker">Repurchase Wallet</div>
                 <div class="value">{!! $currency($repurchaseWallet) !!}</div>
-                <div class="sub">{{ $repurchasePercent }}% deduction wallet for future shopping</div>
+                <div class="sub">Approved balance for product purchase and plan upgrades</div>
             </div>
 
             <div class="stat-card" style="--accent:#ff8a00;">
@@ -842,23 +842,25 @@
         @endif
 
         <div class="actions-grid">
-            <div class="wallet-card action-card" style="border-top:4px solid #0d6efd;">
-                <div class="action-body">
-                    <div class="card-kicker">Add Funds</div>
-                    <h5><i class="fas fa-plus-circle text-primary mr-2"></i>Main Wallet Top Up</h5>
-                    <p class="muted-note mt-2 mb-3">Pay with Razorpay and credit the amount directly to your main
-                        wallet.</p>
-                    <div class="form-group">
-                        <input type="number" class="form-control" id="walletTopupAmount"
-                            placeholder="Enter amount" min="100" step="0.01">
-                        <small class="muted-note">Minimum top up: {!! $currency(100) !!}</small>
+            <div class="wallet-card action-card" style="border-top:4px solid #20c997;">
+                <form method="POST" action="{{ route('member.wallet.transfer.to.repurchase') }}" style="display:flex;flex-direction:column;flex:1;">
+                    @csrf
+                    <div class="action-body">
+                        <div class="card-kicker">Move Funds</div>
+                        <h5><i class="fas fa-exchange-alt mr-2" style="color:#20c997;"></i>Transfer to Repurchase Wallet</h5>
+                        <p class="muted-note mt-2 mb-3">Transfer money from your main wallet into your repurchase wallet. This transfer is one-way and cannot be reversed.</p>
+                        <div class="form-group mb-2">
+                            <label for="transfer_amount">Amount</label>
+                            <input type="number" name="amount" class="form-control" id="transfer_amount" placeholder="Enter amount" min="100" step="0.01" required>
+                        </div>
+                        <div class="muted-note">Available in main wallet: {!! $currency($walletBalance) !!}</div>
                     </div>
-                </div>
-                <div class="action-footer">
-                    <button class="btn btn-primary btn-block" type="button" id="walletTopupButton">
-                        <i class="fas fa-plus mr-2"></i>Add Funds
-                    </button>
-                </div>
+                    <div class="action-footer">
+                        <button type="submit" class="btn btn-success btn-block">
+                            <i class="fas fa-arrow-right mr-2"></i>Move to Repurchase Wallet
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <div class="wallet-card action-card" style="border-top:4px solid #6f42c1;">
@@ -870,7 +872,7 @@
                     <div class="mini-amount">{!! $currency($repurchaseWallet) !!}</div>
                     <div class="repurchase-badge mt-3">
                         <i class="fas fa-tags"></i>
-                        Based on {{ $repurchasePercent }}% repurchase deduction
+                        This balance is available for product purchases and plan upgrades.
                     </div>
                 </div>
                 <div class="action-footer">
@@ -882,32 +884,21 @@
             </div>
 
                 <div class="wallet-card action-card" style="border-top:4px solid #20c997;">
-                    <form method="POST" action="{{ route('member.wallet.repurchase_topup') }}" enctype="multipart/form-data" style="display:flex;flex-direction:column;flex:1;">
-                        @csrf
-                        <div class="action-body">
-                            <div class="card-kicker">Add to Repurchase Wallet</div>
-                            <h5><i class="fas fa-university mr-2" style="color:#20c997;"></i>Bank Transfer Top Up</h5>
-                            <p class="muted-note mt-2 mb-3">Transfer funds from your own bank account to add money in your repurchase wallet. Admin approval required.</p>
-                            <div class="form-group mb-2">
-                                <label for="repurchase_amount">Amount</label>
-                                <input type="number" name="amount" class="form-control" id="repurchase_amount" placeholder="Enter amount" min="100" step="0.01" required>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="bank_reference">Bank Reference / UTR</label>
-                                <input type="text" name="bank_reference" class="form-control" id="bank_reference" placeholder="Enter bank reference or UTR" required>
-                            </div>
-                            <div class="form-group mb-2">
-                                <label for="proof">Upload Payment Proof</label>
-                                <input type="file" name="proof" class="form-control" id="proof" accept="image/*,application/pdf" required>
-                            </div>
-                            <small class="muted-note">Minimum top up: {!! $currency(100) !!}. Only after admin approval, amount will be credited to your repurchase wallet.</small>
+                    <div class="action-body">
+                        <div class="card-kicker">Add to Repurchase Wallet</div>
+                        <h5><i class="fas fa-credit-card mr-2" style="color:#20c997;"></i>Razorpay Top Up</h5>
+                        <p class="muted-note mt-2 mb-3">Pay instantly with Razorpay and credit the amount immediately to your repurchase wallet.</p>
+                        <div class="form-group mb-2">
+                            <label for="repurchase_amount">Amount</label>
+                            <input type="number" name="amount" class="form-control" id="repurchase_amount" placeholder="Enter amount" min="100" step="0.01" required>
                         </div>
-                        <div class="action-footer">
-                            <button class="btn btn-success btn-block" type="submit">
-                                <i class="fas fa-university mr-2"></i>Add to Repurchase Wallet
-                            </button>
-                        </div>
-                    </form>
+                        <small class="muted-note">Minimum top up: {!! $currency(100) !!}. The amount will be credited immediately to your repurchase wallet.</small>
+                    </div>
+                    <div class="action-footer">
+                        <button id="repurchase_topup_button" class="btn btn-success btn-block" type="button">
+                            <i class="fas fa-credit-card mr-2"></i>Pay with Razorpay
+                        </button>
+                    </div>
                 </div>
 
             <div class="wallet-card action-card" style="border-top:4px solid #ff6b35;">
@@ -1050,83 +1041,72 @@
         });
     });
 
-    (function() {
-        var topupButton = document.getElementById('walletTopupButton');
-        var topupAmountInput = document.getElementById('walletTopupAmount');
+    document.getElementById('repurchase_topup_button')?.addEventListener('click', function() {
+        const amountInput = document.getElementById('repurchase_amount');
+        const amount = parseFloat(amountInput.value);
 
-        if (!topupButton || !topupAmountInput || typeof Razorpay === 'undefined') {
+        if (!amount || amount < 100) {
+            alert('Please enter a valid amount of at least ₹100.');
+            amountInput.focus();
             return;
         }
 
-        topupButton.addEventListener('click', function() {
-            var amount = parseFloat(topupAmountInput.value || '0');
-
-            if (!amount || amount < 100) {
-                alert('Minimum top up amount is Rs. 100');
-                topupAmountInput.focus();
-                return;
+        fetch('{{ route('member.wallet.repurchase.create.order') }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ amount: amount })
+        })
+        .then(function(response) { return response.json(); })
+        .then(function(data) {
+            if (!data.order_id) {
+                throw new Error(data.message || 'Unable to create Razorpay order.');
             }
 
-            topupButton.disabled = true;
-            topupButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Processing';
-
-            $.post('{{ route('member.wallet.create.order') }}', {
-                _token: $('meta[name="csrf-token"]').attr('content'),
-                amount: amount
-            }).done(function(orderData) {
-                var options = {
-                    key: "{{ config('services.razorpay.key') }}",
-                    amount: orderData.amount,
-                    currency: 'INR',
-                    name: 'Kemtex Wellness',
-                    description: 'Wallet Top Up',
-                    order_id: orderData.order_id,
-                    prefill: {
-                        name: orderData.name || '',
-                        email: orderData.email || '',
-                        contact: orderData.contact || ''
-                    },
-                    handler: function(response) {
-                        $.post('{{ route('member.wallet.verify.payment') }}', {
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_signature: response.razorpay_signature
-                        }).done(function(res) {
-                            if (res.success) {
-                                window.location.reload();
-                                return;
-                            }
-
-                            alert(res.message || 'Top up verification failed.');
-                            resetTopupButton();
-                        }).fail(function(xhr) {
-                            alert((xhr.responseJSON && xhr.responseJSON.message) ||
-                                'Top up verification failed.');
-                            resetTopupButton();
-                        });
-                    },
-                    modal: {
-                        ondismiss: function() {
-                            resetTopupButton();
+            const options = {
+                key: '{{ config('services.razorpay.key') }}',
+                amount: data.amount,
+                currency: 'INR',
+                name: '{{ config('app.name') }}',
+                description: 'Repurchase Wallet Top Up',
+                order_id: data.order_id,
+                handler: function(response) {
+                    fetch('{{ route('member.wallet.repurchase.verify.payment') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(response)
+                    })
+                    .then(function(res) { return res.json(); })
+                    .then(function(result) {
+                        if (result.success) {
+                            window.location.reload();
+                        } else {
+                            alert(result.message || 'Payment verification failed.');
                         }
-                    }
-                };
+                    })
+                    .catch(function() {
+                        alert('Unable to verify payment at this time.');
+                    });
+                },
+                prefill: {
+                    name: '{{ auth()->user()->name }}',
+                    email: '{{ auth()->user()->email }}',
+                    contact: '{{ auth()->user()->phone }}'
+                },
+                theme: { color: '#20c997' }
+            };
 
-                var rzp = new Razorpay(options);
-                rzp.open();
-            }).fail(function(xhr) {
-                alert((xhr.responseJSON && (xhr.responseJSON.message || (xhr.responseJSON.errors &&
-                        Object.values(xhr.responseJSON.errors)[0][0]))) ||
-                    'Unable to create wallet top up order.');
-                resetTopupButton();
-            });
+            const razorpay = new Razorpay(options);
+            razorpay.open();
+        })
+        .catch(function(error) {
+            alert(error.message || 'Unable to initiate payment. Please try again.');
         });
-
-        function resetTopupButton() {
-            topupButton.disabled = false;
-            topupButton.innerHTML = '<i class="fas fa-plus mr-2"></i>Add Funds';
-        }
-    })();
+    });
 </script>
 @endpush
