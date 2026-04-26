@@ -34,7 +34,11 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+ 'twilio' => [
+    'sid'   => env('TWILIO_SID'),
+    'token' => env('TWILIO_AUTH_TOKEN'),
+    'from'  => env('TWILIO_PHONE_NUMBER'),
+],
     'fast2sms' => [
         'api_key' => env('FAST2SMS_API_KEY'),
         'base_url' => env('FAST2SMS_BASE_URL', 'https://www.fast2sms.com/dev/bulkV2'),

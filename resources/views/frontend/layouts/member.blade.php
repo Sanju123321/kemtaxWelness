@@ -203,6 +203,7 @@
                                 <div class="card h-100 shadow-sm border-0"
                                     style="border-radius: 14px; background: #e3f0ff;">
                                     <div class="card-body d-flex flex-column align-items-center py-4">
+                                        
                                         <div class="mb-3">
                                             <span class="badge badge-primary px-3 py-2"
                                                 style="font-size: 1rem;">Essential Care</span>

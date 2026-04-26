@@ -728,7 +728,10 @@
         }
     </style>
 @endpush
-
+<?php
+use App\Models\Plan;
+ $plan = Plan::first();
+?>
 @section('content')
 
     {{-- Dashboard Header --}}
