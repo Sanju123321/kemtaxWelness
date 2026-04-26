@@ -203,12 +203,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p class="text-muted">We've sent a 4-digit OTP to your phone number. Please enter it below to verify.</p>
+                    <p class="text-muted">We've sent a 6-digit OTP to your phone number. Please enter it below to verify.</p>
                     <form id="otpForm">
                         <div class="form-group">
                             <label for="otp">Enter OTP</label>
                             <input type="text" class="form-control form-control-lg text-center" id="otp" name="otp" 
-                                   placeholder="0000" maxlength="4" pattern="[0-9]{4}" required>
+                                   placeholder="000000" maxlength="6" pattern="[0-9]{6}" required>
                         </div>
                         <div class="text-center">
                             <button type="submit" class="btn btn-main btn-lg">Verify OTP</button>
