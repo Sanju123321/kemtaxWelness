@@ -111,13 +111,69 @@
             padding: 24px 20px 60px;
         }
 
+        .mobile-sidebar-toggle,
+        .mobile-sidebar-backdrop {
+            display: none;
+        }
+
+        .mobile-sidebar-toggle {
+            border: 1px solid #dce4e8;
+            background: #fff;
+            color: #2f3a44;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            align-items: center;
+            gap: 8px;
+            touch-action: manipulation;
+        }
+
         @media (max-width:768px) {
             .dash-sidebar {
-                display: none;
+                display: flex;
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index: 1051;
+                height: 100vh;
+                width: min(84vw, 300px);
+                min-height: 100vh;
+                transform: translateX(-100%);
+                transition: transform .22s ease;
             }
 
             .dash-main {
                 padding: 14px 12px 40px;
+            }
+
+            .mobile-sidebar-toggle {
+                display: inline-flex;
+            }
+
+            .mobile-sidebar-backdrop {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(16, 24, 32, .45);
+                z-index: 1050;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity .2s ease;
+            }
+
+            body.mobile-sidebar-open {
+                overflow: hidden;
+            }
+
+            body.mobile-sidebar-open .dash-sidebar {
+                transform: translateX(0);
+            }
+
+            body.mobile-sidebar-open .mobile-sidebar-backdrop {
+                opacity: 1;
+                visibility: visible;
             }
         }
 
@@ -338,9 +394,13 @@
         </form>
     </div>
 </aside>
+<div class="mobile-sidebar-backdrop" data-sidebar-close></div>
 
 {{-- Main Content --}}
 <div class="dash-main">
+    <button type="button" class="mobile-sidebar-toggle" data-sidebar-open>
+        <i class="fas fa-bars"></i> Menu
+    </button>
 
     {{-- Page header --}}
     <div
@@ -427,6 +487,24 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
+    (function() {
+        var body = document.body;
+        var openBtn = document.querySelector('[data-sidebar-open]');
+        var closeTargets = document.querySelectorAll('[data-sidebar-close], .dash-sidebar a');
+
+        if (!openBtn) return;
+
+        openBtn.addEventListener('click', function() {
+            body.classList.add('mobile-sidebar-open');
+        });
+
+        closeTargets.forEach(function(target) {
+            target.addEventListener('click', function() {
+                body.classList.remove('mobile-sidebar-open');
+            });
+        });
+    })();
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

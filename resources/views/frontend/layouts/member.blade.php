@@ -76,6 +76,39 @@
                 border: 1.5px solid #fff;
                 line-height: 1;
             }
+
+            body,
+            .navigation,
+            .container,
+            .container-fluid {
+                max-width: 100%;
+            }
+
+            body {
+                overflow-x: hidden;
+            }
+
+            .table-responsive {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            @media (max-width: 768px) {
+                .btn,
+                .form-control,
+                .custom-select {
+                    min-height: 42px;
+                }
+
+                .modal .modal-dialog {
+                    margin: .5rem;
+                }
+
+                .modal .modal-body {
+                    max-height: calc(100vh - 130px);
+                    overflow-y: auto;
+                    -webkit-overflow-scrolling: touch;
+                }
+            }
         </style>
 
         <div id="navbar">

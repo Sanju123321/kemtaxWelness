@@ -493,13 +493,69 @@
             padding: 28px 24px 60px;
         }
 
+        .mobile-sidebar-toggle,
+        .mobile-sidebar-backdrop {
+            display: none;
+        }
+
+        .mobile-sidebar-toggle {
+            border: 1px solid #dce4e8;
+            background: #fff;
+            color: #2f3a44;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            align-items: center;
+            gap: 8px;
+            touch-action: manipulation;
+        }
+
         @media (max-width: 768px) {
             .dash-sidebar {
-                display: none;
+                display: flex;
+                position: fixed;
+                left: 0;
+                top: 0;
+                z-index: 1051;
+                height: 100vh;
+                width: min(84vw, 300px);
+                min-height: 100vh;
+                transform: translateX(-100%);
+                transition: transform .22s ease;
             }
 
             .dash-main {
                 padding: 16px 12px 40px;
+            }
+
+            .mobile-sidebar-toggle {
+                display: inline-flex;
+            }
+
+            .mobile-sidebar-backdrop {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(16, 24, 32, .45);
+                z-index: 1050;
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity .2s ease;
+            }
+
+            body.mobile-sidebar-open {
+                overflow: hidden;
+            }
+
+            body.mobile-sidebar-open .dash-sidebar {
+                transform: translateX(0);
+            }
+
+            body.mobile-sidebar-open .mobile-sidebar-backdrop {
+                opacity: 1;
+                visibility: visible;
             }
         }
 
@@ -697,6 +753,14 @@
 
         /* Responsive adjustments */
         @media (max-width: 576px) {
+            .invite-code-box {
+                flex-direction: column;
+            }
+
+            .invite-code-box .btn {
+                width: 100%;
+            }
+
             .gt-avatar {
                 width: 52px;
                 height: 52px;
@@ -872,7 +936,7 @@ use App\Models\Plan;
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
+                <a href="#" data-toggle="modal" data-target="#inviteModal"
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
@@ -911,9 +975,13 @@ use App\Models\Plan;
                 </form>
             </div>
         </aside>
+        <div class="mobile-sidebar-backdrop" data-sidebar-close></div>
 
         {{-- Main Content --}}
         <div class="dash-main">
+            <button type="button" class="mobile-sidebar-toggle" data-sidebar-open>
+                <i class="fas fa-bars"></i> Menu
+            </button>
 
             {{-- Stat Cards --}}
             <div class="row mb-4 flex-nowrap overflow-auto pb-1">
@@ -1526,7 +1594,7 @@ use App\Models\Plan;
                 <div class="modal-header" style="border-bottom:1px solid #f0f0f0;">
                     <h5 class="modal-title" id="inviteModalLabel" style="font-weight:700;"><i
                             class="fas fa-share-alt mr-2 text-color"></i>Invite &amp; Earn</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -1724,7 +1792,25 @@ use App\Models\Plan;
 
 
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            var body = document.body;
+            var openBtn = document.querySelector('[data-sidebar-open]');
+            var closeTargets = document.querySelectorAll('[data-sidebar-close], .dash-sidebar a');
+
+            if (!openBtn) return;
+
+            openBtn.addEventListener('click', function() {
+                body.classList.add('mobile-sidebar-open');
+            });
+
+            closeTargets.forEach(function(target) {
+                target.addEventListener('click', function() {
+                    body.classList.remove('mobile-sidebar-open');
+                });
+            });
+        })();
+    </script>
     <script>
         // ── Sidebar click-active for in-page links ─────────────────────────
         document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
