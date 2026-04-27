@@ -113,6 +113,7 @@ Route::prefix('member')
 
         Route::get('/dashboard', [MemberController::class, 'dashboard'])->name('dashboard');
         Route::get('/commissions', [MemberController::class, 'commissionsJson'])->name('commissions.json');
+        Route::get('/commissions/history', [MemberController::class, 'commissionsHistory'])->name('commissions.history');
         Route::get('/team', [MemberController::class, 'team'])->name('team');
         Route::get('/team/tree', [MemberController::class, 'treeJson'])->name('team.tree');
         Route::get('/setup', [MemberController::class, 'setup'])->name('setup');

@@ -399,7 +399,7 @@
 
         <div class="nav-label">More</div>
         <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
-            <i class="fas fa-tags nav-icon"></i> Pricing
+            <i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans
         </a>
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
             <i class="fas fa-headset nav-icon"></i> Support

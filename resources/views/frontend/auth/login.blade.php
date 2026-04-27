@@ -59,9 +59,16 @@
 
                             <div class="form-group mb-3">
                                 <label for="password"><i class="fas fa-key text-color mr-2"></i>Password</label>
-                                <input type="password"
-                                    class="form-control form-control-lg @error('password') is-invalid @enderror"
-                                    id="password" name="password" placeholder="Enter your password" required>
+                                <div class="input-group">
+                                    <input type="password"
+                                        class="form-control form-control-lg @error('password') is-invalid @enderror"
+                                        id="password" name="password" placeholder="Enter your password" required>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show password">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 @error('password')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
@@ -139,6 +146,13 @@
 
 <script>
 $(document).ready(function () {
+    $('#togglePassword').on('click', function() {
+        const passwordInput = $('#password');
+        const icon = $(this).find('i');
+        const isPassword = passwordInput.attr('type') === 'password';
+        passwordInput.attr('type', isPassword ? 'text' : 'password');
+        icon.toggleClass('fa-eye fa-eye-slash');
+    });
 
     $("#loginForm").validate({
         rules: {

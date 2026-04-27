@@ -694,7 +694,7 @@
 
         <div class="nav-label">More</div>
         <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
-            <i class="fas fa-tags nav-icon"></i> Pricing
+            <i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans
         </a>
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
             <i class="fas fa-headset nav-icon"></i> Support
@@ -703,8 +703,8 @@
             class="{{ $isInactive ? 'disabled' : '' }}">
             <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
         </a>
-        <a href="{{ route('member.dashboard') }}#referral-commission" class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+        <a href="{{ route('member.commissions.history') }}" class="{{ $isInactive ? 'disabled' : '' }}">
+            <i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions
         </a>
 
         <div class="nav-label">My Shopping</div>
@@ -779,8 +779,8 @@
                         <div class="hero-stat-value">{!! $currency($todayEarned) !!}</div>
                     </div>
                     <div class="hero-stat">
-                        <div class="hero-stat-label">Pending Withdraw</div>
-                        <div class="hero-stat-value">{!! $currency($pendingWithdrawalAmount) !!}</div>
+                        <div class="hero-stat-label">Withdrawn</div>
+                        <div class="hero-stat-value">{!! $currency($approvedWithdrawalAmount) !!}</div>
                     </div>
                 </div>
             </div>
@@ -932,7 +932,7 @@
                     <div class="mini-amount">{!! $currency($repurchaseWallet) !!}</div>
                     <div class="repurchase-badge mt-3">
                         <i class="fas fa-tags"></i>
-                        This balance is available for product purchases and plan upgrades.
+                        This balance is available for product purchases, topups, and plan upgrades.
                     </div>
                 </div>
                 <div class="action-footer">

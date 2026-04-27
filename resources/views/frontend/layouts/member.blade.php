@@ -146,7 +146,7 @@
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('pricing') }}"><i
-                                                class="fas fa-tags mr-1"></i>Pricing</a>
+                                                class="fas fa-tags mr-1"></i>Pricing &amp; Plans</a>
                                     </li>
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('contact') }}"><i
@@ -229,7 +229,7 @@
             <div class="modal-content"
                 style="border-radius: 18px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
                 <div class="modal-header"
-                    style="background: linear-gradient(90deg, #0066cc 0%, #28a745 100%); color: #fff; border-bottom: none;">
+                    style="background: linear-gradient(90deg, #1e7e34 0%, #28a745 100%); color: #fff; border-bottom: none;">
                     <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">Welcome! Please
                         Choose a Plan to Continue</h4>
                 </div>
@@ -239,14 +239,14 @@
                             <!-- Only One Plan Card -->
                             <div class="col-lg-5 col-md-8 col-sm-12 mb-4">
                                 <div class="card h-100 shadow-sm border-0"
-                                    style="border-radius: 14px; background: #e3f0ff;">
+                                    style="border-radius: 14px; background: #edf9f0;">
                                     <div class="card-body d-flex flex-column align-items-center py-4">
                                         
                                         <div class="mb-3">
-                                            <span class="badge badge-primary px-3 py-2"
+                                            <span class="badge badge-success px-3 py-2"
                                                 style="font-size: 1rem;">Essential Care</span>
                                         </div>
-                                        <h2 class="font-weight-bold mb-1" style="color: #0066cc;">
+                                        <h2 class="font-weight-bold mb-1" style="color: #28a745;">
                                             ₹{{ $planAmount ?? '1500' }}</h2>
                                         <p class="small mb-3">One-Time / Monthly</p>
                                         <ul class="list-unstyled mb-4">
@@ -256,7 +256,7 @@
                                             <li>Community Support</li>
                                         </ul>
                                         <a href="{{ route('contact') }}"
-                                            class="btn btn-primary btn-block btn-round-full purchase-plan"
+                                            class="btn btn-success btn-block btn-round-full purchase-plan"
                                             style="width: 100%;">Join Now</a>
                                         <!-- The Razorpay button uses JS, so href is not used -->
                                     </div>

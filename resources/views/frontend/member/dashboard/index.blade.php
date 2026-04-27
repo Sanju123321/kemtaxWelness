@@ -792,10 +792,6 @@
         }
     </style>
 @endpush
-<?php
-use App\Models\Plan;
- $plan = Plan::first();
-?>
 @section('content')
 
     {{-- Dashboard Header --}}
@@ -930,7 +926,7 @@ use App\Models\Plan;
                 <div class="nav-label">More</div>
 
                 <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
-                    <i class="fas fa-tags nav-icon"></i> Pricing
+                    <i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans
                 </a>
 
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
@@ -940,10 +936,9 @@ use App\Models\Plan;
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
-                <a href="#" id="sidebarCommissionLink"
-                    onclick="showSection('recentCommissionsSection'); return false;"
+                <a href="{{ route('member.commissions.history') }}" id="sidebarCommissionLink"
                     class="{{ $isInactive ? 'disabled' : '' }}">
-                    <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+                    <i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions
                 </a>
                 <div class="nav-label">My Shopping</div>
                 <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;"
@@ -1157,7 +1152,7 @@ use App\Models\Plan;
                     <div class="section-card" id="recentCommissionsSection">
                         <div class="section-card-header d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-history mr-2 text-color"></i>Recent Commissions</span>
-                            <a href="#" class="btn btn-sm btn-main btn-round-full"
+                            <a href="{{ route('member.commissions.history') }}" class="btn btn-sm btn-main btn-round-full"
                                 style="font-size:11px;padding:4px 14px;">View All</a>
                         </div>
                         <div class="section-card-body p-0">
@@ -1167,13 +1162,14 @@ use App\Models\Plan;
                                         <th>Date</th>
                                         <th>From Member</th>
                                         <th>Type</th>
+                                        <th>Level</th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="commissionTableBody">
                                     <tr>
-                                        <td colspan="5" class="text-center text-muted py-3">
+                                        <td colspan="6" class="text-center text-muted py-3">
                                             <i class="fas fa-spinner fa-spin mr-1"></i> Loading…
                                         </td>
                                     </tr>
@@ -1252,11 +1248,11 @@ use App\Models\Plan;
                                 @endauth
                             </h6>
 
-                            {{-- EMAIL --}}
+                            {{-- USER ID --}}
                             <p class="text-muted small mb-2">
-                                @auth {{ Auth::user()->email }}
+                                @auth {{ Auth::user()->user_id }}
                                 @else
-                                    member@example.com
+                                    KW000000
                                 @endauth
                             </p>
 
@@ -2518,8 +2514,8 @@ use App\Models\Plan;
             let currentPage = 1;
 
             function statusBadge(status) {
-                if (status.toLowerCase() === 'completed') {
-                    return '<span class="badge-completed">Completed</span>';
+                if (status.toLowerCase() === 'credited') {
+                    return '<span class="badge-completed">Credited</span>';
                 }
                 return '<span class="badge-pending">' + status + '</span>';
             }
@@ -2528,7 +2524,7 @@ use App\Models\Plan;
                 const tbody = document.getElementById('commissionTableBody');
                 if (!data.length) {
                     tbody.innerHTML =
-                        '<tr><td colspan="5" class="text-center text-muted py-3">No commissions yet</td></tr>';
+                        '<tr><td colspan="6" class="text-center text-muted py-3">No commissions yet</td></tr>';
                     return;
                 }
                 tbody.innerHTML = data.map(function(row) {
@@ -2536,6 +2532,7 @@ use App\Models\Plan;
                         '<td>' + row.date + '</td>' +
                         '<td>' + row.from + '</td>' +
                         '<td><span class="text-muted" style="font-size:12px;">' + row.type + '</span></td>' +
+                        '<td><span class="text-muted" style="font-size:12px;">' + row.level + '</span></td>' +
                         '<td><strong style="color:#28a745;">&#x20B9; ' + row.amount + '</strong></td>' +
                         '<td>' + statusBadge(row.status) + '</td>' +
                         '</tr>';
@@ -2601,7 +2598,7 @@ use App\Models\Plan;
             function loadCommissions(page) {
                 const tbody = document.getElementById('commissionTableBody');
                 tbody.innerHTML =
-                    '<tr><td colspan="5" class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading…</td></tr>';
+                    '<tr><td colspan="6" class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading…</td></tr>';
                 document.getElementById('commissionPagination').innerHTML = '';
                 document.getElementById('commissionInfo').textContent = '';
 
@@ -2620,7 +2617,7 @@ use App\Models\Plan;
                     })
                     .catch(function() {
                         tbody.innerHTML =
-                            '<tr><td colspan="5" class="text-center text-danger py-3">Failed to load commissions.</td></tr>';
+                            '<tr><td colspan="6" class="text-center text-danger py-3">Failed to load commissions.</td></tr>';
                     });
             }
 

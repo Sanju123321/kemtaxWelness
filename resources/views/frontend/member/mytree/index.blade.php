@@ -676,7 +676,7 @@
         <div class="nav-label">More</div>
 
         <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
-            <i class="fas fa-tags nav-icon"></i> Pricing
+            <i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans
         </a>
 
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
@@ -686,10 +686,9 @@
             class="{{ $isInactive ? 'disabled' : '' }}">
             <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
         </a>
-        <a href="{{ route('member.dashboard') }}#referral-commission" id="sidebarCommissionLink"
-            onclick="showSection('referralCommissionSection'); return false;"
+        <a href="{{ route('member.commissions.history') }}" id="sidebarCommissionLink"
             class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
+            <i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions
         </a>
         <div class="nav-label">My Shopping</div>
         <a href="{{ route('member.dashboard') }}#wishlist" onclick="scrollToSection('wishlist'); return false;"

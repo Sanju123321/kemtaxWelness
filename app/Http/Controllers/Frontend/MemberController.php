@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use App\Models\UserBankDetail;
+use Illuminate\Database\Eloquent\Builder;
 
 class MemberController extends Controller
 {
@@ -556,22 +557,11 @@ public function verifyWalletTopupPayment(Request $request)
      */
     public function commissionsJson(Request $request)
     {
-        $user = auth()->user();
-
-        $paginator = Income::with('fromUser')
-            ->where('user_id', $user->id)
+        $paginator = $this->buildCommissionQuery(auth()->id())
             ->latest()
             ->paginate(10);
 
-        $items = $paginator->getCollection()->map(function ($income) {
-            return [
-                'date'      => $income->created_at->format('M d, Y'),
-                'from'      => $income->fromUser->name ?? 'N/A',
-                'type'      => $income->type === 'direct' ? 'Direct Ref.' : 'Level ' . $income->level,
-                'amount'    => number_format($income->amount, 2),
-                'status'    => ucfirst($income->status),
-            ];
-        });
+        $items = $paginator->getCollection()->map(fn ($income) => $this->formatCommissionRow($income));
 
         return response()->json([
             'data'         => $items,
@@ -579,6 +569,49 @@ public function verifyWalletTopupPayment(Request $request)
             'last_page'    => $paginator->lastPage(),
             'total'        => $paginator->total(),
             'per_page'     => $paginator->perPage(),
+        ]);
+    }
+
+    public function commissionsHistory(Request $request)
+    {
+        $query = $this->buildCommissionQuery(auth()->id());
+
+        $search = trim((string) $request->query('search', ''));
+        if ($search !== '') {
+            $query->where(function (Builder $inner) use ($search) {
+                $inner->whereHas('fromUser', fn (Builder $q) => $q->where('name', 'like', '%' . $search . '%'))
+                    ->orWhere('type', 'like', '%' . $search . '%')
+                    ->orWhere('status', 'like', '%' . $search . '%')
+                    ->orWhere('level', 'like', '%' . $search . '%');
+            });
+        }
+
+        $sortBy = $request->query('sort_by', 'date');
+        $sortDir = strtolower((string) $request->query('sort_dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+
+        if ($sortBy === 'amount') {
+            $query->orderBy('amount', $sortDir);
+        } elseif ($sortBy === 'type') {
+            $query->orderBy('type', $sortDir);
+        } elseif ($sortBy === 'level') {
+            $query->orderBy('level', $sortDir);
+        } elseif ($sortBy === 'status') {
+            $query->orderBy('status', $sortDir);
+        } elseif ($sortBy === 'from') {
+            $query->leftJoin('users as from_users', 'incomes.from_user_id', '=', 'from_users.id')
+                ->select('incomes.*')
+                ->orderBy('from_users.name', $sortDir);
+        } else {
+            $query->orderBy('created_at', $sortDir);
+        }
+
+        $rows = $query->paginate(20)->appends($request->query());
+
+        return view('frontend.member.commissions.index', [
+            'rows' => $rows,
+            'search' => $search,
+            'sortBy' => $sortBy,
+            'sortDir' => $sortDir,
         ]);
     }
 
@@ -730,6 +763,17 @@ public function saveBank(Request $request)
             ->latest()
             ->take(10)
             ->get();
+        $recentRepurchaseTopups = RepurchaseWalletTopup::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->latest()
+            ->take(10)
+            ->get();
+        $recentPlanUpgrades = Payment::where('user_id', $user->id)
+            ->where('purpose', 'plan')
+            ->where('status', 'captured')
+            ->latest()
+            ->take(10)
+            ->get();
 
         $recentTransactions = $recentIncomeTransactions
             ->map(function ($income) {
@@ -774,8 +818,40 @@ public function saveBank(Request $request)
                     ];
                 })
             )
+            ->merge(
+                $recentRepurchaseTopups->map(function ($entry) {
+                    $isMainWalletTransfer = $entry->bank_reference === 'main_wallet_transfer';
+
+                    return [
+                        'kind'        => $isMainWalletTransfer ? 'debit' : 'credit',
+                        'icon'        => $isMainWalletTransfer ? 'fa-random' : 'fa-coins',
+                        'title'       => $isMainWalletTransfer ? 'Transfer to Repurchase Wallet' : 'Repurchase Wallet Top Up',
+                        'subtitle'    => $isMainWalletTransfer
+                            ? 'Moved from main wallet'
+                            : 'Added via ' . ucfirst((string) ($entry->bank_reference ?: 'Razorpay')),
+                        'date'        => $entry->created_at,
+                        'amount'      => (float) $entry->amount,
+                        'status'      => 'approved',
+                        'status_text' => $isMainWalletTransfer ? 'Transferred' : 'Added',
+                    ];
+                })
+            )
+            ->merge(
+                $recentPlanUpgrades->map(function ($payment) {
+                    return [
+                        'kind'        => 'debit',
+                        'icon'        => 'fa-arrow-circle-up',
+                        'title'       => 'Plan Upgraded',
+                        'subtitle'    => 'Upgrade payment via ' . ucfirst($payment->method ?? 'Razorpay'),
+                        'date'        => $payment->created_at,
+                        'amount'      => (float) $payment->amount,
+                        'status'      => 'approved',
+                        'status_text' => 'Upgraded',
+                    ];
+                })
+            )
             ->sortByDesc('date')
-            ->take(12)
+            ->take(30)
             ->values();
 
         return view('frontend.member.wallet.index', compact(
@@ -987,5 +1063,37 @@ return back()->with('success', 'Profile photo updated');
             "select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1",
             ['withdrawal_requests', 'razorpay_payout_id']
         ));
+    }
+
+    private function buildCommissionQuery(int $userId): Builder
+    {
+        return Income::with('fromUser')
+            ->where('user_id', $userId);
+    }
+
+    private function commissionTypeLabel(string $type): string
+    {
+        return $type === 'upgrade' ? 'Upgrade' : 'Referral';
+    }
+
+    private function commissionLevelLabel($level): string
+    {
+        if ((int) $level <= 1) {
+            return 'Direct (Level 1)';
+        }
+
+        return 'Level ' . (int) $level;
+    }
+
+    private function formatCommissionRow(Income $income): array
+    {
+        return [
+            'date' => $income->created_at->format('M d, Y'),
+            'from' => $income->fromUser->name ?? 'N/A',
+            'type' => $this->commissionTypeLabel((string) $income->type),
+            'level' => $this->commissionLevelLabel($income->level),
+            'amount' => number_format((float) $income->amount, 2),
+            'status' => ucfirst((string) $income->status),
+        ];
     }
 }
