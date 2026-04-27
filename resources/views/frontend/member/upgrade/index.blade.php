@@ -257,7 +257,7 @@
         }
 
         .btn-upgrade {
-            background: #1f2937;
+            background: #ff8a00;
             color: #fff;
         }
 
@@ -265,6 +265,11 @@
             background: #8b98a8;
             color: #e5e7eb;
             cursor: not-allowed;
+        }
+
+        .btn-disabled.active-plan {
+            background: #28a745;
+            color: #fff;
         }
 
         @media (max-width: 1399px) {
@@ -397,7 +402,7 @@
                         Upgrade Now
                     </button>
                 @else
-                    <button class="btn-disabled" disabled>
+                    <button class="btn-disabled {{ $isCurrent ? 'active-plan' : '' }}" disabled>
                         {{ $isCurrent ? 'Active Plan' : 'Not Available' }}
                     </button>
                 @endif

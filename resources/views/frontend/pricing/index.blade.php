@@ -4,10 +4,21 @@
 
 @push('styles')
 <style>
-    .plans-showcase-grid {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        gap: 18px;
+    .plans-carousel-wrap {
+        position: relative;
+        padding: 0 30px 6px;
+    }
+
+    .plans-slide-row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -9px;
+    }
+
+    .plans-slide-col {
+        width: 33.3333%;
+        padding: 0 9px;
+        margin-bottom: 10px;
     }
 
     .showcase-plan {
@@ -130,6 +141,16 @@
         font-size: 22px;
     }
 
+    .showcase-cta.active-plan {
+        background: #28a745 !important;
+        color: #fff !important;
+    }
+
+    .showcase-cta.upgrade-plan {
+        background: #ff8a00 !important;
+        color: #fff !important;
+    }
+
     .plan-theme-bronze { background: linear-gradient(135deg, #f5c58d, #f2dcc2); }
     .plan-theme-bronze .showcase-plan-head, .plan-theme-bronze .showcase-cta { background: #1f2937; }
     .plan-theme-silver { background: linear-gradient(135deg, #e8e8e8, #f9f9f9); }
@@ -141,10 +162,55 @@
     .plan-theme-diamond { background: linear-gradient(135deg, #54a7ff, #d6ebff); }
     .plan-theme-diamond .showcase-plan-head, .plan-theme-diamond .showcase-cta { background: #1f2937; }
 
-    @media (max-width: 1399px) { .plans-showcase-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-    @media (max-width: 991px) { .plans-showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    .plans-carousel-caption {
+        margin-top: 6px;
+        text-align: center;
+        font-size: 13px;
+        color: #475467;
+        font-weight: 600;
+    }
+
+    .plans-carousel-wrap .carousel-indicators {
+        bottom: -22px;
+    }
+
+    .plans-carousel-wrap .carousel-indicators li {
+        background-color: #9ca3af;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    .plans-carousel-wrap .carousel-indicators .active {
+        background-color: #28a745;
+    }
+
+    .plans-carousel-wrap .carousel-control-prev,
+    .plans-carousel-wrap .carousel-control-next {
+        width: 30px;
+        opacity: .95;
+    }
+
+    .plans-carousel-wrap .carousel-control-prev-icon,
+    .plans-carousel-wrap .carousel-control-next-icon {
+        background-color: #1f2937;
+        border-radius: 999px;
+        background-size: 52% 52%;
+        width: 28px;
+        height: 28px;
+    }
+
+    @media (max-width: 1399px) { .plans-slide-col { width: 33.3333%; } }
+    @media (max-width: 991px) { .plans-slide-col { width: 50%; } }
     @media (max-width: 575px) {
-        .plans-showcase-grid { grid-template-columns: 1fr; }
+        .plans-carousel-wrap {
+            padding: 0 6px 6px;
+        }
+
+        .plans-slide-col {
+            width: 100%;
+        }
+
         .showcase-plan { padding: 16px 14px 12px; border-radius: 16px; }
     }
 </style>
@@ -211,73 +277,109 @@
             $icons = ['fa-star', 'fa-medal', 'fa-gem', 'fa-crown', 'fa-trophy'];
         @endphp
 
-        <div class="plans-showcase-grid">
-            @foreach($packages as $index => $package)
-                @php
-                    $isCurrent = $package->id == $currentPlanId;
-                    $isNext = $index == $currentIndex + 1;
-                    $isLocked = $index < $currentIndex;
-                    $theme = $themes[$index] ?? 'bronze';
-                    $label = $labels[$index] ?? ($package->name ?? 'Premium Plan');
-                @endphp
+        @php
+            $slides = collect($packages)->values()->chunk(3);
+        @endphp
+        <div class="plans-carousel-wrap">
+            <div id="plansCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                <ol class="carousel-indicators">
+                    @foreach($slides as $slideIndex => $slide)
+                        <li data-target="#plansCarousel" data-slide-to="{{ $slideIndex }}" class="{{ $slideIndex === 0 ? 'active' : '' }}"></li>
+                    @endforeach
+                </ol>
 
-                <div class="showcase-plan plan-theme-{{ $theme }}">
-                    <span class="showcase-plan-head">
-                        <i class="fas {{ $icons[$index] ?? 'fa-star' }}"></i>{{ $label }}
-                    </span>
+                <div class="carousel-inner">
+                    @foreach($slides as $slideIndex => $slide)
+                        <div class="carousel-item {{ $slideIndex === 0 ? 'active' : '' }}">
+                            <div class="plans-slide-row justify-content-center">
+                                @foreach($slide as $package)
+                                    @php
+                                        $index = $packages->search(fn($p) => $p->id === $package->id);
+                                        $isCurrent = $package->id == $currentPlanId;
+                                        $isNext = $index == $currentIndex + 1;
+                                        $isLocked = $index < $currentIndex;
+                                        $theme = $themes[$index] ?? 'bronze';
+                                        $label = $labels[$index] ?? ($package->name ?? 'Premium Plan');
+                                    @endphp
 
-                    <div class="showcase-price">₹{{ number_format((float) $package->price, 0) }}</div>
-                    <div class="showcase-sub">Start your journey and unlock earning potential 🚀</div>
-                    <div class="showcase-rule"></div>
+                                    <div class="plans-slide-col">
+                                        <div class="showcase-plan plan-theme-{{ $theme }}">
+                                            <span class="showcase-plan-head">
+                                                <i class="fas {{ $icons[$index] ?? 'fa-star' }}"></i>{{ $label }}
+                                            </span>
 
-                    <div class="showcase-feature">
-                        <i class="fas fa-layer-group"></i>
-                        <div>
-                            <div class="showcase-feature-title">Earn 10X in Total</div>
-                            <div class="showcase-feature-sub">On your total income</div>
+                                            <div class="showcase-price">₹{{ number_format((float) $package->price, 0) }}</div>
+                                            <div class="showcase-sub">Start your journey and unlock earning potential 🚀</div>
+                                            <div class="showcase-rule"></div>
+
+                                            <div class="showcase-feature">
+                                                <i class="fas fa-layer-group"></i>
+                                                <div>
+                                                    <div class="showcase-feature-title">Earn 10X in Total</div>
+                                                    <div class="showcase-feature-sub">On your total income</div>
+                                                </div>
+                                            </div>
+                                            <div class="showcase-feature">
+                                                <i class="fas fa-chart-line"></i>
+                                                <div>
+                                                    <div class="showcase-feature-title">Earn 2X Per Day</div>
+                                                    <div class="showcase-feature-sub">On your daily income</div>
+                                                </div>
+                                            </div>
+                                            <div class="showcase-feature">
+                                                <i class="fas fa-users"></i>
+                                                <div>
+                                                    <div class="showcase-feature-title">Higher Referral Income</div>
+                                                    <div class="showcase-feature-sub">Grow your network and earn more</div>
+                                                </div>
+                                            </div>
+                                            <div class="showcase-feature">
+                                                <i class="fas fa-tags"></i>
+                                                <div>
+                                                    <div class="showcase-feature-title">Buy Any Product</div>
+                                                    <div class="showcase-feature-sub">At Direct Price (DP)</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="showcase-power">
+                                                <strong><i class="fas fa-shield-alt mr-1"></i>All Plans, Same Power.</strong>
+                                                <div>10X in Total &nbsp;|&nbsp; 2X Per Day</div>
+                                                <div>Buy Any Product in DP</div>
+                                            </div>
+
+                                            @if($isCurrent)
+                                                <button class="showcase-cta active-plan" disabled><i class="fas fa-check-circle"></i> Active Plan</button>
+                                            @elseif($isNext)
+                                                <button class="showcase-cta upgrade-plan purchase-plan" data-amount="{{ $package->price }}" data-plan="{{ $package->id }}">
+                                                    Upgrade Now <i class="fas fa-arrow-right"></i>
+                                                </button>
+                                            @elseif($isLocked)
+                                                <button class="showcase-cta disabled" disabled>Locked</button>
+                                            @else
+                                                <button class="showcase-cta disabled" disabled>Not Available</button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="plans-carousel-caption">
+                                {{ $slide->pluck('name')->join(' • ') }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="showcase-feature">
-                        <i class="fas fa-chart-line"></i>
-                        <div>
-                            <div class="showcase-feature-title">Earn 2X Per Day</div>
-                            <div class="showcase-feature-sub">On your daily income</div>
-                        </div>
-                    </div>
-                    <div class="showcase-feature">
-                        <i class="fas fa-users"></i>
-                        <div>
-                            <div class="showcase-feature-title">Higher Referral Income</div>
-                            <div class="showcase-feature-sub">Grow your network and earn more</div>
-                        </div>
-                    </div>
-                    <div class="showcase-feature">
-                        <i class="fas fa-tags"></i>
-                        <div>
-                            <div class="showcase-feature-title">Buy Any Product</div>
-                            <div class="showcase-feature-sub">At Direct Price (DP)</div>
-                        </div>
-                    </div>
-
-                    <div class="showcase-power">
-                        <strong><i class="fas fa-shield-alt mr-1"></i>All Plans, Same Power.</strong>
-                        <div>10X in Total &nbsp;|&nbsp; 2X Per Day</div>
-                        <div>Buy Any Product in DP</div>
-                    </div>
-
-                    @if($isCurrent)
-                        <button class="showcase-cta" disabled><i class="fas fa-check-circle"></i> Active Plan</button>
-                    @elseif($isNext)
-                        <button class="showcase-cta purchase-plan" data-amount="{{ $package->price }}" data-plan="{{ $package->id }}">
-                            Upgrade Now <i class="fas fa-arrow-right"></i>
-                        </button>
-                    @elseif($isLocked)
-                        <button class="showcase-cta disabled" disabled>Locked</button>
-                    @else
-                        <button class="showcase-cta disabled" disabled>Not Available</button>
-                    @endif
+                    @endforeach
                 </div>
-            @endforeach
+
+                @if($slides->count() > 1)
+                    <a class="carousel-control-prev" href="#plansCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#plansCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                @endif
+            </div>
         </div>
     </div>
 </section>
