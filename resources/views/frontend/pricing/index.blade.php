@@ -2,6 +2,154 @@
 
 @section('title', 'Pricing &amp; Commission Structure - KemtexWellness')
 
+@push('styles')
+<style>
+    .plans-showcase-grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .showcase-plan {
+        border-radius: 18px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        background: #fff;
+        box-shadow: 0 10px 26px rgba(16, 24, 40, 0.08);
+        overflow: hidden;
+        padding: 18px 16px 14px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .showcase-plan-head {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        color: #fff;
+        font-weight: 800;
+        font-size: 12px;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+        border-radius: 999px;
+        padding: 7px 14px;
+        width: fit-content;
+        margin: 0 auto 14px;
+    }
+
+    .showcase-price {
+        font-size: clamp(2rem, 2.4vw, 2.7rem);
+        line-height: 1;
+        font-weight: 900;
+        color: #0f172a;
+        text-align: center;
+    }
+
+    .showcase-sub {
+        text-align: center;
+        color: #0f172a;
+        font-size: 14px;
+        margin: 10px 0 12px;
+    }
+
+    .showcase-rule {
+        height: 1px;
+        background: #dce7dd;
+        margin-bottom: 14px;
+    }
+
+    .showcase-feature {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 12px;
+        align-items: flex-start;
+    }
+
+    .showcase-feature i {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #eef7ee;
+        color: #2a7f38;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        margin-top: 1px;
+        flex-shrink: 0;
+    }
+
+    .showcase-feature-title {
+        font-size: 13px;
+        font-weight: 800;
+        color: #101828;
+        line-height: 1.2;
+    }
+
+    .showcase-feature-sub {
+        font-size: 12px;
+        color: #475467;
+        line-height: 1.3;
+        margin-top: 3px;
+    }
+
+    .showcase-power {
+        border-radius: 10px;
+        padding: 10px 11px;
+        margin-top: 4px;
+        margin-bottom: 14px;
+        font-size: 12px;
+        text-align: center;
+        border: 1px solid rgba(16, 24, 40, .06);
+    }
+
+    .showcase-power strong {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+
+    .showcase-cta {
+        margin-top: auto;
+        border: none;
+        border-radius: 10px;
+        height: 44px;
+        font-size: 22px;
+        font-weight: 800;
+        color: #fff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .showcase-cta.disabled {
+        background: #8b98a8 !important;
+        cursor: not-allowed;
+        opacity: .95;
+        font-size: 22px;
+    }
+
+    .plan-theme-bronze { background: linear-gradient(135deg, #f5c58d, #f2dcc2); }
+    .plan-theme-bronze .showcase-plan-head, .plan-theme-bronze .showcase-cta { background: #1f2937; }
+    .plan-theme-silver { background: linear-gradient(135deg, #e8e8e8, #f9f9f9); }
+    .plan-theme-silver .showcase-plan-head, .plan-theme-silver .showcase-cta { background: #1f2937; }
+    .plan-theme-gold { background: linear-gradient(135deg, #ffe86e, #fff8cf); }
+    .plan-theme-gold .showcase-plan-head, .plan-theme-gold .showcase-cta { background: #1f2937; }
+    .plan-theme-platinum { background: linear-gradient(135deg, #64d983, #d7f7e0); }
+    .plan-theme-platinum .showcase-plan-head, .plan-theme-platinum .showcase-cta { background: #1f2937; }
+    .plan-theme-diamond { background: linear-gradient(135deg, #54a7ff, #d6ebff); }
+    .plan-theme-diamond .showcase-plan-head, .plan-theme-diamond .showcase-cta { background: #1f2937; }
+
+    @media (max-width: 1399px) { .plans-showcase-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media (max-width: 991px) { .plans-showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 575px) {
+        .plans-showcase-grid { grid-template-columns: 1fr; }
+        .showcase-plan { padding: 16px 14px 12px; border-radius: 16px; }
+    }
+</style>
+@endpush
+
 @section('content')
 
 <section class="page-title bg-1">
@@ -57,68 +205,80 @@
         });
         @endphp
 
-        <div class="row justify-content-center">
+        @php
+            $themes = ['bronze', 'silver', 'gold', 'platinum', 'diamond'];
+            $labels = ['Bronze Core', 'Silver Edge', 'Gold Rise', 'Platinum Force', 'Diamond Elite'];
+            $icons = ['fa-star', 'fa-medal', 'fa-gem', 'fa-crown', 'fa-trophy'];
+        @endphp
 
+        <div class="plans-showcase-grid">
             @foreach($packages as $index => $package)
-
-            @php
-            $bg = $planColors[$index] ?? 'linear-gradient(135deg, #0066cc, #dce8fb)';
-
-            $isCurrent = $package->id == $currentPlanId;
-            $isNext = $index == $currentIndex + 1;
-            $isLocked = $index < $currentIndex;
+                @php
+                    $isCurrent = $package->id == $currentPlanId;
+                    $isNext = $index == $currentIndex + 1;
+                    $isLocked = $index < $currentIndex;
+                    $theme = $themes[$index] ?? 'bronze';
+                    $label = $labels[$index] ?? ($package->name ?? 'Premium Plan');
                 @endphp
 
-                <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card text-center border-0 shadow-lg h-100"
-                    style="background: {{ $bg }};
-                   border-radius: 15px;">
+                <div class="showcase-plan plan-theme-{{ $theme }}">
+                    <span class="showcase-plan-head">
+                        <i class="fas {{ $icons[$index] ?? 'fa-star' }}"></i>{{ $label }}
+                    </span>
 
-                    <div class="card-body d-flex flex-column py-5 px-4">
+                    <div class="showcase-price">₹{{ number_format((float) $package->price, 0) }}</div>
+                    <div class="showcase-sub">Start your journey and unlock earning potential 🚀</div>
+                    <div class="showcase-rule"></div>
 
-                        <h5 class="mb-3 font-weight-bold">
-                            {{ $planNames[$index] ?? 'Premium Plan' }}
-                        </h5>
-
-                        <h1 class="mb-4 font-weight-bold">
-                            ₹{{ $package->price }}
-                        </h1>
-
-                        <p class="mb-4 text-dark">
-                            Start your journey and unlock earning potential 🚀
-                        </p>
-
-                        {{-- BUTTON LOGIC --}}
-                        @if($isCurrent)
-                        <button class="btn btn-success mt-auto" disabled>
-                            ✅ Active Plan
-                        </button>
-
-                        @elseif($isNext)
-                        <a class="btn btn-dark mt-auto purchase-plan"
-                            data-amount="{{ $package->price }}"
-                            data-plan="{{ $package->id }}">
-                            ⬆ Upgrade Now
-                        </a>
-
-                        @elseif($isLocked)
-                        <button class="btn btn-secondary mt-auto" disabled>
-                            🔒 Locked
-                        </button>
-
-                        @else
-                        <button class="btn btn-secondary mt-auto" disabled>
-                            Not Available
-                        </button>
-                        @endif
-
+                    <div class="showcase-feature">
+                        <i class="fas fa-layer-group"></i>
+                        <div>
+                            <div class="showcase-feature-title">Earn 10X in Total</div>
+                            <div class="showcase-feature-sub">On your total income</div>
+                        </div>
                     </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <div class="showcase-feature-title">Earn 2X Per Day</div>
+                            <div class="showcase-feature-sub">On your daily income</div>
+                        </div>
+                    </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-users"></i>
+                        <div>
+                            <div class="showcase-feature-title">Higher Referral Income</div>
+                            <div class="showcase-feature-sub">Grow your network and earn more</div>
+                        </div>
+                    </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-tags"></i>
+                        <div>
+                            <div class="showcase-feature-title">Buy Any Product</div>
+                            <div class="showcase-feature-sub">At Direct Price (DP)</div>
+                        </div>
+                    </div>
+
+                    <div class="showcase-power">
+                        <strong><i class="fas fa-shield-alt mr-1"></i>All Plans, Same Power.</strong>
+                        <div>10X in Total &nbsp;|&nbsp; 2X Per Day</div>
+                        <div>Buy Any Product in DP</div>
+                    </div>
+
+                    @if($isCurrent)
+                        <button class="showcase-cta" disabled><i class="fas fa-check-circle"></i> Active Plan</button>
+                    @elseif($isNext)
+                        <button class="showcase-cta purchase-plan" data-amount="{{ $package->price }}" data-plan="{{ $package->id }}">
+                            Upgrade Now <i class="fas fa-arrow-right"></i>
+                        </button>
+                    @elseif($isLocked)
+                        <button class="showcase-cta disabled" disabled>Locked</button>
+                    @else
+                        <button class="showcase-cta disabled" disabled>Not Available</button>
+                    @endif
                 </div>
+            @endforeach
         </div>
-
-        @endforeach
-
-    </div>
     </div>
 </section>
 <!-- Section Pricing End -->

@@ -98,7 +98,7 @@ Route::middleware(['maintenance', 'guest'])->group(function () {
     Route::post('/reset-password-phone', [AuthController::class, 'resetPassword'])->name('reset.password.phone');
 });
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 Route::post('/dev/fast2sms/test', [AuthController::class, 'testFast2Sms'])->name('dev.fast2sms.test');
 
 /*
@@ -293,5 +293,5 @@ Route::prefix('admin')
         Route::get('/tables', fn() => view('backend.tables.index'))->name('tables');
 
         // Logout
-        Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+        Route::match(['get', 'post'], '/logout', [AdminAuthController::class, 'logout'])->name('logout');
     });

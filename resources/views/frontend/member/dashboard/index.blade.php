@@ -961,13 +961,10 @@
             </nav>
 
             <div class="sidebar-footer">
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit"
-                        style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;">
-                        <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
-                    </button>
-                </form>
+                <a href="{{ route('logout') }}"
+                    style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;text-decoration:none;">
+                    <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
+                </a>
             </div>
         </aside>
         <div class="mobile-sidebar-backdrop" data-sidebar-close></div>

@@ -200,13 +200,10 @@
                                                 <i class="fas fa-shopping-bag mr-2 text-color"></i>Shop Products
                                             </a>
                                             <div class="dropdown-divider"></div>
-                                            <form action="{{ route('logout') }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="dropdown-item text-danger"
-                                                    style="font-size:13px;">
-                                                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                                                </button>
-                                            </form>
+                                            <a class="dropdown-item text-danger" href="{{ route('logout') }}"
+                                                style="font-size:13px;">
+                                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                                            </a>
                                         </div>
                                     </div>
 

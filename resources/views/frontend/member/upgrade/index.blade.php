@@ -180,152 +180,103 @@
         /* ── Plan Cards ─────────────────────────────────────── */
         .plan-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
         }
 
         .plan-card {
-            background: #fff;
-            border-radius: 14px;
-            border: 2px solid #e0e0e0;
-            padding: 24px 18px 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(15, 23, 42, .08);
+            padding: 16px 16px 14px;
             text-align: center;
-            transition: transform .2s, box-shadow .2s;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, .08);
             position: relative;
-        }
-
-        .plan-card.upgradeable {
-            border-color: #28a745;
-            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
         }
 
         .plan-card.upgradeable:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 28px rgba(40, 167, 69, .2);
+            transform: translateY(-3px);
         }
 
-        .plan-card.current-plan {
-            border-color: #3498db;
-            background: #f0f8ff;
-        }
+        .plan-card.plan-0 { background: linear-gradient(135deg, #f5c58d, #f2dcc2); }
+        .plan-card.plan-1 { background: linear-gradient(135deg, #e8e8e8, #f9f9f9); }
+        .plan-card.plan-2 { background: linear-gradient(135deg, #ffe86e, #fff8cf); }
+        .plan-card.plan-3 { background: linear-gradient(135deg, #64d983, #d7f7e0); }
+        .plan-card.plan-4 { background: linear-gradient(135deg, #54a7ff, #d6ebff); }
 
-        .plan-card.locked {
-            opacity: .55;
-            background: #f8f9fa;
-            border-color: #dee2e6;
-        }
-
-        .plan-badge-top {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 2px 14px;
-            border-radius: 20px;
+        .plan-pill {
+            width: fit-content;
+            margin: 0 auto 12px;
+            border-radius: 999px;
+            color: #fff;
+            background: #1f2937;
             font-size: 11px;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .badge-current {
-            background: #3498db;
-            color: #fff;
-        }
-
-        .badge-upgrade {
-            background: #28a745;
-            color: #fff;
-        }
-
-        .badge-locked {
-            background: #aaa;
-            color: #fff;
-        }
-
-        .plan-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: #fff;
-            margin: 0 auto 14px;
+            font-weight: 800;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            padding: 7px 14px;
         }
 
         .plan-name {
-            font-size: 16px;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 4px;
-        }
-
-        .plan-price {
-            font-size: 26px;
+            font-size: 14px;
             font-weight: 800;
-            color: #28a745;
+            color: #111827;
             margin-bottom: 6px;
         }
 
+        .plan-price {
+            font-size: clamp(2rem, 2.4vw, 2.8rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
         .plan-detail {
-            font-size: 12px;
-            color: #777;
-            margin-bottom: 4px;
+            font-size: 15px;
+            color: #364152;
+            margin-bottom: 10px;
+            min-height: 48px;
+        }
+
+        .btn-upgrade,
+        .btn-disabled {
+            margin-top: auto;
+            width: 100%;
+            height: 44px;
+            border: 0;
+            border-radius: 999px;
+            font-size: 22px;
+            font-weight: 800;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .btn-upgrade {
-            display: inline-block;
-            margin-top: 14px;
-            padding: 8px 22px;
-            background: linear-gradient(135deg, #28a745, #1e7e34);
+            background: #1f2937;
             color: #fff;
-            border: none;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: opacity .2s;
-            width: 100%;
-        }
-
-        .btn-upgrade:hover {
-            opacity: .88;
         }
 
         .btn-disabled {
-            display: inline-block;
-            margin-top: 14px;
-            padding: 8px 22px;
-            background: #e9ecef;
-            color: #aaa;
-            border: none;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 700;
+            background: #8b98a8;
+            color: #e5e7eb;
             cursor: not-allowed;
-            width: 100%;
         }
 
-        /* plan colour palette */
-        .plan-icon-a {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        @media (max-width: 1399px) {
+            .plan-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
         }
 
-        .plan-icon-b {
-            background: linear-gradient(135deg, #11998e, #38ef7d);
-        }
-
-        .plan-icon-c {
-            background: linear-gradient(135deg, #f093fb, #f5576c);
-        }
-
-        .plan-icon-d {
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-        }
-
-        .plan-icon-e {
-            background: linear-gradient(135deg, #f7971e, #ffd200);
+        @media (max-width: 767px) {
+            .plan-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 @endpush
@@ -334,7 +285,7 @@
     @php
         $isInactive = auth()->check() && auth()->user()->status == 'inactive';
         $currentPrice = $currentPlan?->price ?? 0;
-        $iconClasses = ['plan-icon-a', 'plan-icon-b', 'plan-icon-c', 'plan-icon-d', 'plan-icon-e'];
+        $planPills = ['Bronze Core', 'Silver Edge', 'Gold Rise', 'Platinum Force', 'Diamond Elite'];
     @endphp
 
     <div class="dash-layout">
@@ -385,13 +336,10 @@
     </nav>
 
     <div class="sidebar-footer">
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit"
-                style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;">
-                <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
-            </button>
-        </form>
+        <a href="{{ route('logout') }}"
+            style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;text-decoration:none;">
+            <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
+        </a>
     </div>
 </aside>
 <div class="mobile-sidebar-backdrop" data-sidebar-close></div>
@@ -428,7 +376,6 @@
                 $isCurrent = $currentPlan && $plan->id === $currentPlan->id;
                 $isLocked = $currentPlan && $plan->price < $currentPlan->price;
                 $isUpgradeable = !$isCurrent && !$isLocked;
-                $iconClass = $iconClasses[$index] ?? 'plan-icon-a';
 
                 if ($isCurrent) {
                     $cardClass = 'current-plan';
@@ -438,38 +385,20 @@
                     $cardClass = 'upgradeable';
                 }
             @endphp
-            <div class="plan-card {{ $cardClass }}">
-                @if ($isCurrent)
-                    <span class="plan-badge-top badge-current"><i class="fas fa-check-circle mr-1"></i>Current
-                        Plan</span>
-                @elseif($isLocked)
-                    <span class="plan-badge-top badge-locked"><i class="fas fa-lock mr-1"></i>Locked</span>
-                @else
-                    <span class="plan-badge-top badge-upgrade"><i class="fas fa-arrow-up mr-1"></i>Upgrade</span>
-                @endif
-
-                <div class="plan-icon {{ $iconClass }} mt-3">
-                    <i class="fas fa-crown"></i>
-                </div>
-
+            <div class="plan-card {{ $cardClass }} plan-{{ $index }}">
+                <span class="plan-pill">{{ $planPills[$index] ?? $plan->name }}</span>
                 <div class="plan-name">{{ $plan->name }}</div>
                 <div class="plan-price">₹{{ number_format($plan->price) }}</div>
-                <div class="plan-detail"><i class="fas fa-calendar-day mr-1 text-muted"></i>Daily Cap:
-                    <strong>₹{{ number_format($plan->daily_cap) }}</strong>
-                </div>
-                <div class="plan-detail"><i class="fas fa-flag-checkered mr-1 text-muted"></i>Max Cap:
-                    <strong>₹{{ number_format($plan->total_cap) }}</strong>
-                </div>
-                <div class="plan-detail"><i class="fas fa-chart-line mr-1 text-muted"></i>2X Daily Income</div>
+                <div class="plan-detail">Start your journey and unlock earning potential 🚀</div>
 
                 @if ($isUpgradeable)
                     <button class="btn-upgrade purchase-plan" data-amount="{{ $plan->price }}"
                         data-plan="{{ $plan->id }}">
-                        <i class="fas fa-bolt mr-1"></i>Upgrade Now
+                        Upgrade Now
                     </button>
                 @else
                     <button class="btn-disabled" disabled>
-                        {{ $isCurrent ? 'Active Plan' : 'Locked' }}
+                        {{ $isCurrent ? 'Active Plan' : 'Not Available' }}
                     </button>
                 @endif
             </div>
