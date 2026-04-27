@@ -178,6 +178,12 @@
                     @method('PUT')
 
                     <div class="row">
+                        <div class="col-12 form-group">
+                            <label>User ID</label>
+                            <input type="text" class="form-control bg-light" value="{{ auth()->user()->user_id }}"
+                                disabled readonly aria-readonly="true">
+                        </div>
+
                         <div class="col-md-6 form-group">
                             <label>Full Name</label>
                             <input type="text" class="form-control" name="name"
@@ -264,6 +270,12 @@
                             <input type="text" class="form-control" name="pincode"
                                 value="{{ old('pincode', auth()->user()->pincode) }}"
                                 placeholder="6-digit pincode">
+                        </div>
+
+                        <div class="col-12 form-group">
+                            <label>Address</label>
+                            <textarea class="form-control" name="address" rows="3"
+                                placeholder="Street, area, landmark">{{ old('address', auth()->user()->address) }}</textarea>
                         </div>
                     </div>
 

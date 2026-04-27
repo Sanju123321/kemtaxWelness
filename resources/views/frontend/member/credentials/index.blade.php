@@ -195,8 +195,8 @@
                 achievements</p>
         </div> -->
 
-    {{-- Member Certificate --}}
-    <div class="certificate-card" id="achievement-certificate">
+    {{-- Member Certificate: only #certificate-capture-root is exported to PNG (no share buttons) --}}
+    <div class="certificate-card mb-3" id="certificate-capture-root">
         <div class="certificate-header">
             <div
                 style="font-size: 14px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.9; margin-bottom: 10px;">
@@ -255,14 +255,15 @@
                     </div>
                 </div>
             </div>
-            <div class="cert-share-row">
-                <button type="button" class="cert-share-btn cert-share-download" id="downloadCertificateBtn"><i class="fas fa-download"></i>Download</button>
-                <button type="button" class="cert-share-btn cert-share-wa" id="shareCertificateWa"><i class="fab fa-whatsapp"></i>WhatsApp</button>
-                <button type="button" class="cert-share-btn cert-share-fb" id="shareCertificateFb"><i class="fab fa-facebook-f"></i>Facebook</button>
-                <button type="button" class="cert-share-btn cert-share-x" id="shareCertificateX"><i class="fab fa-x-twitter"></i>X</button>
-                <button type="button" class="cert-share-btn cert-share-copy" id="copyCertificateLink"><i class="fas fa-link"></i>Copy Link</button>
-            </div>
         </div>
+    </div>
+
+    <div class="cert-share-row certificate-actions mb-5">
+        <button type="button" class="cert-share-btn cert-share-download" id="downloadCertificateBtn"><i class="fas fa-download"></i>Download</button>
+        <button type="button" class="cert-share-btn cert-share-wa" id="shareCertificateWa"><i class="fab fa-whatsapp"></i>WhatsApp</button>
+        <button type="button" class="cert-share-btn cert-share-fb" id="shareCertificateFb"><i class="fab fa-facebook-f"></i>Facebook</button>
+        <button type="button" class="cert-share-btn cert-share-x" id="shareCertificateX"><i class="fab fa-x-twitter"></i>X</button>
+        <button type="button" class="cert-share-btn cert-share-copy" id="copyCertificateLink"><i class="fas fa-link"></i>Copy Link</button>
     </div>
 
     {{-- Rank Progression --}}
@@ -462,12 +463,10 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script>
         (function() {
-            const card = document.getElementById('achievement-certificate');
-            if (!card) return;
+            const captureEl = document.getElementById('certificate-capture-root');
+            if (!captureEl) return;
 
-            function certificateText() {
-                return encodeURIComponent('Check out my KemtexWellness achievement certificate: {{ route('member.credentials') }}');
-            }
+            const pageUrl = @json(route('member.credentials'));
 
             function downloadCanvas(canvas) {
                 const link = document.createElement('a');
@@ -476,33 +475,80 @@
                 link.click();
             }
 
-            async function captureCertificate() {
-                return await html2canvas(card, {
-                    backgroundColor: '#ffffff',
-                    scale: 2,
-                    useCORS: true
+            function canvasToBlob(canvas) {
+                return new Promise(function(resolve) {
+                    canvas.toBlob(resolve, 'image/png', 1.0);
                 });
             }
 
+            async function captureCertificate() {
+                return await html2canvas(captureEl, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                });
+            }
+
+            async function shareCertificateImage(canvas, appLabel) {
+                var blob = await canvasToBlob(canvas);
+                if (!blob) {
+                    downloadCanvas(canvas);
+                    return;
+                }
+                var file = new File([blob], 'kemtexwellness-certificate.png', { type: 'image/png' });
+                var text = 'My KemtexWellness achievement certificate';
+                try {
+                    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        await navigator.share({ files: [file], title: 'KemtexWellness', text: text });
+                        return;
+                    }
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                }
+                try {
+                    if (navigator.clipboard && window.ClipboardItem) {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        alert('Certificate image copied. Open ' + appLabel + ' and paste it into the chat or post.');
+                        return;
+                    }
+                } catch (e2) {}
+                downloadCanvas(canvas);
+                alert('Certificate saved to your device. Attach this image when sharing on ' + appLabel + '.');
+            }
+
             document.getElementById('downloadCertificateBtn')?.addEventListener('click', async function() {
-                const canvas = await captureCertificate();
+                var canvas = await captureCertificate();
                 downloadCanvas(canvas);
             });
 
-            document.getElementById('shareCertificateWa')?.addEventListener('click', function() {
-                window.open('https://wa.me/?text=' + certificateText(), '_blank');
+            document.getElementById('shareCertificateWa')?.addEventListener('click', async function() {
+                var canvas = await captureCertificate();
+                await shareCertificateImage(canvas, 'WhatsApp');
             });
 
-            document.getElementById('shareCertificateFb')?.addEventListener('click', function() {
-                window.open('https://www.facebook.com/sharer/sharer.php?u={{ urlencode(route('member.credentials')) }}', '_blank');
+            document.getElementById('shareCertificateFb')?.addEventListener('click', async function() {
+                var canvas = await captureCertificate();
+                await shareCertificateImage(canvas, 'Facebook');
             });
 
-            document.getElementById('shareCertificateX')?.addEventListener('click', function() {
-                window.open('https://twitter.com/intent/tweet?text=' + certificateText(), '_blank');
+            document.getElementById('shareCertificateX')?.addEventListener('click', async function() {
+                var canvas = await captureCertificate();
+                await shareCertificateImage(canvas, 'X');
             });
 
             document.getElementById('copyCertificateLink')?.addEventListener('click', function() {
-                navigator.clipboard.writeText('{{ route('member.credentials') }}');
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(pageUrl).then(function() {
+                        alert('Link copied.');
+                    }).catch(function() {
+                        prompt('Copy this link:', pageUrl);
+                    });
+                } else {
+                    prompt('Copy this link:', pageUrl);
+                }
             });
         })();
     </script>

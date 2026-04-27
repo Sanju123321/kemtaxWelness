@@ -12,6 +12,7 @@ class Income extends Model
         'level',
         'amount',
         'type',
+        'commission_source',
         'status',
         'remark'
     ];

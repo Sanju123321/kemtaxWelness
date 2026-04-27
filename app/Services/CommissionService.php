@@ -15,7 +15,7 @@ class CommissionService
      * Applies each upline's daily cap and total cap.
      * Excess income is marked 'lost' and goes to company.
      */
-    public function distributeIncome(int $userId): void
+    public function distributeIncome(int $userId, string $commissionSource = 'referral'): void
     {
         $user = User::with('currentPlan')->find($userId);
 
@@ -54,7 +54,7 @@ class CommissionService
             $grossIncome = round(($baseValue * $percent) / 100, 2);
             $type        = ((int) $node->level === 1) ? 'direct' : 'level';
 
-            DB::transaction(function () use ($node, $userId, $grossIncome, $type, $uplineUsers, $totalEarnedMap, $todayEarnedMap) {
+            DB::transaction(function () use ($node, $userId, $grossIncome, $type, $uplineUsers, $totalEarnedMap, $todayEarnedMap, $commissionSource) {
                 // Reload with lock inside transaction for safe increment
                 $uplineUser = User::with('currentPlan')->lockForUpdate()->find($node->upline_id);
 
@@ -69,13 +69,14 @@ class CommissionService
                 // ── Already hit total cap — full amount goes to admin ──────────
                 if ($totalEarned >= $totalCap) {
                     Income::create([
-                        'user_id'      => $uplineUser->id,
-                        'from_user_id' => $userId,
-                        'level'        => $node->level,
-                        'type'         => $type,
-                        'amount'       => $grossIncome,
-                        'status'       => 'lost',
-                        'remark'       => 'total_cap_exceeded',
+                        'user_id'            => $uplineUser->id,
+                        'from_user_id'       => $userId,
+                        'level'              => $node->level,
+                        'type'               => $type,
+                        'commission_source'  => $commissionSource,
+                        'amount'             => $grossIncome,
+                        'status'             => 'lost',
+                        'remark'             => 'total_cap_exceeded',
                     ]);
 
                     // Lost income → admin
@@ -96,13 +97,14 @@ class CommissionService
                 // ── Nothing creditable today — full amount goes to admin ───────
                 if ($creditable <= 0) {
                     Income::create([
-                        'user_id'      => $uplineUser->id,
-                        'from_user_id' => $userId,
-                        'level'        => $node->level,
-                        'type'         => $type,
-                        'amount'       => $grossIncome,
-                        'status'       => 'lost',
-                        'remark'       => 'daily_cap_exceeded',
+                        'user_id'            => $uplineUser->id,
+                        'from_user_id'       => $userId,
+                        'level'              => $node->level,
+                        'type'               => $type,
+                        'commission_source'  => $commissionSource,
+                        'amount'             => $grossIncome,
+                        'status'             => 'lost',
+                        'remark'             => 'daily_cap_exceeded',
                     ]);
 
                     // Lost income → admin
@@ -126,23 +128,25 @@ class CommissionService
                     $userNet         = round($creditable - $maintenanceFee - $repurchaseAmt, 2);
 
                     Income::create([
-                        'user_id'      => $uplineUser->id,
-                        'from_user_id' => $userId,
-                        'level'        => $node->level,
-                        'type'         => $type,
-                        'amount'       => $creditable,
-                        'status'       => 'credited',
-                        'remark'       => null,
+                        'user_id'            => $uplineUser->id,
+                        'from_user_id'       => $userId,
+                        'level'              => $node->level,
+                        'type'               => $type,
+                        'commission_source'  => $commissionSource,
+                        'amount'             => $creditable,
+                        'status'             => 'credited',
+                        'remark'             => null,
                     ]);
 
                     Income::create([
-                        'user_id'      => $uplineUser->id,
-                        'from_user_id' => $userId,
-                        'level'        => $node->level,
-                        'type'         => $type,
-                        'amount'       => $lost,
-                        'status'       => 'lost',
-                        'remark'       => 'daily_cap_exceeded',
+                        'user_id'            => $uplineUser->id,
+                        'from_user_id'       => $userId,
+                        'level'              => $node->level,
+                        'type'               => $type,
+                        'commission_source'  => $commissionSource,
+                        'amount'             => $lost,
+                        'status'             => 'lost',
+                        'remark'             => 'daily_cap_exceeded',
                     ]);
 
                     // Lost portion → admin
@@ -183,13 +187,14 @@ class CommissionService
                 $userNet       = round($grossIncome - $maintenanceFee - $repurchaseAmt, 2);
 
                 Income::create([
-                    'user_id'      => $uplineUser->id,
-                    'from_user_id' => $userId,
-                    'level'        => $node->level,
-                    'type'         => $type,
-                    'amount'       => $grossIncome,
-                    'status'       => 'credited',
-                    'remark'       => null,
+                    'user_id'            => $uplineUser->id,
+                    'from_user_id'       => $userId,
+                    'level'              => $node->level,
+                    'type'               => $type,
+                    'commission_source'  => $commissionSource,
+                    'amount'             => $grossIncome,
+                    'status'             => 'credited',
+                    'remark'             => null,
                 ]);
 
                 // 10% maintenance fee on full credited amount → admin

@@ -13,16 +13,14 @@ class DistributeIncomeJob implements ShouldQueue
     public int $tries = 3;
     public int $timeout = 120;
 
-    public int $userId;
-
-    public function __construct(int $userId)
-    {
-        $this->userId = $userId;
-    }
+    public function __construct(
+        public int $userId,
+        public string $commissionSource = 'referral',
+    ) {}
 
     public function handle(): void
     {
         app(CommissionService::class)
-            ->distributeIncome($this->userId);
+            ->distributeIncome($this->userId, $this->commissionSource);
     }
 }

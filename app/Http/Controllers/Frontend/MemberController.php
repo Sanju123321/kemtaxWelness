@@ -283,8 +283,11 @@ public function verifyPayment(Request $request)
                 'activated_at' => now()
             ]);
 
-            //  MLM TRIGGER
-            dispatch(new DistributeIncomeJob($user->id));
+            //  MLM TRIGGER — upgrade vs first plan purchase
+            dispatch(new DistributeIncomeJob(
+                $user->id,
+                $oldPlanId ? 'plan_upgrade' : 'referral'
+            ));
 
         });
 
@@ -993,6 +996,7 @@ public function updateProfile(Request $request)
         'city' => 'nullable|string|max:100',
         'state' => 'nullable|string|max:100',
         'pincode' => 'nullable|digits:6',
+        'address' => 'nullable|string|max:2000',
     ]);
 
     $user = auth()->user();
@@ -1004,7 +1008,8 @@ public function updateProfile(Request $request)
         $user->city = $request->city;
         $user->state = $request->state;
         $user->pincode = $request->pincode;
-   $user->save();
+        $user->address = $request->address;
+        $user->save();
 
     return back()->with('success', 'Profile updated successfully');
 }
@@ -1073,9 +1078,11 @@ return back()->with('success', 'Profile photo updated');
             ->where('user_id', $userId);
     }
 
-    private function commissionTypeLabel(string $type): string
+    private function commissionDisplayType(Income $income): string
     {
-        return $type === 'upgrade' ? 'Upgrade' : 'Referral';
+        return ($income->commission_source ?? 'referral') === 'plan_upgrade'
+            ? 'Upgraded Plan'
+            : 'Referral';
     }
 
     private function commissionLevelLabel($level): string
@@ -1092,7 +1099,7 @@ return back()->with('success', 'Profile photo updated');
         return [
             'date' => $income->created_at->format('M d, Y'),
             'from' => $income->fromUser->name ?? 'N/A',
-            'type' => $this->commissionTypeLabel((string) $income->type),
+            'type' => $this->commissionDisplayType($income),
             'level' => $this->commissionLevelLabel($income->level),
             'amount' => number_format((float) $income->amount, 2),
             'status' => ucfirst((string) $income->status),

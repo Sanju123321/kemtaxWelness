@@ -92,6 +92,54 @@
                 overflow-x: hidden;
             }
 
+            .member-navbar-actions {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: flex-end;
+                gap: 6px;
+                max-width: 100%;
+                margin-left: auto !important;
+            }
+
+            .member-user-dropdown-btn {
+                max-width: 100%;
+                min-width: 0;
+            }
+
+            .member-user-dropdown-btn .member-user-name {
+                display: inline-block;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: bottom;
+            }
+
+            @media (max-width: 991.98px) {
+                .member-navbar-actions {
+                    justify-content: center;
+                    padding-top: 8px;
+                    width: 100%;
+                }
+
+                .member-user-dropdown-btn .member-user-name {
+                    max-width: 100px;
+                }
+            }
+
+            @media (max-width: 575.98px) {
+                .member-user-dropdown-btn {
+                    padding-left: 10px;
+                    padding-right: 10px;
+                    font-size: 12px;
+                }
+
+                .member-user-dropdown-btn .member-user-name {
+                    max-width: 72px;
+                }
+            }
+
             .table-responsive {
                 -webkit-overflow-scrolling: touch;
             }
@@ -158,8 +206,7 @@
                                     </li>
                                 </ul>
 
-                                <div class="my-2 my-md-0 ml-lg-3 d-flex align-items-center justify-content-center"
-                                    style="gap:2px;">
+                                <div class="my-2 my-md-0 ml-lg-3 member-navbar-actions">
 
                                     {{-- Cart icon --}}
                                     <div class="member-cart-wrap">
@@ -180,13 +227,13 @@
                                     </div>
 
                                     {{-- User dropdown --}}
-                                    <div class="dropdown ml-2">
+                                    <div class="dropdown ml-2 flex-shrink-0">
                                         <button type="button"
-                                            class="btn btn-main btn-round-full btn-sm dropdown-toggle"
+                                            class="btn btn-main btn-round-full btn-sm dropdown-toggle member-user-dropdown-btn"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                                            style="min-width:130px;">
+                                            style="min-width:0;">
                                             <i class="fas fa-user mr-1"></i>
-                                            {{ Str::words(auth()->user()->name ?? 'Member', 1, '') }}
+                                            <span class="member-user-name">{{ Str::words(auth()->user()->name ?? 'Member', 1, '') }}</span>
                                             <i class="fas fa-chevron-down ml-1 small"></i>
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right"
