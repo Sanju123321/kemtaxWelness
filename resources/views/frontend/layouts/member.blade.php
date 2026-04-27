@@ -77,6 +77,10 @@
                 line-height: 1;
             }
 
+            .member-top-links {
+                display: none !important;
+            }
+
             body,
             .navigation,
             .container,
@@ -130,7 +134,7 @@
                                 <span class="fa fa-bars"></span>
                             </button>
                             <div class="collapse navbar-collapse text-center" id="memberNav">
-                                <ul class="navbar-nav ml-auto">
+                                <ul class="navbar-nav ml-auto member-top-links">
                                     <li class="nav-item {{ request()->routeIs('member.dashboard') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('member.dashboard') }}"><i
                                                 class="fas fa-tachometer-alt mr-1"></i>Dashboard</a>
@@ -187,6 +191,10 @@
                                         </button>
                                         <div class="dropdown-menu dropdown-menu-right"
                                             style="min-width:170px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,.12);border:none;">
+                                            <a class="dropdown-item" href="{{ route('member.dashboard') }}"
+                                                style="font-size:13px;">
+                                                <i class="fas fa-tachometer-alt mr-2 text-color"></i>Dashboard
+                                            </a>
                                             <a class="dropdown-item" href="{{ route('member.profile') }}"
                                                 style="font-size:13px;">
                                                 <i class="fas fa-user-cog mr-2 text-color"></i>Profile

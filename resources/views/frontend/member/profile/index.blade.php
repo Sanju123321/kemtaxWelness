@@ -96,7 +96,9 @@
             <div class="profile-card text-center">
                 <div class="avatar-circle">
                     @if(auth()->user()->profile_photo)
-                    <img src="{{ asset('storage/' . auth()->user()->profile_photo) }}">
+                    <img src="{{ Storage::url(auth()->user()->profile_photo) }}"
+                        alt="Profile Photo"
+                        onerror="this.style.display='none';this.parentElement.querySelector('i').style.display='block';">
                     @else
                     <i class="fas fa-user"></i>
                     @endif

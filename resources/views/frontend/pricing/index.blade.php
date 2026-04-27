@@ -9,6 +9,10 @@
         padding: 0 30px 6px;
     }
 
+    .plans-mobile-grid {
+        display: none;
+    }
+
     .plans-slide-row {
         display: flex;
         flex-wrap: wrap;
@@ -213,6 +217,18 @@
 
         .showcase-plan { padding: 16px 14px 12px; border-radius: 16px; }
     }
+
+    @media (max-width: 767.98px) {
+        .plans-carousel-wrap {
+            display: none;
+        }
+
+        .plans-mobile-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+    }
 </style>
 @endpush
 
@@ -380,6 +396,46 @@
                     </a>
                 @endif
             </div>
+        </div>
+
+        <div class="plans-mobile-grid">
+            @foreach($packages as $index => $package)
+                @php
+                    $isCurrent = $package->id == $currentPlanId;
+                    $isNext = $index == $currentIndex + 1;
+                    $isLocked = $index < $currentIndex;
+                    $theme = $themes[$index] ?? 'bronze';
+                    $label = $labels[$index] ?? ($package->name ?? 'Premium Plan');
+                @endphp
+                <div class="showcase-plan plan-theme-{{ $theme }}">
+                    <span class="showcase-plan-head">
+                        <i class="fas {{ $icons[$index] ?? 'fa-star' }}"></i>{{ $label }}
+                    </span>
+                    <div class="showcase-price">₹{{ number_format((float) $package->price, 0) }}</div>
+                    <div class="showcase-sub">Start your journey and unlock earning potential 🚀</div>
+                    <div class="showcase-rule"></div>
+                    <div class="showcase-feature"><i class="fas fa-layer-group"></i><div><div class="showcase-feature-title">Earn 10X in Total</div><div class="showcase-feature-sub">On your total income</div></div></div>
+                    <div class="showcase-feature"><i class="fas fa-chart-line"></i><div><div class="showcase-feature-title">Earn 2X Per Day</div><div class="showcase-feature-sub">On your daily income</div></div></div>
+                    <div class="showcase-feature"><i class="fas fa-users"></i><div><div class="showcase-feature-title">Higher Referral Income</div><div class="showcase-feature-sub">Grow your network and earn more</div></div></div>
+                    <div class="showcase-feature"><i class="fas fa-tags"></i><div><div class="showcase-feature-title">Buy Any Product</div><div class="showcase-feature-sub">At Direct Price (DP)</div></div></div>
+                    <div class="showcase-power">
+                        <strong><i class="fas fa-shield-alt mr-1"></i>All Plans, Same Power.</strong>
+                        <div>10X in Total &nbsp;|&nbsp; 2X Per Day</div>
+                        <div>Buy Any Product in DP</div>
+                    </div>
+                    @if($isCurrent)
+                        <button class="showcase-cta active-plan" disabled><i class="fas fa-check-circle"></i> Active Plan</button>
+                    @elseif($isNext)
+                        <button class="showcase-cta upgrade-plan purchase-plan" data-amount="{{ $package->price }}" data-plan="{{ $package->id }}">
+                            Upgrade Now <i class="fas fa-arrow-right"></i>
+                        </button>
+                    @elseif($isLocked)
+                        <button class="showcase-cta disabled" disabled>Locked</button>
+                    @else
+                        <button class="showcase-cta disabled" disabled>Not Available</button>
+                    @endif
+                </div>
+            @endforeach
         </div>
     </div>
 </section>
@@ -804,17 +860,18 @@
                             <p class="text-muted">Platform maintenance and support infrastructure</p>
                         </div>
                         <div class="col-lg-6">
-                            <p><strong>10% Repurchase Deduction</strong></p>
+                            <p><strong>5% Repurchase Deduction</strong></p>
                             <p class="text-muted">Credited to your wallet for future purchases or upgrades</p>
                         </div>
                     </div>
-                    <p class="mb-0 pt-3 border-top"><strong>Net Calculation:</strong> Your earnings minus 20% total
+                    <p class="mb-0 pt-3 border-top"><strong>Net Calculation:</strong> Your earnings minus 15% total
                         deductions = Amount credited to account</p>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container mt-5">
+
+    <!-- <div class="container mt-5">
         <div class="cta-block p-5 rounded">
             <div class="row justify-content-center align-items-center">
                 <div class="col-lg-7 text-center text-lg-left">
@@ -826,7 +883,8 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
+
     </div>
 </section>
 <!-- Commission Structure Section End -->

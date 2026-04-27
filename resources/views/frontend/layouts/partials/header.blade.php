@@ -222,3 +222,16 @@
         </div>
     </div>
 </header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var dropdownBtn = document.querySelector('.user-dropdown .dropdown-toggle');
+        if (!dropdownBtn || !window.jQuery) return;
+
+        dropdownBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.jQuery(this).dropdown('toggle');
+        });
+    });
+</script>

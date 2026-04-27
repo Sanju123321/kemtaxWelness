@@ -291,6 +291,34 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
+        .geo-avatar.plan-active {
+            border-color: #28a745 !important;
+            box-shadow: 0 4px 14px rgba(40, 167, 69, .32);
+        }
+
+        .geo-avatar.plan-inactive {
+            border-color: #dc3545 !important;
+            box-shadow: 0 4px 14px rgba(220, 53, 69, .28);
+        }
+
+        .geo-crown {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #ffd700;
+            color: #6b4f00;
+            border: 2px solid #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .22);
+            z-index: 2;
+        }
+
         .geo-node:hover .geo-avatar {
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(40, 167, 69, .35);
@@ -963,9 +991,18 @@
             // Avatar
             const avatar = document.createElement('div');
             avatar.className = 'geo-avatar';
+            avatar.classList.add(node.has_plan ? 'plan-active' : 'plan-inactive');
             // avatar.innerHTML = '<i class="fas fa-user"></i>';
             avatar.innerHTML = node.profile_photo ? '<img src="' + storageUrl + '/' + node.profile_photo +
                 '" style="width:100%;height:100%;border-radius:50%;">' : '<i class="fas fa-user"></i>';
+
+            if ((node.direct_referrals || 0) >= 10) {
+                const crown = document.createElement('span');
+                crown.className = 'geo-crown';
+                crown.title = '10+ direct referrals';
+                crown.innerHTML = '<i class="fas fa-crown"></i>';
+                avatar.appendChild(crown);
+            }
 
             // Name
             const nameEl = document.createElement('div');

@@ -653,6 +653,8 @@ public function verifyWalletTopupPayment(Request $request)
             'depth'        => $depth,
             'profile_photo' => $user->profile_photo,
             'status'       => $user->status ?? 'inactive',
+            'has_plan'     => !empty($user->current_plan_id),
+            'direct_referrals' => UserTree::where('upline_id', $user->id)->where('level', 1)->count(),
             'ref_code'     => $user->reference_code ?? '-',
             'plan_name'    => $user->currentPlan?->name ?? 'No Plan',
             'plan_price'   => $user->currentPlan?->price ?? 0,
@@ -1037,8 +1039,8 @@ public function updatePhoto(Request $request)
     $user = auth()->user();
 
     // Delete old image
-    if ($user->profile_photo && Storage::exists($user->profile_photo)) {
-        Storage::delete($user->profile_photo);
+    if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+        Storage::disk('public')->delete($user->profile_photo);
     }
 
     // Upload new image

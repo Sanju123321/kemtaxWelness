@@ -16,7 +16,7 @@ class PlanSeeder extends Seeder
 
         DB::table('plans')->insert([
             [
-                'name'       => 'Plan A',
+                'name'       => 'Bronze',
                 'price'      => 1500,
                 'base_value' => 1000,
                 'daily_cap'  => 2000,
@@ -26,8 +26,8 @@ class PlanSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name'       => 'Plan B',
-                'price'      => 3000,
+                'name'       => 'Silver',
+                'price'      => 2500,
                 'base_value' => 2000,
                 'daily_cap'  => 5000,
                 'total_cap'  => 25000,
@@ -36,8 +36,8 @@ class PlanSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name'       => 'Plan C',
-                'price'      => 7500,
+                'name'       => 'Gold',
+                'price'      => 5000,
                 'base_value' => 5000,
                 'daily_cap'  => 10000,
                 'total_cap'  => 50000,
@@ -46,8 +46,8 @@ class PlanSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name'       => 'Plan D',
-                'price'      => 15000,
+                'name'       => 'Platinum',
+                'price'      => 10000,
                 'base_value' => 10000,
                 'daily_cap'  => 20000,
                 'total_cap'  => 100000,
@@ -56,8 +56,8 @@ class PlanSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name'       => 'Plan E',
-                'price'      => 30000,
+                'name'       => 'Diamond',
+                'price'      => 20000,
                 'base_value' => 20000,
                 'daily_cap'  => 50000,
                 'total_cap'  => 250000,
