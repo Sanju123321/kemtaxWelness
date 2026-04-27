@@ -99,6 +99,11 @@
                     min-height: 42px;
                 }
 
+                .navbar-toggler,
+                #memberNav {
+                    display: none !important;
+                }
+
                 .modal .modal-dialog {
                     margin: .5rem;
                 }

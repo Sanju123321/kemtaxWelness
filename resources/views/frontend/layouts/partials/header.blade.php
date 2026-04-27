@@ -102,6 +102,12 @@
             background: #eaf7ef;
             color: #28a745;
         }
+
+        @media (max-width: 991.98px) {
+            .header-top {
+                display: none !important;
+            }
+        }
     </style>
 
     <div id="navbar">
