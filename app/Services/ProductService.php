@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\RecentlyViewed;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
 class ProductService
@@ -58,7 +59,7 @@ class ProductService
         );
     }
 
-    public function recentlyViewed(int $userId, int $limit = 6): \Illuminate\Database\Eloquent\Collection
+    public function recentlyViewed(int $userId, int $limit = 6): Collection
     {
         return RecentlyViewed::with('product')
             ->where('user_id', $userId)
