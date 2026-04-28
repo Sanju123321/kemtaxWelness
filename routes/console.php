@@ -31,3 +31,7 @@ Schedule::command('cap:warn')->dailyAt('22:00')->appendOutputTo(storage_path('lo
 Schedule::command('cap:warn')->dailyAt('23:00')->appendOutputTo(storage_path('logs/cap-warn.log'));
 Schedule::command('cap:warn')->at('23:30')->appendOutputTo(storage_path('logs/cap-warn.log'));
 Schedule::command('cap:warn')->at('23:45')->appendOutputTo(storage_path('logs/cap-warn.log'));
+Schedule::command('queue:work --stop-when-empty --tries=3')
+    ->everyMinute()
+    ->withoutOverlapping()
+    ->runInBackground();

@@ -493,69 +493,13 @@
             padding: 28px 24px 60px;
         }
 
-        .mobile-sidebar-toggle,
-        .mobile-sidebar-backdrop {
-            display: none;
-        }
-
-        .mobile-sidebar-toggle {
-            border: 1px solid #dce4e8;
-            background: #fff;
-            color: #2f3a44;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 14px;
-            align-items: center;
-            gap: 8px;
-            touch-action: manipulation;
-        }
-
         @media (max-width: 768px) {
             .dash-sidebar {
-                display: flex;
-                position: fixed;
-                left: 0;
-                top: 0;
-                z-index: 1051;
-                height: 100vh;
-                width: min(84vw, 300px);
-                min-height: 100vh;
-                transform: translateX(-100%);
-                transition: transform .22s ease;
+                display: none;
             }
 
             .dash-main {
                 padding: 16px 12px 40px;
-            }
-
-            .mobile-sidebar-toggle {
-                display: inline-flex;
-            }
-
-            .mobile-sidebar-backdrop {
-                display: block;
-                position: fixed;
-                inset: 0;
-                background: rgba(16, 24, 32, .45);
-                z-index: 1050;
-                opacity: 0;
-                visibility: hidden;
-                transition: opacity .2s ease;
-            }
-
-            body.mobile-sidebar-open {
-                overflow: hidden;
-            }
-
-            body.mobile-sidebar-open .dash-sidebar {
-                transform: translateX(0);
-            }
-
-            body.mobile-sidebar-open .mobile-sidebar-backdrop {
-                opacity: 1;
-                visibility: visible;
             }
         }
 
@@ -753,14 +697,6 @@
 
         /* Responsive adjustments */
         @media (max-width: 576px) {
-            .invite-code-box {
-                flex-direction: column;
-            }
-
-            .invite-code-box .btn {
-                width: 100%;
-            }
-
             .gt-avatar {
                 width: 52px;
                 height: 52px;
@@ -790,85 +726,9 @@
                 min-height: 100vh;
             }
         }
-
-        .upgrade-modal-header {
-            background: linear-gradient(120deg, #24a73f, #1b8e34);
-            color: #fff;
-            border: none;
-            padding: 18px 24px;
-        }
-
-        .upgrade-modal-title {
-            font-size: 38px;
-            font-weight: 800;
-            line-height: 1.1;
-            margin: 0;
-        }
-
-        .upgrade-modal-subtitle {
-            margin-top: 4px;
-            color: rgba(255, 255, 255, 0.86);
-            font-size: 14px;
-        }
-
-        .upgrade-plan-card {
-            background: #eef7ef;
-            border: 1px solid #dcefe0;
-            border-radius: 20px;
-            box-shadow: 0 10px 24px rgba(6, 79, 24, 0.1);
-            padding: 18px 18px 22px;
-            max-width: 320px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .upgrade-plan-name {
-            display: inline-block;
-            background: #3cae4d;
-            color: #fff;
-            font-weight: 700;
-            border-radius: 999px;
-            padding: 8px 22px;
-            font-size: 18px;
-        }
-
-        .upgrade-plan-price {
-            color: #1f9a3f;
-            font-size: 52px;
-            font-weight: 800;
-            margin: 10px 0 0;
-            line-height: 1.1;
-        }
-
-        .upgrade-plan-features {
-            margin: 14px 0 0;
-            padding: 0;
-            list-style: none;
-            text-align: left;
-            color: #495057;
-            line-height: 1.65;
-            font-size: 17px;
-        }
-
-        .upgrade-plan-features li::before {
-            content: "•";
-            color: #2fa84a;
-            font-weight: 700;
-            margin-right: 8px;
-        }
-
-        .upgrade-join-btn {
-            width: 100%;
-            border: none;
-            border-radius: 999px;
-            background: #26a845;
-            color: #fff;
-            font-weight: 700;
-            padding: 12px;
-            margin-top: 16px;
-        }
     </style>
 @endpush
+
 @section('content')
 
     {{-- Dashboard Header --}}
@@ -1003,19 +863,20 @@
                 <div class="nav-label">More</div>
 
                 <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}">
-                    <i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans
+                    <i class="fas fa-tags nav-icon"></i> Pricing
                 </a>
 
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" data-toggle="modal" data-target="#inviteModal"
+                <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
-                <a href="{{ route('member.commissions.history') }}" id="sidebarCommissionLink"
+                <a href="#" id="sidebarCommissionLink"
+                    onclick="showSection('recentCommissionsSection'); return false;"
                     class="{{ $isInactive ? 'disabled' : '' }}">
-                    <i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions
+                    <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
                 </a>
                 <div class="nav-label">My Shopping</div>
                 <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;"
@@ -1038,19 +899,18 @@
             </nav>
 
             <div class="sidebar-footer">
-                <a href="{{ route('logout') }}"
-                    style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;text-decoration:none;">
-                    <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
-                </a>
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit"
+                        style="background:none;border:none;padding:0;width:100%;text-align:left;display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;cursor:pointer;">
+                        <i class="fas fa-sign-out-alt" style="width:18px;text-align:center;"></i> Logout
+                    </button>
+                </form>
             </div>
         </aside>
-        <div class="mobile-sidebar-backdrop" data-sidebar-close></div>
 
         {{-- Main Content --}}
         <div class="dash-main">
-            <button type="button" class="mobile-sidebar-toggle" data-sidebar-open>
-                <i class="fas fa-bars"></i> Menu
-            </button>
 
             {{-- Stat Cards --}}
             <div class="row mb-4 flex-nowrap overflow-auto pb-1">
@@ -1226,7 +1086,7 @@
                     <div class="section-card" id="recentCommissionsSection">
                         <div class="section-card-header d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-history mr-2 text-color"></i>Recent Commissions</span>
-                            <a href="{{ route('member.commissions.history') }}" class="btn btn-sm btn-main btn-round-full"
+                            <a href="#" class="btn btn-sm btn-main btn-round-full"
                                 style="font-size:11px;padding:4px 14px;">View All</a>
                         </div>
                         <div class="section-card-body p-0">
@@ -1236,14 +1096,13 @@
                                         <th>Date</th>
                                         <th>From Member</th>
                                         <th>Type</th>
-                                        <th>Level</th>
                                         <th>Amount</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="commissionTableBody">
                                     <tr>
-                                        <td colspan="6" class="text-center text-muted py-3">
+                                        <td colspan="5" class="text-center text-muted py-3">
                                             <i class="fas fa-spinner fa-spin mr-1"></i> Loading…
                                         </td>
                                     </tr>
@@ -1322,11 +1181,11 @@
                                 @endauth
                             </h6>
 
-                            {{-- USER ID --}}
+                            {{-- EMAIL --}}
                             <p class="text-muted small mb-2">
-                                @auth {{ Auth::user()->user_id }}
+                                @auth {{ Auth::user()->email }}
                                 @else
-                                    KW000000
+                                    member@example.com
                                 @endauth
                             </p>
 
@@ -1664,7 +1523,7 @@
                 <div class="modal-header" style="border-bottom:1px solid #f0f0f0;">
                     <h5 class="modal-title" id="inviteModalLabel" style="font-weight:700;"><i
                             class="fas fa-share-alt mr-2 text-color"></i>Invite &amp; Earn</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -1756,20 +1615,34 @@
     <div class="modal fade" id="upgradeModal" tabindex="-1" role="dialog" aria-labelledby="upgradeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content" style="border-radius: 18px; border: none; overflow: hidden;">
-                <div class="modal-header upgrade-modal-header">
+            <div class="modal-content" style="border-radius:14px;border:none;overflow:hidden;">
+
+                {{-- Header --}}
+                <div class="modal-header"
+                    style="background:linear-gradient(135deg,#28a745,#1e7e34);border:none;padding:18px 24px;">
                     <div>
-                        <h5 class="modal-title mb-0" id="upgradeModalLabel">Welcome! Please Choose a Plan to Continue</h5>
-                        <div class="upgrade-modal-subtitle">Complete activation to unlock team income and member benefits.</div>
+                        <h5 class="modal-title mb-0" id="upgradeModalLabel"
+                            style="color:white;font-weight:700;font-size:17px;">
+                            <i class="fas fa-arrow-circle-up mr-2"></i>Upgrade Your Plan
+                        </h5>
+                        @if ($plan)
+                            <div style="color:rgba(255,255,255,.8);font-size:12px;margin-top:3px;">
+                                Current: <strong style="color:white;">{{ $plan->name }}</strong>
+                                &nbsp;·&nbsp; ₹{{ number_format($plan->price, 0) }}
+                                &nbsp;·&nbsp; Daily Cap: ₹{{ number_format($plan->daily_cap, 0) }}
+                                &nbsp;·&nbsp; Total Cap: ₹{{ number_format($plan->total_cap, 0) }}
+                            </div>
+                        @endif
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                        style="color:white;opacity:1;font-size:26px;background:none;border:none;line-height:1;padding:0;">
+                        style="color:white;opacity:1;font-size:22px;background:none;border:none;line-height:1;padding:0;">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <div class="modal-body" style="padding: 24px; background: #f4f7f5;">
-                    <div class="row">
+                {{-- Body --}}
+                <div class="modal-body" style="padding:24px;background:#f8fafb;">
+                    <div class="row" style="gap:0;">
                         @foreach ($allPlans as $p)
                             @php
                                 $isCurrent = $plan && $plan->id === $p->id;
@@ -1778,28 +1651,50 @@
                                 $canUpgrade = !$isCurrent && !$isLocked;
                             @endphp
                             <div class="col-md-6 mb-3">
-                                <div class="upgrade-plan-card" style="opacity: {{ $isLocked ? '0.55' : '1' }};">
-                                    <div class="upgrade-plan-name">
+                                <div
+                                    style="
+                                background: {{ $isCurrent ? '#eaf7ef' : 'white' }};
+                                border: 2px solid {{ $isCurrent ? '#28a745' : ($isNext ? '#fd7e14' : '#e9ecef') }};
+                                border-radius: 10px;
+                                padding: 18px;
+                                height: 100%;
+                                position: relative;
+                                opacity: {{ $isLocked ? '0.5' : '1' }};
+                            ">
+                                    {{-- Badge --}}
+                                    @if ($isCurrent)
+                                        <span
+                                            style="position:absolute;top:10px;right:12px;background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">CURRENT</span>
+                                    @elseif($isNext)
+                                        <span
+                                            style="position:absolute;top:10px;right:12px;background:#fd7e14;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">RECOMMENDED</span>
+                                    @endif
+
+                                    <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px;">
                                         {{ $p->name }}
                                     </div>
-                                    <div class="upgrade-plan-price">
+                                    <div
+                                        style="font-size:22px;font-weight:800;color:{{ $isCurrent ? '#28a745' : '#333' }};margin-bottom:10px;">
                                         ₹{{ number_format($p->price, 0) }}
                                     </div>
-                                    <div class="text-muted" style="font-size: 17px;">One-Time / Monthly</div>
-                                    <ul class="upgrade-plan-features">
-                                        <li>20% Personal Commission</li>
-                                        <li>Starter Resources Kit</li>
-                                        <li>Basic Training Access</li>
-                                        <li>Community Support</li>
-                                    </ul>
+                                    <div style="font-size:12px;color:#666;line-height:1.8;">
+                                        <div><i class="fas fa-coins mr-1" style="color:#f59e0b;width:14px;"></i> Base
+                                            Value: <strong>₹{{ number_format($p->base_value, 0) }}</strong></div>
+                                        <div><i class="fas fa-calendar-day mr-1" style="color:#17a2b8;width:14px;"></i>
+                                            Daily Cap: <strong>₹{{ number_format($p->daily_cap, 0) }}</strong></div>
+                                        <div><i class="fas fa-lock-open mr-1" style="color:#6610f2;width:14px;"></i> Total
+                                            Cap: <strong>₹{{ number_format($p->total_cap, 0) }}</strong></div>
+                                    </div>
 
                                     @if ($canUpgrade && !$isLocked)
-                                        <button class="purchase-plan upgrade-join-btn"
-                                            data-amount="{{ $p->price }}" data-plan="{{ $p->id }}" data-label="Join Now">
-                                            Join Now
+                                        <button class="btn btn-main btn-round-full btn-sm purchase-plan mt-3 w-100"
+                                            data-amount="{{ $p->price }}" data-plan="{{ $p->id }}"
+                                            style="font-weight:700;font-size:13px;">
+                                            <i class="fas fa-arrow-up mr-1"></i> Upgrade to {{ $p->name }}
                                         </button>
                                     @elseif($isCurrent)
-                                        <div style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:700;">
+                                        <div
+                                            style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:600;">
                                             <i class="fas fa-check-circle mr-1"></i> Your Active Plan
                                         </div>
                                     @else
@@ -1812,8 +1707,8 @@
                         @endforeach
                     </div>
 
-                    <div style="font-size:11px;color:#8a9199;text-align:center;margin-top:8px;">
-                        Secure payment via Razorpay
+                    <div style="font-size:11px;color:#aaa;text-align:center;margin-top:8px;">
+                        Plans upgrade sequentially: A → B → C → D → E &nbsp;|&nbsp; Payment via Razorpay
                     </div>
                 </div>
 
@@ -1826,25 +1721,7 @@
 
 
 @push('scripts')
-    <script>
-        (function() {
-            var body = document.body;
-            var openBtn = document.querySelector('[data-sidebar-open]');
-            var closeTargets = document.querySelectorAll('[data-sidebar-close], .dash-sidebar a');
-
-            if (!openBtn) return;
-
-            openBtn.addEventListener('click', function() {
-                body.classList.add('mobile-sidebar-open');
-            });
-
-            closeTargets.forEach(function(target) {
-                target.addEventListener('click', function() {
-                    body.classList.remove('mobile-sidebar-open');
-                });
-            });
-        })();
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // ── Sidebar click-active for in-page links ─────────────────────────
         document.querySelectorAll('.sidebar-nav a').forEach(function(link) {
@@ -2552,8 +2429,8 @@
             let currentPage = 1;
 
             function statusBadge(status) {
-                if (status.toLowerCase() === 'credited') {
-                    return '<span class="badge-completed">Credited</span>';
+                if (status.toLowerCase() === 'completed') {
+                    return '<span class="badge-completed">Completed</span>';
                 }
                 return '<span class="badge-pending">' + status + '</span>';
             }
@@ -2562,7 +2439,7 @@
                 const tbody = document.getElementById('commissionTableBody');
                 if (!data.length) {
                     tbody.innerHTML =
-                        '<tr><td colspan="6" class="text-center text-muted py-3">No commissions yet</td></tr>';
+                        '<tr><td colspan="5" class="text-center text-muted py-3">No commissions yet</td></tr>';
                     return;
                 }
                 tbody.innerHTML = data.map(function(row) {
@@ -2570,7 +2447,6 @@
                         '<td>' + row.date + '</td>' +
                         '<td>' + row.from + '</td>' +
                         '<td><span class="text-muted" style="font-size:12px;">' + row.type + '</span></td>' +
-                        '<td><span class="text-muted" style="font-size:12px;">' + row.level + '</span></td>' +
                         '<td><strong style="color:#28a745;">&#x20B9; ' + row.amount + '</strong></td>' +
                         '<td>' + statusBadge(row.status) + '</td>' +
                         '</tr>';
@@ -2636,7 +2512,7 @@
             function loadCommissions(page) {
                 const tbody = document.getElementById('commissionTableBody');
                 tbody.innerHTML =
-                    '<tr><td colspan="6" class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading…</td></tr>';
+                    '<tr><td colspan="5" class="text-center text-muted py-3"><i class="fas fa-spinner fa-spin mr-1"></i> Loading…</td></tr>';
                 document.getElementById('commissionPagination').innerHTML = '';
                 document.getElementById('commissionInfo').textContent = '';
 
@@ -2655,7 +2531,7 @@
                     })
                     .catch(function() {
                         tbody.innerHTML =
-                            '<tr><td colspan="6" class="text-center text-danger py-3">Failed to load commissions.</td></tr>';
+                            '<tr><td colspan="5" class="text-center text-danger py-3">Failed to load commissions.</td></tr>';
                     });
             }
 
@@ -2671,15 +2547,6 @@
         (function() {
             var CSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-            document.addEventListener('DOMContentLoaded', function() {
-                @if (!$plan)
-                    $('#upgradeModal').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    }).modal('show');
-                @endif
-            });
-
             document.addEventListener('click', function(e) {
                 var btn = e.target.closest('.purchase-plan');
                 if (!btn) return;
@@ -2687,7 +2554,6 @@
 
                 var amount = btn.getAttribute('data-amount');
                 var planId = btn.getAttribute('data-plan');
-                var initialLabel = btn.getAttribute('data-label') || btn.textContent.trim();
 
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Processing…';
@@ -2746,14 +2612,16 @@
                                             alert('❌ Payment Verification Failed: ' + (res
                                                 .message || ''));
                                             btn.disabled = false;
-                                            btn.innerHTML = initialLabel;
+                                            btn.innerHTML =
+                                                '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
                                         }
                                     });
                             },
                             modal: {
                                 ondismiss: function() {
                                     btn.disabled = false;
-                                    btn.innerHTML = initialLabel;
+                                    btn.innerHTML =
+                                        '<i class="fas fa-arrow-up mr-1"></i> Upgrade to Plan';
                                 }
                             }
                         };
@@ -2763,7 +2631,7 @@
                     .catch(function() {
                         alert('❌ Could not create order. Please try again.');
                         btn.disabled = false;
-                        btn.innerHTML = initialLabel;
+                        btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
                     });
             });
         })();
