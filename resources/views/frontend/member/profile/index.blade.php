@@ -111,7 +111,20 @@
                     @else
                     - @endauth
                 </p>
-                <span class="badge-rank mb-3 d-inline-block">Active Member</span>
+                <span class="badge-rank mb-3 d-inline-block 
+    @auth 
+        {{ Auth::user()->status == 'active' ? 'bg-success' : 'bg-danger' }} 
+    @else 
+        bg-danger 
+    @endauth">
+
+                    @auth
+                    {{ ucfirst(Auth::user()->status) }}
+                    @else
+                    Inactive Member
+                    @endauth
+
+                </span>
                 <form action="{{ url('/member/profile/photo') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
@@ -220,42 +233,42 @@
                             <select class="form-control" name="state">
                                 <option value="">Select State</option>
                                 @foreach ([
-                                    'Andhra Pradesh',
-                                    'Arunachal Pradesh',
-                                    'Assam',
-                                    'Bihar',
-                                    'Chhattisgarh',
-                                    'Goa',
-                                    'Gujarat',
-                                    'Haryana',
-                                    'Himachal Pradesh',
-                                    'Jharkhand',
-                                    'Karnataka',
-                                    'Kerala',
-                                    'Madhya Pradesh',
-                                    'Maharashtra',
-                                    'Manipur',
-                                    'Meghalaya',
-                                    'Mizoram',
-                                    'Nagaland',
-                                    'Odisha',
-                                    'Punjab',
-                                    'Rajasthan',
-                                    'Sikkim',
-                                    'Tamil Nadu',
-                                    'Telangana',
-                                    'Tripura',
-                                    'Uttar Pradesh',
-                                    'Uttarakhand',
-                                    'West Bengal',
-                                    'Andaman and Nicobar Islands',
-                                    'Chandigarh',
-                                    'Dadra and Nagar Haveli and Daman and Diu',
-                                    'Delhi',
-                                    'Jammu and Kashmir',
-                                    'Ladakh',
-                                    'Lakshadweep',
-                                    'Puducherry',
+                                'Andhra Pradesh',
+                                'Arunachal Pradesh',
+                                'Assam',
+                                'Bihar',
+                                'Chhattisgarh',
+                                'Goa',
+                                'Gujarat',
+                                'Haryana',
+                                'Himachal Pradesh',
+                                'Jharkhand',
+                                'Karnataka',
+                                'Kerala',
+                                'Madhya Pradesh',
+                                'Maharashtra',
+                                'Manipur',
+                                'Meghalaya',
+                                'Mizoram',
+                                'Nagaland',
+                                'Odisha',
+                                'Punjab',
+                                'Rajasthan',
+                                'Sikkim',
+                                'Tamil Nadu',
+                                'Telangana',
+                                'Tripura',
+                                'Uttar Pradesh',
+                                'Uttarakhand',
+                                'West Bengal',
+                                'Andaman and Nicobar Islands',
+                                'Chandigarh',
+                                'Dadra and Nagar Haveli and Daman and Diu',
+                                'Delhi',
+                                'Jammu and Kashmir',
+                                'Ladakh',
+                                'Lakshadweep',
+                                'Puducherry',
                                 ] as $state)
                                 <option value="{{ $state }}"
                                     {{ old('state', auth()->user()->state) == $state ? 'selected' : '' }}>

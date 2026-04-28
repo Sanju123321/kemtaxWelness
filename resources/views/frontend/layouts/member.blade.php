@@ -26,6 +26,82 @@
     <header class="navigation" style="background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
 
         <style>
+
+            .plan-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.plan-card:hover {
+    transform: translateY(-5px);
+}
+
+.plan-badge {
+    display: inline-block;
+    background: #28a745;
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.plan-price {
+    font-size: 34px;
+    font-weight: bold;
+    color: #28a745;
+}
+
+.plan-sub {
+    color: #777;
+    margin-bottom: 15px;
+}
+
+.plan-divider {
+    height: 1px;
+    background: #eee;
+    margin: 15px 0;
+}
+
+.plan-feature {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    margin-bottom: 12px;
+}
+
+.plan-feature i {
+    color: #28a745;
+    font-size: 18px;
+    margin-right: 10px;
+}
+
+.plan-feature small {
+    display: block;
+    color: #888;
+    font-size: 12px;
+}
+
+.plan-footer-box {
+    background: #f1f8f4;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.plan-btn {
+    margin-top: 15px;
+    width: 100%;
+    border-radius: 25px;
+    background: #28a745;
+    color: #fff;
+    font-weight: 600;
+}
             .member-cart-wrap,
             .member-wish-wrap {
                 position: relative;
@@ -145,6 +221,7 @@
             }
 
             @media (max-width: 768px) {
+
                 .btn,
                 .form-control,
                 .custom-select {
@@ -273,53 +350,107 @@
 
     {{-- Page Content --}}
     @yield('content')
-
+   
     {{-- Plan Purchase Modal (hidden by default) --}}
-    <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="planModalLabel"
-        aria-hidden="true" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content"
-                style="border-radius: 18px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.18);">
-                <div class="modal-header"
-                    style="background: linear-gradient(90deg, #1e7e34 0%, #28a745 100%); color: #fff; border-bottom: none;">
-                    <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">Welcome! Please
-                        Choose a Plan to Continue</h4>
-                </div>
-                <div class="modal-body" style="background: #f7fafd;">
-                    <div class="container-fluid">
-                        <div class="row justify-content-center">
-                            <!-- Only One Plan Card -->
-                            <div class="col-lg-5 col-md-8 col-sm-12 mb-4">
-                                <div class="card h-100 shadow-sm border-0"
-                                    style="border-radius: 14px; background: #edf9f0;">
-                                    <div class="card-body d-flex flex-column align-items-center py-4">
-                                        
-                                        <div class="mb-3">
-                                            <span class="badge badge-success px-3 py-2"
-                                                style="font-size: 1rem;">Essential Care</span>
-                                        </div>
-                                        <h2 class="font-weight-bold mb-1" style="color: #28a745;">
-                                            ₹{{ $planAmount ?? '1500' }}</h2>
-                                        <p class="small mb-3">One-Time / Monthly</p>
-                                        <ul class="list-unstyled mb-4">
-                                            <li>20% Personal Commission</li>
-                                            <li>Starter Resources Kit</li>
-                                            <li>Basic Training Access</li>
-                                            <li>Community Support</li>
-                                        </ul>
-                                        <a href="{{ route('contact') }}"
-                                            class="btn btn-success btn-block btn-round-full purchase-plan"
-                                            style="width: 100%;">Join Now</a>
-                                        <!-- The Razorpay button uses JS, so href is not used -->
+   <div class="modal fade" id="planModal" tabindex="-1" role="dialog"
+     aria-labelledby="planModalLabel" aria-hidden="true"
+     data-backdrop="static" data-keyboard="false">
+
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"
+             style="border-radius:18px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
+
+            <!-- Header -->
+            <div class="modal-header"
+                 style="background: linear-gradient(90deg, #1e7e34 0%, #28a745 100%);
+                        color:#fff; border-bottom:none;">
+                <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">
+                    Welcome! Please Choose a Plan to Continue
+                </h4>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body" style="background:#f7fafd;">
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+
+                        <!-- PLAN CARD START -->
+                        <div class="col-lg-7 col-md-10 col-sm-12 mb-4">
+                            <div class="plan-card">
+
+                                <!-- Plan Name -->
+                                <div class="plan-badge">
+                                    <i class="fas fa-star mr-1"></i>
+                                    {{ $plan->name ?? 'Essential Care' }}
+                                </div>
+
+                                <!-- Price -->
+                                <div class="plan-price">
+                                    ₹{{ $plan->price ?? '1500' }}
+                                </div>
+
+                                <p class="plan-sub">
+                                    Start your journey and unlock earning potential
+                                </p>
+
+                                <div class="plan-divider"></div>
+
+                                <!-- Features -->
+                                <div class="plan-feature">
+                                    <i class="fas fa-layer-group"></i>
+                                    <div>
+                                        <strong>Earn 10X in Total</strong>
+                                        <small>On your total income</small>
                                     </div>
                                 </div>
+
+                                <div class="plan-feature">
+                                    <i class="fas fa-chart-line"></i>
+                                    <div>
+                                        <strong>Earn 2X Per Day</strong>
+                                        <small>On your daily income</small>
+                                    </div>
+                                </div>
+
+                                <div class="plan-feature">
+                                    <i class="fas fa-users"></i>
+                                    <div>
+                                        <strong>Higher Referral Income</strong>
+                                        <small>Grow your network</small>
+                                    </div>
+                                </div>
+
+                                <div class="plan-feature">
+                                    <i class="fas fa-tags"></i>
+                                    <div>
+                                        <strong>Buy Any Product</strong>
+                                        <small>At Direct Price (DP)</small>
+                                    </div>
+                                </div>
+
+                                <!-- Bottom Box -->
+                                <div class="plan-footer-box">
+                                    <strong>🛡️ All Plans Same Power</strong>
+                                    <div>10X Total | 2X Daily | DP Products</div>
+                                </div>
+
+                                <!-- Button -->
+                                <a href="{{ route('contact') }}"
+                                   class="btn plan-btn purchase-plan">
+                                    Join Now <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+
                             </div>
                         </div>
+                        <!-- PLAN CARD END -->
+
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
+</div>
 
     {{-- Scroll to top --}}
     <div id="scroll-to-top" class="scroll-to-top">
@@ -350,67 +481,67 @@
 
     {{-- Inactivity Detection and Modal Trigger (Dashboard only, first time) --}}
     @if (request()->routeIs('member.dashboard') && !auth()->user()->has_plan)
-        <script>
-            $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
-                console.log('Modal script loaded');
+            console.log('Modal script loaded');
 
-                $('#planModal').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                }).modal('show');
+            $('#planModal').modal({
+                backdrop: 'static',
+                keyboard: false
+            }).modal('show');
 
-                $('#planModal').on('hide.bs.modal', function(e) {
-                    if (!window.planPurchased) {
-                        e.preventDefault();
-                    }
-                });
-
-                $(document).on('click', '.purchase-plan', function(e) {
+            $('#planModal').on('hide.bs.modal', function(e) {
+                if (!window.planPurchased) {
                     e.preventDefault();
-
-                    var planAmount = {{ isset($planAmount) ? (int) $planAmount : 1500 }};
-
-                    $.post('/member/create-order', {
-                        _token: $('meta[name="csrf-token"]').attr('content'),
-                        amount: planAmount
-                    }, function(orderData) {
-
-                        var options = {
-                            "key": "{{ config('services.razorpay.key') }}", // ✅ FIXED
-                            "amount": orderData.amount,
-                            "currency": "INR",
-                            "order_id": orderData.order_id,
-
-                            "handler": function(response) {
-                                $.post('/member/verify-payment', {
-                                    _token: $('meta[name="csrf-token"]').attr(
-                                        'content'),
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_signature: response.razorpay_signature
-                                }, function(res) {
-                                    if (res.success) {
-                                        window.planPurchased = true;
-                                        $('#planModal').modal('hide');
-                                        window.location.reload();
-                                    } else {
-                                        alert('Payment failed: ' + (res.message ||
-                                            'Unknown error. Please contact support.'
-                                        ));
-                                    }
-                                });
-                            }
-                        };
-
-                        var rzp = new Razorpay(options);
-                        rzp.open();
-
-                    });
-                });
-
+                }
             });
-        </script>
+
+            $(document).on('click', '.purchase-plan', function(e) {
+                e.preventDefault();
+
+               var planAmount = {{ $plan->price ?? 1500 }};
+
+                $.post('/member/create-order', {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    amount: planAmount
+                }, function(orderData) {
+
+                    var options = {
+                        "key": "{{ config('services.razorpay.key') }}", // ✅ FIXED
+                        "amount": orderData.amount,
+                        "currency": "INR",
+                        "order_id": orderData.order_id,
+
+                        "handler": function(response) {
+                            $.post('/member/verify-payment', {
+                                _token: $('meta[name="csrf-token"]').attr(
+                                    'content'),
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            }, function(res) {
+                                if (res.success) {
+                                    window.planPurchased = true;
+                                    $('#planModal').modal('hide');
+                                    window.location.reload();
+                                } else {
+                                    alert('Payment failed: ' + (res.message ||
+                                        'Unknown error. Please contact support.'
+                                    ));
+                                }
+                            });
+                        }
+                    };
+
+                    var rzp = new Razorpay(options);
+                    rzp.open();
+
+                });
+            });
+
+        });
+    </script>
     @endif
 
     @stack('scripts')

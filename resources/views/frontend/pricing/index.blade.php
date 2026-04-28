@@ -325,7 +325,7 @@
                                             </span>
 
                                             <div class="showcase-price">₹{{ number_format((float) $package->price, 0) }}</div>
-                                            <div class="showcase-sub">Start your journey and unlock earning potential 🚀</div>
+                                            <div class="showcase-sub">Start your journey and unlock earning potential </div>
                                             <div class="showcase-rule"></div>
 
                                             <div class="showcase-feature">

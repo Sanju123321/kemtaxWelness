@@ -544,6 +544,7 @@ public function verifyWalletTopupPayment(Request $request)
             'user',
             'dailyCapHit',
             'totalCapHit',
+            'starterPlan'
         ));
     }
 

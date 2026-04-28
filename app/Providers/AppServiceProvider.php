@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Cart;
+use App\Models\Plan;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +33,14 @@ class AppServiceProvider extends ServiceProvider
                 $cartCount = Cart::where('user_id', auth()->id())->sum('quantity');
             }
             $view->with('cartCount', $cartCount);
+
+             // ✅ Fetch active plan
+            $plan = Plan::where('is_active', true)->first();
+
+            $view->with([
+                'cartCount' => $cartCount,
+                'plan' => $plan, // ✅ NOW AVAILABLE EVERYWHERE
+            ]);
         });
     }
 }
