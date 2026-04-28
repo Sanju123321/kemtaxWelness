@@ -611,10 +611,6 @@ public function verifyWalletTopupPayment(Request $request)
             return back()->with('error', 'Selected member is not your direct referral.');
         }
 
-        if (!is_null($userToPlace->parent_id)) {
-            return back()->with('error', 'Selected user is already placed and cannot be changed.');
-        }
-
         $placementParentId = $request->integer('placement_parent_id');
         $downlineIds = $this->getDescendantUserIds($member->id);
         if (!in_array($placementParentId, $downlineIds, true)) {
@@ -630,11 +626,29 @@ public function verifyWalletTopupPayment(Request $request)
             return back()->with('error', 'Circular placement is not allowed.');
         }
 
-        DB::transaction(function () use ($userToPlace, $placementParentId) {
-            $userToPlace->update([
-                'parent_id' => $placementParentId,
-            ]);
+        $placed = false;
+        DB::transaction(function () use ($userToPlace, $placementParentId, &$placed) {
+            $locked = User::query()
+                ->whereKey($userToPlace->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$locked || !is_null($locked->parent_id)) {
+                $placed = false;
+                return;
+            }
+
+            $placed = (bool) User::query()
+                ->whereKey($locked->id)
+                ->whereNull('parent_id')
+                ->update([
+                    'parent_id' => $placementParentId,
+                ]);
         });
+
+        if (!$placed) {
+            return back()->with('error', 'Selected user is already placed and cannot be changed.');
+        }
 
         return back()->with('success', 'Placement updated successfully.');
     }
