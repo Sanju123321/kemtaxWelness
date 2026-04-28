@@ -43,7 +43,11 @@ public function createOrder(Request $request)
     // 🔒 FIXED PLAN AMOUNT (always verify)
    
 
-    $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
+    // $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
+    $api = new \Razorpay\Api\Api(
+        config('services.razorpay.key'),
+        config('services.razorpay.secret')
+    );
 
     $order = $api->order->create([
         'receipt' => 'order_' . time(),
