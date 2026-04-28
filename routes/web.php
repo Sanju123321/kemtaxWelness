@@ -25,6 +25,7 @@ use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\ContactMessageController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\ActivityLogController;
+use App\Http\Controllers\Backend\AboutSectionController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -272,6 +273,10 @@ Route::prefix('admin')
         Route::put('/announcements/{id}', [AnnouncementController::class, 'update'])->name('announcements.update');
         Route::post('/announcements/{id}/toggle', [AnnouncementController::class, 'toggleActive'])->name('announcements.toggle');
         Route::delete('/announcements/{id}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
+
+        // About Us Content
+        Route::get('/about-content', [AboutSectionController::class, 'index'])->name('about.index');
+        Route::put('/about-content', [AboutSectionController::class, 'update'])->name('about.update');
 
         // Settings
         Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');

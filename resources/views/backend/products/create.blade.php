@@ -53,7 +53,7 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label for="price" class="form-label">Price (₹) <span class="text-danger">*</span></label>
+                        <label for="price" class="form-label">DP Price (Direct Price) (₹) <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
                             name="price" step="0.01" min="0" value="{{ old('price') }}" required>
                         @error('price')
@@ -61,9 +61,9 @@
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="old_price" class="form-label">Old Price (₹)</label>
-                        <input type="number" class="form-control" id="old_price" name="old_price" step="0.01"
-                            min="0" value="{{ old('old_price') }}">
+                        <label for="original_price" class="form-label">MRP Price (₹)</label>
+                        <input type="number" class="form-control" id="original_price" name="original_price" step="0.01"
+                            min="0" value="{{ old('original_price') }}">
                     </div>
                     <div class="col-md-4">
                         <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>

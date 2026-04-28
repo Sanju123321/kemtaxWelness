@@ -69,61 +69,51 @@
                         </a>
                     </div>
                 </div>
-
-                <style>
-                    .footer-social-icons {
-                        display: flex;
-                        flex-direction: row;
-                        flex-wrap: nowrap;
-                        align-items: center;
-                        gap: 12px;
-                        justify-content: center;
-                        margin-top: 6px;
-                    }
-
-                    @media (min-width: 992px) {
-                        .footer-social-icons {
-                            justify-content: center;
-                        }
-                    }
-
-                    .social-icon-btn {
-                        width: 44px;
-                        height: 44px;
-                        min-width: 44px;
-                        border-radius: 50%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        font-size: 1.05rem;
-                        color: #fff !important;
-                        text-decoration: none !important;
-                        transition: transform 0.25s, box-shadow 0.25s;
-                        flex-shrink: 0;
-                        line-height: 1;
-                        box-sizing: border-box;
-                        overflow: hidden;
-                    }
-
-                    .social-icon-btn:hover {
-                        transform: translateY(-4px);
-                        box-shadow: 0 6px 18px rgba(0, 0, 0, .35);
-                        color: #fff !important;
-                    }
-
-                    .social-icon-btn.facebook {
-                        background: #1877f2;
-                    }
-
-                    .social-icon-btn.instagram {
-                        background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
-                    }
-
-                    .social-icon-btn.youtube {
-                        background: #ff0000;
-                    }
-                </style>
             </div>
         </div>
     </div>
 </footer>
+
+<style>
+    .footer-btm {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .footer-social-icons {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+
+    .social-icon-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff !important;
+        font-size: 16px;
+        text-decoration: none !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.24);
+    }
+
+    .social-icon-btn:hover {
+        transform: translateY(-3px);
+        color: #fff !important;
+    }
+
+    .social-icon-btn.facebook {
+        background: #1877f2;
+    }
+
+    .social-icon-btn.instagram {
+        background: linear-gradient(135deg, #f58529 0%, #dd2a7b 45%, #8134af 70%, #515bd4 100%);
+    }
+
+    .social-icon-btn.youtube {
+        background: #ff0000;
+    }
+</style>

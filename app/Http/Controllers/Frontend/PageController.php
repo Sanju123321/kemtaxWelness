@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Mail\ContactMail;
 use App\Models\ContactMessage;
 use App\Models\Plan;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 
@@ -16,7 +17,14 @@ class PageController extends Controller
      */
     public function about()
     {
-        return view('frontend.about.index');
+        $introHeading = Setting::getValue('about_intro_heading', 'What we are');
+        $introBody = Setting::getValue('about_intro_body', 'KemtexWellness is a wellness-driven multi-level marketing company dedicated to empowering individuals through entrepreneurship and healthier living.');
+        $introImage = Setting::getValue('about_intro_image', 'frontend/images/about/home-7.jpg');
+
+        $topEarners = json_decode(Setting::getValue('about_top_earners', '[]'), true) ?: [];
+        $stories = json_decode(Setting::getValue('about_success_stories', '[]'), true) ?: [];
+
+        return view('frontend.about.index', compact('introHeading', 'introBody', 'introImage', 'topEarners', 'stories'));
     }
 
     /**

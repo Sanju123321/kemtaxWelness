@@ -149,6 +149,12 @@
                     Announcements
                 </a>
 
+                <a class="nav-link {{ request()->routeIs('admin.about*') ? 'active' : '' }}"
+                    href="{{ route('admin.about.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-address-card"></i></div>
+                    About Us Content
+                </a>
+
                 <div class="sb-sidenav-menu-heading">Reports</div>
 
                 <a class="nav-link {{ request()->routeIs('admin.reports*') ? 'active' : '' }}"

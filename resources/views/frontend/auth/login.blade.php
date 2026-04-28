@@ -59,12 +59,12 @@
 
                             <div class="form-group mb-3">
                                 <label for="password"><i class="fas fa-key text-color mr-2"></i>Password</label>
-                                <div class="input-group">
+                                <div class="input-group login-password-group">
                                     <input type="password"
                                         class="form-control form-control-lg @error('password') is-invalid @enderror"
                                         id="password" name="password" placeholder="Enter your password" required>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword" aria-label="Show password">
+                                        <button class="btn password-toggle-btn" type="button" id="togglePassword" aria-label="Show password">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -189,4 +189,26 @@ $(document).ready(function () {
 
 });
 </script>
+<style>
+    .login-password-group .form-control {
+        border-right: 0;
+        border-radius: 12px 0 0 12px;
+    }
+
+    .password-toggle-btn {
+        min-width: 64px;
+        background: #6c7784;
+        color: #fff;
+        border: 1px solid #6c7784;
+        border-radius: 0 12px 12px 0;
+    }
+
+    .password-toggle-btn:hover,
+    .password-toggle-btn:focus {
+        background: #5b6673;
+        border-color: #5b6673;
+        color: #fff;
+        box-shadow: none;
+    }
+</style>
 @endsection

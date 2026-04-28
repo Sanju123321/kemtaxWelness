@@ -28,22 +28,20 @@
             <div class="row">
                 <div class="col-lg-6">
                     <div class="about-item pr-3 mb-5 mb-lg-0">
-                        <span class="h6 text-color">What we are</span>
-                        <p class="mb-5">KemtexWellness is a wellness-driven multi-level marketing company dedicated to
-                            empowering individuals through
-                            entrepreneurship and healthier living. We provide high-quality products that promote vitality
-                            while offering a proven
-                            business model where members can grow their networks, earn rewards, and achieve financial
-                            independence.
-                            Our mission is simple: to inspire wellness and create opportunities for success. By combining
-                            innovation, integrity, and
-                            community support, we help people build sustainable businesses and transform their lives.</p>
+                        <span class="h6 text-color">{{ $introHeading ?? 'What we are' }}</span>
+                        <p class="mb-5">{{ $introBody ?? '' }}</p>
                         <a href="{{ route('contact') }}" class="btn btn-main btn-round-full">Get started</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
                     <div class="about-item-img">
-                        <img loading="lazy" src="{{ asset('frontend/images/about/home-7.jpg') }}" alt="about-image"
+                        @php
+                            $introImagePath = $introImage ?? '';
+                            $introImageUrl = $introImagePath
+                                ? (str_starts_with($introImagePath, 'frontend/') ? asset($introImagePath) : asset('storage/' . $introImagePath))
+                                : asset('frontend/images/about/home-7.jpg');
+                        @endphp
+                        <img loading="lazy" src="{{ $introImageUrl }}" alt="about-image"
                             class="img-fluid">
                     </div>
                 </div>
@@ -136,7 +134,7 @@
 
             <div class="row justify-content-center">
                 @php
-                    $team = [
+                    $team = !empty($topEarners ?? []) ? $topEarners : [
                         [
                             'name' => 'Rajesh Kumar',
                             'title' => 'Executive Director - Earned ₹25L+',
@@ -165,7 +163,7 @@
                     <div class="col-lg-4 col-md-6 col-sm-6">
                         <div class="team-item-wrap mb-5">
                             <div class="team-item position-relative">
-                                <img loading="lazy" src="{{ asset('frontend/images/team/' . $member['img']) }}"
+                                <img loading="lazy" src="{{ !empty($member['image']) ? asset('storage/' . $member['image']) : asset('frontend/images/team/' . ($member['img'] ?? 'team-1.jpg')) }}"
                                     alt="{{ $member['name'] }}" class="img-fluid w-100">
                                 <div class="team-img-hover">
                                     <ul class="team-social list-inline">
@@ -206,42 +204,37 @@
         </div>
         <div class="container">
             <div class="testimonial-wrap">
-                <div class="testimonial-item position-relative">
-                    <i class="ti-quote-left text-color"></i>
-                    <div class="testimonial-item-content">
-                        <p class="testimonial-text">"Joining KemtexWellness transformed my life! I started part-time and
-                            now earn ₹2L+ monthly. The products improved my family's health, and the income gives me
-                            freedom. This is a legitimate opportunity!"</p>
-                        <div class="testimonial-author">
-                            <h5 class="mb-0 text-capitalize">Anita Verma</h5>
-                            <p>Silver Director - Earns ₹2L+/month</p>
+                @php
+                    $testimonials = !empty($stories ?? []) ? $stories : [
+                        [
+                            'name' => 'Anita Verma',
+                            'title' => 'Silver Director - Earns ₹2L+/month',
+                            'quote' => '"Joining KemtexWellness transformed my life! I started part-time and now earn ₹2L+ monthly."',
+                        ],
+                        [
+                            'name' => 'Rahul Mehta',
+                            'title' => 'Gold Manager - ₹50K/month',
+                            'quote' => '"From zero to ₹50K monthly in just 6 months! The training and mentorship here is exceptional."',
+                        ],
+                        [
+                            'name' => 'Priya Sharma',
+                            'title' => 'Executive Director - ₹25L+/month',
+                            'quote' => '"I have built a network of 2000+ people and earned more than my corporate job ever paid."',
+                        ],
+                    ];
+                @endphp
+                @foreach ($testimonials as $testimonial)
+                    <div class="testimonial-item position-relative">
+                        <i class="ti-quote-left text-color"></i>
+                        <div class="testimonial-item-content">
+                            <p class="testimonial-text">{{ $testimonial['quote'] ?? '' }}</p>
+                            <div class="testimonial-author">
+                                <h5 class="mb-0 text-capitalize">{{ $testimonial['name'] ?? '' }}</h5>
+                                <p>{{ $testimonial['title'] ?? '' }}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="testimonial-item position-relative">
-                    <i class="ti-quote-left text-color"></i>
-                    <div class="testimonial-item-content">
-                        <p class="testimonial-text">"From zero to ₹50K monthly in just 6 months! The training and
-                            mentorship here is exceptional. My upline believed in me, and now I'm building my own team. Best
-                            decision ever!"</p>
-                        <div class="testimonial-author">
-                            <h5 class="mb-0 text-capitalize">Rahul Mehta</h5>
-                            <p>Gold Manager - ₹50K/month</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="testimonial-item position-relative">
-                    <i class="ti-quote-left text-color"></i>
-                    <div class="testimonial-item-content">
-                        <p class="testimonial-text">"I've built a network of 2000+ people and earned more than my corporate
-                            job ever paid! The transparency, support, and unlimited income potential make KemtexWellness the
-                            best opportunity out there."</p>
-                        <div class="testimonial-author">
-                            <h5 class="mb-0 text-capitalize">Priya Sharma</h5>
-                            <p>Executive Director - ₹25L+/month</p>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
         </div>
     </section>

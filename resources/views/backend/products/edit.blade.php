@@ -22,9 +22,8 @@
                 </div>
             @endif
 
-            {{-- Replace the form action and value attributes with $product->xxx when Product model is available --}}
             <form method="POST"
-                action="{{ request()->route('id') ? route('admin.products.update', request()->route('id')) : '#' }}"
+                action="{{ route('admin.products.update', $product->id) }}"
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
@@ -32,7 +31,7 @@
                     <div class="col-md-8">
                         <label for="name" class="form-label">Product Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror" id="name"
-                            name="name" value="{{ old('name') }}" required>
+                            name="name" value="{{ old('name', $product->name) }}" required>
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -42,11 +41,11 @@
                         <select class="form-select @error('category') is-invalid @enderror" id="category" name="category"
                             required>
                             <option value="">Select category</option>
-                            <option value="Health">Health</option>
-                            <option value="Nutrition">Nutrition</option>
-                            <option value="Beauty">Beauty</option>
-                            <option value="Fitness">Fitness</option>
-                            <option value="Ayurveda">Ayurveda</option>
+                            <option value="Health" {{ old('category', $product->category) == 'Health' ? 'selected' : '' }}>Health</option>
+                            <option value="Nutrition" {{ old('category', $product->category) == 'Nutrition' ? 'selected' : '' }}>Nutrition</option>
+                            <option value="Beauty" {{ old('category', $product->category) == 'Beauty' ? 'selected' : '' }}>Beauty</option>
+                            <option value="Fitness" {{ old('category', $product->category) == 'Fitness' ? 'selected' : '' }}>Fitness</option>
+                            <option value="Ayurveda" {{ old('category', $product->category) == 'Ayurveda' ? 'selected' : '' }}>Ayurveda</option>
                         </select>
                         @error('category')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -55,22 +54,22 @@
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-4">
-                        <label for="price" class="form-label">Price (₹) <span class="text-danger">*</span></label>
+                        <label for="price" class="form-label">DP Price (Direct Price) (₹) <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('price') is-invalid @enderror" id="price"
-                            name="price" step="0.01" min="0" value="{{ old('price') }}" required>
+                            name="price" step="0.01" min="0" value="{{ old('price', $product->price) }}" required>
                         @error('price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-4">
-                        <label for="old_price" class="form-label">Old Price (₹)</label>
-                        <input type="number" class="form-control" id="old_price" name="old_price" step="0.01"
-                            min="0" value="{{ old('old_price') }}">
+                        <label for="original_price" class="form-label">MRP Price (₹)</label>
+                        <input type="number" class="form-control" id="original_price" name="original_price" step="0.01"
+                            min="0" value="{{ old('original_price', $product->original_price) }}">
                     </div>
                     <div class="col-md-4">
                         <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
                         <input type="number" class="form-control @error('stock') is-invalid @enderror" id="stock"
-                            name="stock" min="0" value="{{ old('stock', 0) }}" required>
+                            name="stock" min="0" value="{{ old('stock', $product->stock) }}" required>
                         @error('stock')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -78,7 +77,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="description" class="form-label">Description</label>
-                    <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ old('description', $product->description) }}</textarea>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">

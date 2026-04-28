@@ -39,8 +39,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
             'category'       => ['required', 'string'],
-            'price'          => ['required', 'numeric', 'min:0'],
+            'price'          => ['nullable', 'numeric', 'min:0'],
+            'dp_price'       => ['nullable', 'numeric', 'min:0'],
             'original_price' => ['nullable', 'numeric', 'min:0'],
+            'mrp_price'      => ['nullable', 'numeric', 'min:0'],
             'stock'          => ['required', 'integer', 'min:0'],
             'description'    => ['nullable', 'string'],
             'short_desc'     => ['nullable', 'string', 'max:500'],
@@ -49,6 +51,12 @@ class ProductController extends Controller
             'sku'            => ['nullable', 'string', 'unique:products,sku'],
             'sort_order'     => ['nullable', 'integer'],
         ]);
+
+        $validated['price'] = $validated['price'] ?? $validated['dp_price'] ?? null;
+        $validated['original_price'] = $validated['original_price'] ?? $validated['mrp_price'] ?? null;
+        if ($validated['price'] === null) {
+            return back()->withErrors(['price' => 'DP Price is required.'])->withInput();
+        }
 
         $validated['slug'] = Str::slug($validated['name']);
 
@@ -82,8 +90,10 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
             'category'       => ['required', 'string'],
-            'price'          => ['required', 'numeric', 'min:0'],
+            'price'          => ['nullable', 'numeric', 'min:0'],
+            'dp_price'       => ['nullable', 'numeric', 'min:0'],
             'original_price' => ['nullable', 'numeric', 'min:0'],
+            'mrp_price'      => ['nullable', 'numeric', 'min:0'],
             'stock'          => ['required', 'integer', 'min:0'],
             'description'    => ['nullable', 'string'],
             'short_desc'     => ['nullable', 'string', 'max:500'],
@@ -92,6 +102,12 @@ class ProductController extends Controller
             'sku'            => ['nullable', 'string', 'unique:products,sku,' . $id],
             'sort_order'     => ['nullable', 'integer'],
         ]);
+
+        $validated['price'] = $validated['price'] ?? $validated['dp_price'] ?? null;
+        $validated['original_price'] = $validated['original_price'] ?? $validated['mrp_price'] ?? null;
+        if ($validated['price'] === null) {
+            return back()->withErrors(['price' => 'DP Price is required.'])->withInput();
+        }
 
         if ($request->hasFile('image')) {
             $validated['image'] = $request->file('image')->store('products', 'public');

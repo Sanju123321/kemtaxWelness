@@ -790,6 +790,83 @@
                 min-height: 100vh;
             }
         }
+
+        .upgrade-modal-header {
+            background: linear-gradient(120deg, #24a73f, #1b8e34);
+            color: #fff;
+            border: none;
+            padding: 18px 24px;
+        }
+
+        .upgrade-modal-title {
+            font-size: 38px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin: 0;
+        }
+
+        .upgrade-modal-subtitle {
+            margin-top: 4px;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 14px;
+        }
+
+        .upgrade-plan-card {
+            background: #eef7ef;
+            border: 1px solid #dcefe0;
+            border-radius: 20px;
+            box-shadow: 0 10px 24px rgba(6, 79, 24, 0.1);
+            padding: 18px 18px 22px;
+            max-width: 320px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .upgrade-plan-name {
+            display: inline-block;
+            background: #3cae4d;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 8px 22px;
+            font-size: 18px;
+        }
+
+        .upgrade-plan-price {
+            color: #1f9a3f;
+            font-size: 52px;
+            font-weight: 800;
+            margin: 10px 0 0;
+            line-height: 1.1;
+        }
+
+        .upgrade-plan-features {
+            margin: 14px 0 0;
+            padding: 0;
+            list-style: none;
+            text-align: left;
+            color: #495057;
+            line-height: 1.65;
+            font-size: 17px;
+        }
+
+        .upgrade-plan-features li::before {
+            content: "•";
+            color: #2fa84a;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .upgrade-join-btn {
+            width: 100%;
+            border: none;
+            border-radius: 999px;
+            background: #26a845;
+            color: #fff;
+            font-weight: 700;
+            padding: 12px;
+            margin-top: 16px;
+        }
     </style>
 @endpush
 @section('content')
@@ -1679,34 +1756,20 @@
     <div class="modal fade" id="upgradeModal" tabindex="-1" role="dialog" aria-labelledby="upgradeModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content" style="border-radius:14px;border:none;overflow:hidden;">
-
-                {{-- Header --}}
-                <div class="modal-header"
-                    style="background:linear-gradient(135deg,#28a745,#1e7e34);border:none;padding:18px 24px;">
+            <div class="modal-content" style="border-radius: 18px; border: none; overflow: hidden;">
+                <div class="modal-header upgrade-modal-header">
                     <div>
-                        <h5 class="modal-title mb-0" id="upgradeModalLabel"
-                            style="color:white;font-weight:700;font-size:17px;">
-                            <i class="fas fa-arrow-circle-up mr-2"></i>Upgrade Your Plan
-                        </h5>
-                        @if ($plan)
-                            <div style="color:rgba(255,255,255,.8);font-size:12px;margin-top:3px;">
-                                Current: <strong style="color:white;">{{ $plan->name }}</strong>
-                                &nbsp;·&nbsp; ₹{{ number_format($plan->price, 0) }}
-                                &nbsp;·&nbsp; Daily Cap: ₹{{ number_format($plan->daily_cap, 0) }}
-                                &nbsp;·&nbsp; Total Cap: ₹{{ number_format($plan->total_cap, 0) }}
-                            </div>
-                        @endif
+                        <h5 class="modal-title mb-0" id="upgradeModalLabel">Welcome! Please Choose a Plan to Continue</h5>
+                        <div class="upgrade-modal-subtitle">Complete activation to unlock team income and member benefits.</div>
                     </div>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"
-                        style="color:white;opacity:1;font-size:22px;background:none;border:none;line-height:1;padding:0;">
+                        style="color:white;opacity:1;font-size:26px;background:none;border:none;line-height:1;padding:0;">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                {{-- Body --}}
-                <div class="modal-body" style="padding:24px;background:#f8fafb;">
-                    <div class="row" style="gap:0;">
+                <div class="modal-body" style="padding: 24px; background: #f4f7f5;">
+                    <div class="row">
                         @foreach ($allPlans as $p)
                             @php
                                 $isCurrent = $plan && $plan->id === $p->id;
@@ -1715,50 +1778,28 @@
                                 $canUpgrade = !$isCurrent && !$isLocked;
                             @endphp
                             <div class="col-md-6 mb-3">
-                                <div
-                                    style="
-                                background: {{ $isCurrent ? '#eaf7ef' : 'white' }};
-                                border: 2px solid {{ $isCurrent ? '#28a745' : ($isNext ? '#fd7e14' : '#e9ecef') }};
-                                border-radius: 10px;
-                                padding: 18px;
-                                height: 100%;
-                                position: relative;
-                                opacity: {{ $isLocked ? '0.5' : '1' }};
-                            ">
-                                    {{-- Badge --}}
-                                    @if ($isCurrent)
-                                        <span
-                                            style="position:absolute;top:10px;right:12px;background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">CURRENT</span>
-                                    @elseif($isNext)
-                                        <span
-                                            style="position:absolute;top:10px;right:12px;background:#fd7e14;color:white;font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;">RECOMMENDED</span>
-                                    @endif
-
-                                    <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:4px;">
+                                <div class="upgrade-plan-card" style="opacity: {{ $isLocked ? '0.55' : '1' }};">
+                                    <div class="upgrade-plan-name">
                                         {{ $p->name }}
                                     </div>
-                                    <div
-                                        style="font-size:22px;font-weight:800;color:{{ $isCurrent ? '#28a745' : '#333' }};margin-bottom:10px;">
+                                    <div class="upgrade-plan-price">
                                         ₹{{ number_format($p->price, 0) }}
                                     </div>
-                                    <div style="font-size:12px;color:#666;line-height:1.8;">
-                                        <div><i class="fas fa-coins mr-1" style="color:#f59e0b;width:14px;"></i> Base
-                                            Value: <strong>₹{{ number_format($p->base_value, 0) }}</strong></div>
-                                        <div><i class="fas fa-calendar-day mr-1" style="color:#17a2b8;width:14px;"></i>
-                                            Daily Cap: <strong>₹{{ number_format($p->daily_cap, 0) }}</strong></div>
-                                        <div><i class="fas fa-lock-open mr-1" style="color:#6610f2;width:14px;"></i> Total
-                                            Cap: <strong>₹{{ number_format($p->total_cap, 0) }}</strong></div>
-                                    </div>
+                                    <div class="text-muted" style="font-size: 17px;">One-Time / Monthly</div>
+                                    <ul class="upgrade-plan-features">
+                                        <li>20% Personal Commission</li>
+                                        <li>Starter Resources Kit</li>
+                                        <li>Basic Training Access</li>
+                                        <li>Community Support</li>
+                                    </ul>
 
                                     @if ($canUpgrade && !$isLocked)
-                                        <button class="btn btn-main btn-round-full btn-sm purchase-plan mt-3 w-100"
-                                            data-amount="{{ $p->price }}" data-plan="{{ $p->id }}"
-                                            style="font-weight:700;font-size:13px;">
-                                            <i class="fas fa-arrow-up mr-1"></i> Upgrade to {{ $p->name }}
+                                        <button class="purchase-plan upgrade-join-btn"
+                                            data-amount="{{ $p->price }}" data-plan="{{ $p->id }}" data-label="Join Now">
+                                            Join Now
                                         </button>
                                     @elseif($isCurrent)
-                                        <div
-                                            style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:600;">
+                                        <div style="text-align:center;margin-top:12px;font-size:12px;color:#28a745;font-weight:700;">
                                             <i class="fas fa-check-circle mr-1"></i> Your Active Plan
                                         </div>
                                     @else
@@ -1771,8 +1812,8 @@
                         @endforeach
                     </div>
 
-                    <div style="font-size:11px;color:#aaa;text-align:center;margin-top:8px;">
-                        Plans upgrade sequentially: A → B → C → D → E &nbsp;|&nbsp; Payment via Razorpay
+                    <div style="font-size:11px;color:#8a9199;text-align:center;margin-top:8px;">
+                        Secure payment via Razorpay
                     </div>
                 </div>
 
@@ -2630,6 +2671,15 @@
         (function() {
             var CSRF = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+            document.addEventListener('DOMContentLoaded', function() {
+                @if (!$plan)
+                    $('#upgradeModal').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    }).modal('show');
+                @endif
+            });
+
             document.addEventListener('click', function(e) {
                 var btn = e.target.closest('.purchase-plan');
                 if (!btn) return;
@@ -2637,6 +2687,7 @@
 
                 var amount = btn.getAttribute('data-amount');
                 var planId = btn.getAttribute('data-plan');
+                var initialLabel = btn.getAttribute('data-label') || btn.textContent.trim();
 
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> Processing…';
@@ -2695,16 +2746,14 @@
                                             alert('❌ Payment Verification Failed: ' + (res
                                                 .message || ''));
                                             btn.disabled = false;
-                                            btn.innerHTML =
-                                                '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                                            btn.innerHTML = initialLabel;
                                         }
                                     });
                             },
                             modal: {
                                 ondismiss: function() {
                                     btn.disabled = false;
-                                    btn.innerHTML =
-                                        '<i class="fas fa-arrow-up mr-1"></i> Upgrade to Plan';
+                                    btn.innerHTML = initialLabel;
                                 }
                             }
                         };
@@ -2714,7 +2763,7 @@
                     .catch(function() {
                         alert('❌ Could not create order. Please try again.');
                         btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Upgrade';
+                        btn.innerHTML = initialLabel;
                     });
             });
         })();
