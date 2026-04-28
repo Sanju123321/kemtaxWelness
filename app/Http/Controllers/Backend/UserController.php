@@ -59,10 +59,25 @@ class UserController extends Controller
 
         // Resolve sponsor
         $referredBy = null;
+        $sponsorId = null;
+        $parentId = null;
         if (!empty($validated['reference_code'])) {
             $referrer = User::where('reference_code', $validated['reference_code'])->first();
             if ($referrer) {
                 $referredBy = $referrer->id;
+                $sponsorId = $referrer->id;
+
+                $existingDirects = User::query()
+                    ->where(function ($query) use ($referrer) {
+                        $query->where('sponsor_id', $referrer->id)
+                            ->orWhere(function ($legacy) use ($referrer) {
+                                $legacy->whereNull('sponsor_id')
+                                    ->where('referred_by', $referrer->id);
+                            });
+                    })
+                    ->count();
+
+                $parentId = $existingDirects < 10 ? $referrer->id : null;
             }
         }
 
@@ -73,6 +88,8 @@ class UserController extends Controller
             'user_id'        => $userId,
             'reference_code' => $referralCode,
             'referred_by'    => $referredBy,
+            'sponsor_id'     => $sponsorId,
+            'parent_id'      => $parentId,
             'password'       => Hash::make($validated['password']),
             'status'         => 'active',
         ]);

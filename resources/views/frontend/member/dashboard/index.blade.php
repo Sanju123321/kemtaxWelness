@@ -1235,6 +1235,89 @@
                         </div>
                     </div>
 
+                    <div class="section-card mb-4">
+                        <div class="section-card-header">
+                            <i class="fas fa-coins mr-2 text-color"></i>Royalty Status
+                        </div>
+                        <div class="section-card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" style="font-size:13px;">Direct Referrals</span>
+                                <strong>{{ $directReferrals }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" style="font-size:13px;">Royalty Level</span>
+                                <strong>L{{ $royaltyLevel }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="text-muted" style="font-size:13px;">Royalty Percentage</span>
+                                <strong class="text-success">{{ rtrim(rtrim(number_format($royaltyPercentage, 2), '0'), '.') }}%</strong>
+                            </div>
+                            <hr>
+                            <small class="text-muted d-block">
+                                Qualification: 15 directs = 10%, 20 = +5%, 30 = +3%, 50 = +2%.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="section-card mb-4">
+                        <div class="section-card-header">
+                            <i class="fas fa-sitemap mr-2 text-color"></i>Placement Control Panel
+                        </div>
+                        <div class="section-card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-muted" style="font-size:13px;">Total Direct Referrals</span>
+                                <strong>{{ $directReferrals }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="text-muted" style="font-size:13px;">Unplaced Referrals</span>
+                                <strong>{{ $unplacedReferredUsers->count() }}</strong>
+                            </div>
+
+                            @if ($directReferrals < 10)
+                                <div class="alert alert-warning mb-0" style="font-size:13px;">
+                                    Manual placement unlocks after 10 direct referrals.
+                                </div>
+                            @elseif ($unplacedReferredUsers->isEmpty())
+                                <div class="alert alert-success mb-0" style="font-size:13px;">
+                                    No pending placements. All direct users are already placed.
+                                </div>
+                            @elseif ($downlineUsers->isEmpty())
+                                <div class="alert alert-info mb-0" style="font-size:13px;">
+                                    You need at least one downline member to place users under.
+                                </div>
+                            @else
+                                <form method="POST" action="{{ route('member.placement.place') }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label class="small font-weight-bold mb-1">Select User To Place</label>
+                                        <select class="form-control" name="place_user_id" required>
+                                            <option value="">Choose user</option>
+                                            @foreach ($unplacedReferredUsers as $refUser)
+                                                <option value="{{ $refUser->id }}">
+                                                    {{ $refUser->name }} ({{ $refUser->user_id }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="small font-weight-bold mb-1">Select Downline Member</label>
+                                        <select class="form-control" name="placement_parent_id" required>
+                                            <option value="">Choose downline member</option>
+                                            @foreach ($downlineUsers as $downline)
+                                                <option value="{{ $downline->id }}">
+                                                    {{ $downline->name }} ({{ $downline->user_id }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-main btn-sm btn-round-full">
+                                        Place User
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+                    </div>
+
                     {{-- Quick Links --}}
                     <!-- <div class="section-card">
                                 <div class="section-card-header"><i class="fas fa-link mr-2 text-color"></i>Quick Links</div>
