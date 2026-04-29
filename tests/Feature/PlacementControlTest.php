@@ -116,3 +116,4 @@ class PlacementControlTest extends TestCase
         ], $overrides));
     }
 }
+
