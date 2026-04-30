@@ -467,8 +467,33 @@ public function verifyWalletTopupPayment(Request $request)
         $user = auth()->user();
 
         // Real dashboard stats
-        $directReferrals = UserTree::where('upline_id', $user->id)->where('level', 1)->count();
+        $directReferrals = $user->getDirectReferralCount();
         $teamSize        = UserTree::where('upline_id', $user->id)->count();
+        $downlineUserIds = $this->getDescendantUserIds($user->id);
+
+        $unplacedReferredUsers = User::query()
+            ->select('id', 'name', 'user_id')
+            ->where(function ($query) use ($user) {
+                $query->where('sponsor_id', $user->id)
+                    ->orWhere(function ($legacy) use ($user) {
+                        $legacy->whereNull('sponsor_id')
+                            ->where('referred_by', $user->id);
+                    });
+            })
+            ->whereNull('parent_id')
+            ->orderByDesc('id')
+            ->get();
+
+        $downlineUsers = empty($downlineUserIds)
+            ? collect()
+            : User::query()
+                ->select('id', 'name', 'user_id')
+                ->whereIn('id', $downlineUserIds)
+                ->orderBy('name')
+                ->get();
+
+        $royaltyLevel = $user->getRoyaltyLevel();
+        $royaltyPercentage = $user->getRoyaltyPercentage();
 
         // Cap calculations
         $plan      = $user->currentPlan;
@@ -548,8 +573,84 @@ public function verifyWalletTopupPayment(Request $request)
             'user',
             'dailyCapHit',
             'totalCapHit',
-            'starterPlan'
+            'starterPlan',
+            'unplacedReferredUsers',
+            'downlineUsers',
+            'royaltyLevel',
+            'royaltyPercentage',
+            'directReferrals',
         ));
+    }
+
+    public function placeUser(Request $request)
+    {
+        $request->validate([
+            'place_user_id' => ['required', 'integer', 'exists:users,id'],
+            'placement_parent_id' => ['required', 'integer', 'exists:users,id'],
+        ]);
+
+        /** @var User $member */
+        $member = auth()->user();
+        $directReferrals = $member->getDirectReferralCount();
+        if ($directReferrals < 10) {
+            return back()->with('error', 'Placement is available only after 10 direct referrals.');
+        }
+
+        $userToPlace = User::query()
+            ->where('id', $request->integer('place_user_id'))
+            ->where(function ($query) use ($member) {
+                $query->where('sponsor_id', $member->id)
+                    ->orWhere(function ($legacy) use ($member) {
+                        $legacy->whereNull('sponsor_id')
+                            ->where('referred_by', $member->id);
+                    });
+            })
+            ->first();
+
+        if (!$userToPlace) {
+            return back()->with('error', 'Selected member is not your direct referral.');
+        }
+
+        $placementParentId = $request->integer('placement_parent_id');
+        $downlineIds = $this->getDescendantUserIds($member->id);
+        if (!in_array($placementParentId, $downlineIds, true)) {
+            return back()->with('error', 'Placement is allowed only under your downline members.');
+        }
+
+        if ($placementParentId === $userToPlace->id) {
+            return back()->with('error', 'A user cannot be placed under themselves.');
+        }
+
+        $userToPlaceDescendants = $this->getDescendantUserIds($userToPlace->id);
+        if (in_array($placementParentId, $userToPlaceDescendants, true)) {
+            return back()->with('error', 'Circular placement is not allowed.');
+        }
+
+        $placed = false;
+        DB::transaction(function () use ($userToPlace, $placementParentId, &$placed) {
+            $locked = User::query()
+                ->whereKey($userToPlace->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$locked || !is_null($locked->parent_id)) {
+                $placed = false;
+                return;
+            }
+
+            $placed = (bool) User::query()
+                ->whereKey($locked->id)
+                ->whereNull('parent_id')
+                ->update([
+                    'parent_id' => $placementParentId,
+                ]);
+        });
+
+        if (!$placed) {
+            return back()->with('error', 'Selected user is already placed and cannot be changed.');
+        }
+
+        return back()->with('success', 'Placement updated successfully.');
     }
 
     /**
@@ -673,6 +774,30 @@ public function verifyWalletTopupPayment(Request $request)
             'wallet'       => $user->wallet_balance ?? 0,
                'children'     => $children,
         ];
+    }
+
+    private function getDescendantUserIds(int $rootUserId): array
+    {
+        $descendants = [];
+        $frontier = [$rootUserId];
+
+        while (!empty($frontier)) {
+            $children = User::query()
+                ->whereIn('parent_id', $frontier)
+                ->pluck('id')
+                ->map(fn ($id) => (int) $id)
+                ->toArray();
+
+            $newChildren = array_values(array_diff($children, $descendants));
+            if (empty($newChildren)) {
+                break;
+            }
+
+            $descendants = array_merge($descendants, $newChildren);
+            $frontier = $newChildren;
+        }
+
+        return $descendants;
     }
 
 public function saveBank(Request $request)

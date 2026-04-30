@@ -139,6 +139,7 @@ Route::prefix('member')
         Route::post('/verify-payment', [MemberController::class, 'verifyPayment']);
         Route::post('/wallet/verify-payment', [MemberController::class, 'verifyWalletTopupPayment'])->name('wallet.verify.payment');
         Route::post('/wallet/repurchase/verify-payment', [MemberController::class, 'verifyRepurchaseWalletTopupPayment'])->name('wallet.repurchase.verify.payment');
+        Route::post('/placement/place', [MemberController::class, 'placeUser'])->name('placement.place');
 
         // Member KYC Documents
         Route::get('/kyc', [MemberKycController::class, 'index'])->name('kyc.index');

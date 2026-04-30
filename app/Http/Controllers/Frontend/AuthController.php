@@ -90,11 +90,27 @@ class AuthController extends Controller
         } while (User::where('reference_code', $referralCode)->exists());
 
         $referredBy = null;
+        $sponsorId = null;
+        $parentId = null;
         if (!empty($validated['reference_code'])) {
             $referrer = User::where('reference_code', $validated['reference_code'])->first();
 
             if ($referrer) {
                 $referredBy = $referrer->id;
+                $sponsorId = $referrer->id;
+
+                $existingDirects = User::query()
+                    ->where(function ($query) use ($referrer) {
+                        $query->where('sponsor_id', $referrer->id)
+                            ->orWhere(function ($legacy) use ($referrer) {
+                                $legacy->whereNull('sponsor_id')
+                                    ->where('referred_by', $referrer->id);
+                            });
+                    })
+                    ->count();
+
+                // First 10 directs are auto-placed under sponsor.
+                $parentId = $existingDirects < 10 ? $referrer->id : null;
             }
         }
 
@@ -105,6 +121,8 @@ class AuthController extends Controller
             'reference_code' => $referralCode,
             'user_id' => $userId,
             'referred_by' => $referredBy,
+            'sponsor_id' => $sponsorId,
+            'parent_id' => $parentId,
             'password' => Hash::make($validated['password']),
         ]);
 

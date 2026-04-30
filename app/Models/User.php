@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +26,8 @@ class User extends Authenticatable
         'phone',
         'reference_code',
         'referred_by',
+        'sponsor_id',
+        'parent_id',
         'email_verified_at',
         'password',
         'remember_token',
@@ -80,9 +83,24 @@ class User extends Authenticatable
         return $this->hasMany(RecentlyViewed::class);
     }
 
-    public function sponsor()
+    public function sponsor(): BelongsTo
     {
-        return $this->hasMany(User::class, 'referred_by');
+        return $this->belongsTo(User::class, 'sponsor_id');
+    }
+
+    public function directs(): HasMany
+    {
+        return $this->hasMany(User::class, 'sponsor_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(User::class, 'parent_id');
     }
 
     public function currentPlan()
@@ -98,5 +116,52 @@ class User extends Authenticatable
     public function bankDetail()
     {
         return $this->hasOne(UserBankDetail::class);
+    }
+
+    public function getDirectReferralCount(): int
+    {
+        return static::query()
+            ->where(function ($query) {
+                $query->where('sponsor_id', $this->id)
+                    ->orWhere(function ($legacy) {
+                        $legacy->whereNull('sponsor_id')
+                            ->where('referred_by', $this->id);
+                    });
+            })
+            ->count();
+    }
+
+    public function getRoyaltyLevel(): int
+    {
+        $directs = $this->getDirectReferralCount();
+
+        if ($directs >= 50) {
+            return 4;
+        }
+
+        if ($directs >= 30) {
+            return 3;
+        }
+
+        if ($directs >= 20) {
+            return 2;
+        }
+
+        if ($directs >= 15) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public function getRoyaltyPercentage(): float
+    {
+        return match ($this->getRoyaltyLevel()) {
+            4 => 20.0, // 10 + 5 + 3 + 2
+            3 => 18.0, // 10 + 5 + 3
+            2 => 15.0, // 10 + 5
+            1 => 10.0, // 10
+            default => 0.0,
+        };
     }
 }
