@@ -131,7 +131,8 @@
         }
 
         .kw-bg-dark-green {
-            background: linear-gradient(145deg, var(--kw-green-d), var(--kw-green))
+            background: #4caf50;
+            /* background: linear-gradient(145deg, var(--kw-green-d), var(--kw-green)) */
         }
 
         /* ================================================================
@@ -141,7 +142,7 @@
             min-height: 100vh;
             display: flex;
             align-items: center;
-            background: linear-gradient(160deg, #0f2b1d 0%, #1b4332 40%, #2d6a4f 100%);
+            background: #4caf50;
             position: relative;
             overflow: hidden;
             padding: 100px 0 80px;
@@ -998,7 +999,7 @@
                 </div>
                 <div class="col-lg-6 kw-fade-up kw-delay-2">
                     <div class="kw-hero-visual">
-                        <img src="{{ asset('frontend/images/about/1.jpg') }}" alt="KemtexWellness Ayurvedic Products">
+                        <img src="{{ asset('frontend/images/about/bg-1.jpg') }}" alt="KemtexWellness Ayurvedic Products">
                         <div class="kw-hero-float-card card-a kw-fade-up kw-delay-3">
                             <span class="hfc-icon">🌿</span>
                             <div>
@@ -1332,7 +1333,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6 mb-4 mb-lg-0 kw-fade-up">
-                    <img src="{{ asset('frontend/images/about/2.jpg') }}" alt="About KemtexWellness" class="kw-about-img"
+                    <img src="{{ asset('frontend/images/about/about.jpg') }}" alt="About KemtexWellness" class="kw-about-img"
                         loading="lazy">
                 </div>
                 <div class="col-lg-6 kw-fade-up kw-delay-1">
