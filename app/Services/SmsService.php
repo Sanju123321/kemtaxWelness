@@ -56,14 +56,6 @@ class SmsService
             // Format the phone number for India
             $formattedPhone = $this->formatIndianPhone($phone);
 
-            // return $this->twilio->messages->create(
-            //     $formattedPhone,
-            //     [
-            //         'from' => config('services.twilio.from'),
-            //         'body' => $message
-            //     ]
-            // );
-
             $response = $this->twilio->messages->create(
                 $formattedPhone,
                 [
