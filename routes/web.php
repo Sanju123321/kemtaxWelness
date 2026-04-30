@@ -22,6 +22,7 @@ use App\Http\Controllers\Backend\KycController;
 use App\Http\Controllers\Backend\AnnouncementController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\RoyaltyController;
 use App\Http\Controllers\Backend\ContactMessageController;
 use App\Http\Controllers\Backend\PostController;
 use App\Http\Controllers\Backend\ActivityLogController;
@@ -156,7 +157,7 @@ Route::prefix('member')
 |--------------------------------------------------------------------------
 */
 Route::get('/admin', function () {
-    if (Auth::check()) {
+    if (Auth::guard('admin')->check()) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('admin.login');
@@ -221,12 +222,12 @@ Route::prefix('admin')
         // Plans
         Route::get('/plans', [PlanController::class, 'index'])->name('plans.index');
         Route::get('/plans/export', [PlanController::class, 'export'])->name('plans.export');
-        Route::get('/plans/{id}/edit', [PlanController::class, 'edit'])->name('plans.edit');
-        Route::put('/plans/{id}', [PlanController::class, 'update'])->name('plans.update');
 
         // Payments
         Route::get('/payments', [PaymentController::class, 'index'])->name('payments.index');
         Route::get('/payments/export', [PaymentController::class, 'export'])->name('payments.export');
+        Route::get('/royalty', [RoyaltyController::class, 'index'])->name('royalty.index');
+        Route::get('/royalty/export', [RoyaltyController::class, 'export'])->name('royalty.export');
 
         // Incomes / Commissions
         Route::get('/incomes', [IncomeController::class, 'index'])->name('incomes.index');

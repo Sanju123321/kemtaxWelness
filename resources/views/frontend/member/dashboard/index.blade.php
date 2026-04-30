@@ -869,10 +869,6 @@
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
-                    class="{{ $isInactive ? 'disabled' : '' }}">
-                    <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
-                </a>
                 <a href="#" id="sidebarCommissionLink"
                     onclick="showSection('recentCommissionsSection'); return false;"
                     class="{{ $isInactive ? 'disabled' : '' }}">
@@ -1183,7 +1179,7 @@
 
                             {{-- EMAIL --}}
                             <p class="text-muted small mb-2">
-                                @auth {{ Auth::user()->email }}
+                                @auth {{ Auth::user()->user_id }}
                                 @else
                                     member@example.com
                                 @endauth

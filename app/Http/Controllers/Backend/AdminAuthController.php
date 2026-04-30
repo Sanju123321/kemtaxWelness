@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
+use RuntimeException;
 
 class AdminAuthController extends Controller
 {
@@ -28,7 +30,7 @@ class AdminAuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => ['required', 'email:rfc,dns'],
+            'email'    => ['required', 'email:rfc'],
             'password' => ['required', 'string', 'min:6'],
         ], [
             'email.required'    => 'Email address is required.',
@@ -49,11 +51,45 @@ class AdminAuthController extends Controller
 
         $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
-            RateLimiter::clear($throttleKey);
-            $request->session()->regenerate();
+        try {
+            if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+                RateLimiter::clear($throttleKey);
+                $request->session()->regenerate();
 
-            return redirect()->intended(route('admin.dashboard'));
+                return redirect()->intended(route('admin.dashboard'));
+            }
+        } catch (RuntimeException $exception) {
+            if ($this->isHashAlgorithmException($exception)) {
+                $admin = Admin::where('email', $credentials['email'])->first();
+
+                if ($admin && hash_equals((string) $admin->password, (string) $credentials['password'])) {
+                    // Legacy plain-text password migration path.
+                    $admin->password = $credentials['password'];
+                    $admin->save();
+
+                    if (Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+                        RateLimiter::clear($throttleKey);
+                        $request->session()->regenerate();
+
+                        return redirect()->intended(route('admin.dashboard'));
+                    }
+                }
+
+                if ($admin) {
+                    Password::broker('admins')->sendResetLink(['email' => $admin->email]);
+                }
+
+                Log::warning('Admin login blocked due to unsupported hash algorithm.', [
+                    'email' => $credentials['email'],
+                    'ip' => $request->ip(),
+                ]);
+
+                return back()->withErrors([
+                    'email' => 'Your password format is outdated. A reset link has been sent to your email address.',
+                ])->onlyInput('email');
+            }
+
+            throw $exception;
         }
 
         RateLimiter::hit($throttleKey, 60);
@@ -201,5 +237,10 @@ class AdminAuthController extends Controller
         }
 
         return back()->withErrors(['email' => __($status)]);
+    }
+
+    private function isHashAlgorithmException(RuntimeException $exception): bool
+    {
+        return str_contains($exception->getMessage(), 'does not use the Bcrypt algorithm');
     }
 }

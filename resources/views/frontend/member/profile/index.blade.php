@@ -4,6 +4,39 @@
 
 @push('styles')
 <style>
+    .dash-layout {
+        display: flex;
+        align-items: flex-start;
+        background: #f4f6f9;
+        min-height: calc(100vh - 80px);
+    }
+
+    .dash-sidebar {
+        width: 230px;
+        flex-shrink: 0;
+        background: white;
+        min-height: calc(100vh - 80px);
+        box-shadow: 2px 0 12px rgba(0, 0, 0, .06);
+        position: sticky;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar-user { display: flex; align-items: center; gap: 12px; padding: 20px 18px 16px; border-bottom: 1px solid #f0f0f0; }
+    .sidebar-user .u-name { font-size: 13px; font-weight: 700; color: #333; line-height: 1.3; }
+    .sidebar-user .u-role { font-size: 11px; font-weight: 600; }
+    .sidebar-nav { padding: 10px 0; flex: 1; }
+    .sidebar-nav .nav-label { padding: 10px 18px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #aaa; }
+    .sidebar-nav a { display: flex; align-items: center; gap: 10px; padding: 11px 18px; font-size: 14px; font-weight: 500; color: #555; text-decoration: none; border-left: 3px solid transparent; transition: all .15s; }
+    .sidebar-nav a:hover { background: #f4f9f6; color: #28a745; border-left-color: #28a745; text-decoration: none; }
+    .sidebar-nav a.active { background: #eaf7ef; color: #28a745; font-weight: 700; border-left-color: #28a745; }
+    .sidebar-nav a.disabled,
+    .sidebar-nav a.disabled:hover { pointer-events: none; color: #bbb !important; background: #f8f9fa !important; border-left-color: #eee !important; opacity: .7; }
+    .sidebar-nav a i.nav-icon { width: 18px; text-align: center; font-size: 14px; }
+    .sidebar-footer { padding: 14px 18px; border-top: 1px solid #f0f0f0; }
+    .dash-main { flex: 1; min-width: 0; padding: 24px 20px 60px; }
+
     .profile-header {
         background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
         padding: 30px 0;
@@ -77,19 +110,58 @@
         font-size: 40px;
         color: #999;
     }
+
+    @media (max-width: 991px) {
+        .dash-layout { display: block; }
+        .dash-sidebar { display: none; }
+        .dash-main { padding: 14px 12px 40px; }
+    }
 </style>
 @endpush
 
 @section('content')
-
+@php $isInactive = auth()->check() && auth()->user()->status == 'inactive'; @endphp
+<div class="dash-layout">
+    <aside class="dash-sidebar">
+        <div class="sidebar-user">
+            <div style="background:{{ $isInactive ? '#f8d7da' : '#e9f7ef' }};border:2px solid {{ $isInactive ? '#dc3545' : '#28a745' }};border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <i class="fas fa-user {{ $isInactive ? 'text-danger' : 'text-success' }}" style="font-size:18px;"></i>
+            </div>
+            <div>
+                <div class="u-name">{{ Auth::user()->name ?? 'Member' }}</div>
+                <div class="u-role" style="color:{{ $isInactive ? '#dc3545' : '#28a745' }};"><i class="fas fa-circle" style="font-size:7px;margin-right:3px;"></i>{{ ucfirst(Auth::user()->status ?? 'inactive') }}</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-label">Main Menu</div>
+            <a href="{{ route('member.dashboard') }}"><i class="fas fa-tachometer-alt nav-icon"></i> Dashboard</a>
+            <a href="{{ route('member.wallet') }}" class="{{ request()->routeIs('member.wallet') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}"><i class="fas fa-wallet nav-icon"></i> Wallet</a>
+            <div class="nav-label">My Team</div>
+            <a href="{{ route('member.team') }}" class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}"><i class="fas fa-sitemap nav-icon"></i> Genealogy Tree</a>
+            <a href="{{ route('member.credentials') }}" class="{{ request()->routeIs('member.credentials') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}"><i class="fas fa-award nav-icon"></i> My Achievements</a>
+            <div class="nav-label">Account</div>
+            <a href="{{ route('member.kyc.index') }}" class="{{ request()->routeIs('member.kyc*') ? 'active' : '' }}"><i class="fas fa-id-card nav-icon"></i> KYC Documents</a>
+            <a href="{{ route('member.profile') }}" class="active"><i class="fas fa-user-edit nav-icon"></i> My Profile</a>
+            <div class="nav-label">More</div>
+            <a href="{{ route('pricing') }}" class="{{ request()->routeIs('pricing') ? 'active' : '' }}"><i class="fas fa-tags nav-icon"></i> Pricing &amp; Plans</a>
+            <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}"><i class="fas fa-headset nav-icon"></i> Support</a>
+            <a href="{{ route('member.commissions.history') }}" class="{{ $isInactive ? 'disabled' : '' }}"><i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions</a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{{ route('logout') }}" style="display:flex;align-items:center;gap:10px;font-size:14px;color:#dc3545;font-weight:600;text-decoration:none;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </aside>
+    <div class="dash-main">
 <div class="profile-header">
-    <div class="container">
+    <div class="container-fluid px-0">
         <h4 class="mb-1"><i class="fas fa-user mr-2"></i>My Profile</h4>
         <p class="mb-0 small opacity-75">Manage your account information and security settings</p>
     </div>
 </div>
 
-<div class="container" style="padding-bottom: 60px;">
+<div class="container-fluid px-0" style="padding-bottom: 60px;">
     <div class="row">
         {{-- Left: Avatar & Quick Info --}}
         <div class="col-lg-4 mb-4">
@@ -107,7 +179,7 @@
                     @else
                     Member @endauth
                 </h5>
-                <p class="text-muted small mb-2">@auth {{ Auth::user()->email }}
+                <p class="text-muted small mb-2">@auth {{ Auth::user()->user_id }}
                     @else
                     - @endauth
                 </p>
@@ -143,29 +215,15 @@
                     <i class="fas fa-chart-bar mr-2 text-color"></i>My Stats
                 </div>
                 @php
-                function teamCount($user)
-                {
-                $user->load('sponsor'); // important
-
-                $count = 0;
-
-                foreach ($user->sponsor as $ref) {
-                $count++;
-                $count += teamCount($ref);
-                }
-
-                return $count;
-                }
-
-                $memberStats = [
-                [
-                'label' => 'Member Since',
-                'value' => auth()->user()->created_at->format('M Y') ?? 'Jan 2026',
-                ],
-                ['label' => 'Total Referrals', 'value' => auth()->user()->sponsor->count() ?? 0],
-                ['label' => 'Team Size', 'value' => teamCount(auth()->user()) ?? 0],
-                ['label' => 'Total Earned', 'value' => '₹' . auth()->user()->total_earned ?? '0.00'],
-                ];
+                    $memberStats = [
+                        [
+                            'label' => 'Member Since',
+                            'value' => $user->created_at?->format('M Y') ?? 'Jan 2026',
+                        ],
+                        ['label' => 'Total Referrals', 'value' => $totalReferrals ?? 0],
+                        ['label' => 'Team Size', 'value' => $teamSize ?? 0],
+                        ['label' => 'Total Earned', 'value' => '₹' . number_format((float) ($user->total_earned ?? 0), 2)],
+                    ];
                 @endphp
                 @foreach ($memberStats as $s)
                 <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
@@ -376,6 +434,8 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 
 @endsection

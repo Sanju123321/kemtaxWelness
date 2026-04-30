@@ -1339,3 +1339,21 @@ hr {
     text-align: center;
     cursor: pointer;
 }
+
+/* Dropdown readability fix across site */
+select.form-control,
+.custom-select,
+select {
+    min-height: 42px;
+    line-height: 1.45;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-right: 2rem;
+}
+
+select.form-control option,
+.custom-select option,
+select option {
+    color: #1f2d3d;
+    background-color: #fff;
+}

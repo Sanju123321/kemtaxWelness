@@ -167,18 +167,18 @@ class AuthController extends Controller
         }
     }
     // Check if phone number is already registered
-    // public function checkPhone(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'phone' => ['required', 'digits:10'],
-    //     ]);
+    public function checkPhone(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => ['required', 'digits:10'],
+        ]);
 
-    //     $exists = User::where('phone', $validated['phone'])->exists();
+        $exists = User::where('phone', $validated['phone'])->exists();
 
-    //     return response()->json([
-    //         'exists' => $exists,
-    //     ]);
-    // }
+        return response()->json([
+            'exists' => $exists,
+        ]);
+    }
     /**
      * Show forgot password form.
      */

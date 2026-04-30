@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\AdminEarning;
 use App\Models\Income;
 use App\Models\User;
-use App\Models\UserTree;
 use Illuminate\Support\Facades\DB;
 
 class CommissionService
@@ -24,7 +23,10 @@ class CommissionService
         }
 
         $baseValue = $user->currentPlan->base_value;
-        $uplines   = UserTree::where('user_id', $userId)->get();
+        $uplines = $this->placementUplines($userId);
+        if ($uplines->isEmpty()) {
+            return;
+        }
 
         // Pre-load all upline users and their income totals to avoid N+1 queries
         $uplineIds = $uplines->pluck('upline_id')->unique()->all();
@@ -242,5 +244,26 @@ class CommissionService
     private function getMaintenanceFeePercent(): float
     {
         return (float)(\App\Models\Setting::getValue('maintenance_fee_percent', 10));
+    }
+
+    private function placementUplines(int $userId, int $maxLevels = 20)
+    {
+        $nodes = collect();
+        $current = User::query()->select('id', 'parent_id')->find($userId);
+        $level = 1;
+
+        while ($current && $current->parent_id && $level <= $maxLevels) {
+            $nodes->push((object) [
+                'upline_id' => (int) $current->parent_id,
+                'level' => $level,
+            ]);
+
+            $current = User::query()
+                ->select('id', 'parent_id')
+                ->find((int) $current->parent_id);
+            $level++;
+        }
+
+        return $nodes;
     }
 }
