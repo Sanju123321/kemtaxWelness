@@ -65,7 +65,7 @@ class AuthController extends Controller
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'email'],
-            'phone'          => ['required', 'digits:10' ],
+            'phone'          => ['required', 'digits:10'],
             'reference_code' => ['nullable', 'string', 'max:50'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -110,14 +110,9 @@ class AuthController extends Controller
 
         Auth::login($user);
         $this->buildTree($user);
-       
+
         Session::forget('verified_registration_phone');
         PhoneVerification::where('phone', $request->phone)->delete();
-
-        if (!empty($validated['reference_code'])) {
-            return redirect()->route('member.dashboard')
-                ->with('success', 'Welcome! Please complete your plan payment to activate your account.');
-        }
 
         $message = "Welcome to Kemtex Wellness!\n"
             . "User ID: " . $userId . "\n"
@@ -126,6 +121,13 @@ class AuthController extends Controller
         if ($user->phone) {
             $sms->sendSMS($user->phone, $message);
         }
+
+        if (!empty($validated['reference_code'])) {
+            return redirect()->route('member.dashboard')
+                ->with('success', 'Welcome! Please complete your plan payment to activate your account.');
+        }
+
+
 
         return redirect()->route('member.dashboard')
             ->with('success', 'Welcome to Kemtex Wellness! Your account has been created successfully.');
@@ -242,7 +244,7 @@ class AuthController extends Controller
     //         ], 500);
     //     }
     // }
-  public function sendOtp(Request $request, SmsService $sms)
+    public function sendOtp(Request $request, SmsService $sms)
     {
         $request->validate([
             'phone' => ['required', 'digits:10'],
@@ -250,7 +252,7 @@ class AuthController extends Controller
             'user_id' => ['nullable', 'string', 'max:255'],
         ]);
 
-       
+
         try {
             $purpose = $request->input('purpose', 'registration');
 
@@ -276,7 +278,6 @@ class AuthController extends Controller
                 Session::forget('verified_password_reset');
             } else {
                 Session::forget('verified_registration_phone');
-               
             }
 
             $otp = rand(100000, 999999);
@@ -385,7 +386,7 @@ class AuthController extends Controller
     //         'success' => true,
     //     ]);
     // }
- public function verifyOtp(Request $request)
+    public function verifyOtp(Request $request)
     {
         $request->validate([
             'phone' => ['required', 'digits:10'],
