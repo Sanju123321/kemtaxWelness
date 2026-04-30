@@ -34,11 +34,12 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
- 'twilio' => [
-    'sid'   => env('TWILIO_SID'),
-    'token' => env('TWILIO_AUTH_TOKEN'),
-    'from'  => env('TWILIO_PHONE_NUMBER'),
-],
+    'twilio' => [
+        'sid'   => env('TWILIO_SID'),
+        'token' => env('TWILIO_AUTH_TOKEN'),
+        'from'  => env('TWILIO_PHONE_NUMBER'),
+    ],
+    
     'fast2sms' => [
         'api_key' => env('FAST2SMS_API_KEY'),
         'base_url' => env('FAST2SMS_BASE_URL', 'https://www.fast2sms.com/dev/bulkV2'),
@@ -48,11 +49,11 @@ return [
         'test_token' => env('FAST2SMS_TEST_TOKEN'),
     ],
     'razorpay' => [
-    'key' => env('RAZORPAY_KEY_ID'),
-    'secret' => env('RAZORPAY_KEY_SECRET'),
-    'x_key' => env('RAZORPAYX_KEY_ID', env('RAZORPAY_KEY_ID')),
-    'x_secret' => env('RAZORPAYX_KEY_SECRET', env('RAZORPAY_KEY_SECRET')),
-    'x_account_number' => env('RAZORPAYX_ACCOUNT_NUMBER'),
-    'x_base_url' => env('RAZORPAYX_BASE_URL', 'https://api.razorpay.com/v1'),
+        'key' => env('RAZORPAY_KEY_ID'),
+        'secret' => env('RAZORPAY_KEY_SECRET'),
+        'x_key' => env('RAZORPAYX_KEY_ID', env('RAZORPAY_KEY_ID')),
+        'x_secret' => env('RAZORPAYX_KEY_SECRET', env('RAZORPAY_KEY_SECRET')),
+        'x_account_number' => env('RAZORPAYX_ACCOUNT_NUMBER'),
+        'x_base_url' => env('RAZORPAYX_BASE_URL', 'https://api.razorpay.com/v1'),
     ],
 ];
