@@ -675,7 +675,7 @@
 
         <div class="nav-label">My Team</div>
         <a href="{{ route('member.team') }}"
-            class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            class="{{ request()->routeIs('member.team') ? 'active' : '' }}">
             <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
         </a>
         <a href="{{ route('member.credentials') }}"
@@ -698,10 +698,6 @@
         </a>
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
             <i class="fas fa-headset nav-icon"></i> Support
-        </a>
-        <a href="#" data-toggle="modal" data-target="#inviteModal"
-            class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
         </a>
         <a href="{{ route('member.commissions.history') }}" class="{{ $isInactive ? 'disabled' : '' }}">
             <i class="fas fa-hand-holding-usd nav-icon"></i> Recent Commissions
@@ -1017,7 +1013,7 @@
                 </div>
                 <div class="repurchase-badge">
                     <i class="fas fa-list"></i>
-                    {{ $recentTransactions->count() }} recent items
+                    {{ $recentTransactions->total() }} items
                 </div>
             </div>
 
@@ -1052,6 +1048,11 @@
                     </div>
                 @endforelse
             </div>
+            @if ($recentTransactions->hasPages())
+                <div class="mt-3 d-flex justify-content-end">
+                    {{ $recentTransactions->links() }}
+                </div>
+            @endif
         </div>
 
         <div class="info-grid">

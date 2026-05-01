@@ -1117,51 +1117,6 @@
     {{-- ================================================================
      3. FEATURED PRODUCTS
      ================================================================ --}}
-    @php
-        $dummyProducts = [
-            [
-                'name' => 'Ashwagandha Plus Capsules',
-                'desc' => 'Reduces stress & strengthens nerves.',
-                'price' => 499,
-                'mrp' => 699,
-                'dosha' => 'Vaat',
-                'badge' => 'Bestseller',
-                'image' => asset('frontend/images/blog/1.jpg'),
-                'url' => route('products'),
-            ],
-            [
-                'name' => 'Pitta Cool Digestive Syrup',
-                'desc' => 'Relieves acidity & promotes clear skin.',
-                'price' => 349,
-                'mrp' => 499,
-                'dosha' => 'Pitta',
-                'badge' => 'New',
-                'image' => asset('frontend/images/blog/2.jpg'),
-                'url' => route('products'),
-            ],
-            [
-                'name' => 'Kapha Detox Herbal Tea',
-                'desc' => 'Boosts metabolism & clears congestion.',
-                'price' => 299,
-                'mrp' => 399,
-                'dosha' => 'Kapha',
-                'badge' => '',
-                'image' => asset('frontend/images/blog/3.jpg'),
-                'url' => route('products'),
-            ],
-            [
-                'name' => 'Tridosha Rasayana Tonic',
-                'desc' => 'Daily tonic for complete dosha harmony.',
-                'price' => 599,
-                'mrp' => 799,
-                'dosha' => 'Tridosha',
-                'badge' => 'Popular',
-                'image' => asset('frontend/images/about/1.jpg'),
-                'url' => route('products'),
-            ],
-        ];
-    @endphp
-
     <section class="kw-section">
         <div class="container">
             <div class="row justify-content-between align-items-end mb-5">
@@ -1172,12 +1127,12 @@
                 </div>
                 <div class="col-lg-4 text-lg-right mt-3 mt-lg-0">
                     <a href="{{ route('products') }}" class="kw-btn-primary" style="font-size:.85rem;padding:11px 28px">
-                        View All Products <i class="fas fa-arrow-right ml-2"></i>
+                        View All Products <i class="fas fa-arrow-right ml-2 text-success"></i>
                     </a>
                 </div>
             </div>
             <div class="row">
-                @foreach ($dummyProducts as $index => $product)
+                @foreach (($featuredProducts ?? collect()) as $index => $product)
                     <div class="col-lg-3 col-md-6 mb-4 kw-fade-up kw-delay-{{ $index + 1 }}">
                         @include('components.product-card', ['product' => $product])
                     </div>

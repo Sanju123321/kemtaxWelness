@@ -298,11 +298,7 @@
         @endphp
         <div class="plans-carousel-wrap">
             <div id="plansCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                <ol class="carousel-indicators">
-                    @foreach($slides as $slideIndex => $slide)
-                        <li data-target="#plansCarousel" data-slide-to="{{ $slideIndex }}" class="{{ $slideIndex === 0 ? 'active' : '' }}"></li>
-                    @endforeach
-                </ol>
+                
 
                 <div class="carousel-inner">
                     @foreach($slides as $slideIndex => $slide)

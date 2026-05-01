@@ -76,7 +76,6 @@
                             <th>Total Cap</th>
                             <th>Members</th>
                             <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,15 +94,10 @@
                                         {{ $plan->is_active ? 'Active' : 'Inactive' }}
                                     </span>
                                 </td>
-                                <td>
-                                    <a href="{{ route('admin.plans.edit', $plan->id) }}" class="btn btn-sm btn-warning">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10" class="text-center text-muted py-4">No plans found.</td>
+                                <td colspan="9" class="text-center text-muted py-4">No plans found.</td>
                             </tr>
                         @endforelse
                     </tbody>

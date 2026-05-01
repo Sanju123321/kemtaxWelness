@@ -62,12 +62,20 @@ class AuthController extends Controller
      */
     public function register(Request $request, SmsService $sms)
     {
+        $normalizedReference = strtoupper(trim((string) $request->input('reference_code', '')));
+        $request->merge([
+            'reference_code' => $normalizedReference !== '' ? $normalizedReference : null,
+        ]);
+
         $validated = $request->validate([
             'name'           => ['required', 'string', 'max:255'],
             'email'          => ['required', 'email'],
             'phone'          => ['required', 'digits:10'],
-            'reference_code' => ['nullable', 'string', 'max:50'],
+            'reference_code' => ['nullable', 'string', 'max:50', 'regex:/^REF[A-Z0-9]+$/', 'exists:users,reference_code'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'reference_code.regex' => 'Reference code must start with REF and contain only letters and numbers (e.g. REFP2WWSX).',
+            'reference_code.exists' => 'The provided reference code is invalid. Please enter a valid sponsor reference code.',
         ]);
 
         $verification = PhoneVerification::where('phone', $request->phone)
@@ -169,18 +177,18 @@ class AuthController extends Controller
         }
     }
     // Check if phone number is already registered
-    // public function checkPhone(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'phone' => ['required', 'digits:10'],
-    //     ]);
+    public function checkPhone(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => ['required', 'digits:10'],
+        ]);
 
-    //     $exists = User::where('phone', $validated['phone'])->exists();
+        $exists = User::where('phone', $validated['phone'])->exists();
 
-    //     return response()->json([
-    //         'exists' => $exists,
-    //     ]);
-    // }
+        return response()->json([
+            'exists' => $exists,
+        ]);
+    }
     /**
      * Show forgot password form.
      */

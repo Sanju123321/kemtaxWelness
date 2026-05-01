@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\AdminEarning;
 use App\Models\Income;
 use App\Models\User;
-use App\Models\UserTree;
 use Illuminate\Support\Facades\DB;
 
 class CommissionService
@@ -24,7 +23,10 @@ class CommissionService
         }
 
         $baseValue = $user->currentPlan->base_value;
-        $uplines   = UserTree::where('user_id', $userId)->get();
+        $uplines = $this->placementUplines($userId);
+        if ($uplines->isEmpty()) {
+            return;
+        }
 
         // Pre-load all upline users and their income totals to avoid N+1 queries
         $uplineIds = $uplines->pluck('upline_id')->unique()->all();
@@ -59,6 +61,28 @@ class CommissionService
                 $uplineUser = User::with('currentPlan')->lockForUpdate()->find($node->upline_id);
 
                 if (!$uplineUser) return;
+
+                if ($uplineUser->status !== 'active' || !$uplineUser->has_plan || !$uplineUser->currentPlan) {
+                    Income::create([
+                        'user_id'            => $uplineUser->id,
+                        'from_user_id'       => $userId,
+                        'level'              => $node->level,
+                        'type'               => $type,
+                        'commission_source'  => $commissionSource,
+                        'amount'             => $grossIncome,
+                        'status'             => 'lost',
+                        'remark'             => 'inactive_or_no_plan',
+                    ]);
+
+                    AdminEarning::create([
+                        'from_user_id'       => $userId,
+                        'beneficiary_user_id' => $uplineUser->id,
+                        'type'               => 'lost_capture',
+                        'amount'             => $grossIncome,
+                        'remark'             => "ineligible_upline user {$uplineUser->id}",
+                    ]);
+                    return;
+                }
 
                 $dailyCap = $uplineUser->currentPlan?->daily_cap ?? PHP_INT_MAX;
                 $totalCap = $uplineUser->currentPlan?->total_cap ?? PHP_INT_MAX;
@@ -242,5 +266,31 @@ class CommissionService
     private function getMaintenanceFeePercent(): float
     {
         return (float)(\App\Models\Setting::getValue('maintenance_fee_percent', 10));
+    }
+
+    private function placementUplines(int $userId, int $maxLevels = 20)
+    {
+        $nodes = collect();
+        $current = User::query()->select('id', 'parent_id', 'sponsor_id', 'referred_by')->find($userId);
+        $level = 1;
+
+        while ($current && $level <= $maxLevels) {
+            $uplineId = (int) ($current->parent_id ?: $current->sponsor_id ?: $current->referred_by ?: 0);
+            if ($uplineId <= 0) {
+                break;
+            }
+
+            $nodes->push((object) [
+                'upline_id' => $uplineId,
+                'level' => $level,
+            ]);
+
+            $current = User::query()
+                ->select('id', 'parent_id', 'sponsor_id', 'referred_by')
+                ->find($uplineId);
+            $level++;
+        }
+
+        return $nodes;
     }
 }

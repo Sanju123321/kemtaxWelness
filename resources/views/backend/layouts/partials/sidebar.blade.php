@@ -71,6 +71,13 @@
                     Payments
                 </a>
 
+                {{-- Royalty --}}
+                <a class="nav-link {{ request()->routeIs('admin.royalty*') ? 'active' : '' }}"
+                    href="{{ route('admin.royalty.index') }}">
+                    <div class="sb-nav-link-icon"><i class="fas fa-percent"></i></div>
+                    Royalty
+                </a>
+
                 {{-- Commissions --}}
                 <a class="nav-link {{ request()->routeIs('admin.incomes*') ? 'active' : '' }}"
                     href="{{ route('admin.incomes.index') }}">

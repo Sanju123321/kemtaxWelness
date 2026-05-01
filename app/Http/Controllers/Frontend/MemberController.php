@@ -23,8 +23,11 @@ use App\Jobs\DistributeIncomeJob;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use App\Models\UserBankDetail;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class MemberController extends Controller
 {
@@ -427,38 +430,35 @@ public function verifyWalletTopupPayment(Request $request)
         }
     }
 
-// public function webhook(Request $request)
-// {
-//     $webhookSecret = env('RAZORPAY_WEBHOOK_SECRET');
+public function webhook(Request $request)
+{
+    $payload = $request->getContent();
+    $signature = $request->header('X-Razorpay-Signature');
+    $secret = (string) env('RAZORPAY_WEBHOOK_SECRET', '');
 
-//     $signature = $request->header('X-Razorpay-Signature');
-//     $payload = $request->getContent();
+    if ($secret !== '') {
+        try {
+            $api = new Api(
+                config('services.razorpay.key'),
+                config('services.razorpay.secret')
+            );
+            $api->utility->verifyWebhookSignature($payload, $signature, $secret);
+        } catch (\Throwable $e) {
+            Log::warning('Razorpay webhook signature verification failed', [
+                'error' => $e->getMessage(),
+            ]);
 
-//     try {
-//         $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+            return response()->json(['error' => 'Invalid webhook signature'], 400);
+        }
+    }
 
-//         $api->utility->verifyWebhookSignature($payload, $signature, $webhookSecret);
+    $decoded = json_decode($payload, true);
+    Log::info('Razorpay webhook received', [
+        'event' => $decoded['event'] ?? 'unknown',
+    ]);
 
-//         $data = json_decode($payload, true);
-
-//         if ($data['event'] == 'payment.captured') {
-//             $payment = $data['payload']['payment']['entity'];
-
-//             // Save in DB
-//             \DB::table('payments')->insert([
-//                 'payment_id' => $payment['id'],
-//                 'amount' => $payment['amount'] / 100,
-//                 'status' => $payment['status'],
-//                 'created_at' => now()
-//             ]);
-//         }
-
-//         return response()->json(['status' => 'ok']);
-
-//     } catch (\Exception $e) {
-//         return response()->json(['error' => 'Invalid signature'], 400);
-//     }
-// }
+    return response()->json(['status' => 'ok']);
+}
     /**
      * Show member dashboard.
      */
@@ -468,8 +468,8 @@ public function verifyWalletTopupPayment(Request $request)
 
         // Real dashboard stats
         $directReferrals = $user->getDirectReferralCount();
-        $teamSize        = UserTree::where('upline_id', $user->id)->count();
         $downlineUserIds = $this->getDescendantUserIds($user->id);
+        $teamSize        = count($downlineUserIds);
 
         $unplacedReferredUsers = User::query()
             ->select('id', 'name', 'user_id')
@@ -743,15 +743,16 @@ public function verifyWalletTopupPayment(Request $request)
 
     private function buildMemberTree(int $userId, int $depth): array
     {
-        $user = User::with('currentPlan')
-            ->select('id', 'name', 'status', 'profile_photo', 'current_plan_id', 'total_earned', 'wallet_balance', 'reference_code')
+        $user = User::with(['currentPlan', 'sponsor:id,name'])
+            ->select('id', 'name', 'status', 'profile_photo', 'current_plan_id', 'total_earned', 'wallet_balance', 'reference_code', 'sponsor_id')
             ->find($userId);
         if (!$user) return [];
 
-        $children = UserTree::where('upline_id', $userId)
-            ->where('level', 1)
-            ->pluck('user_id')
-            ->map(fn($id) => $this->buildMemberTree($id, $depth + 1))
+        $children = User::query()
+            ->where('parent_id', $userId)
+            ->orderBy('id')
+            ->pluck('id')
+            ->map(fn ($id) => $this->buildMemberTree((int) $id, $depth + 1))
             ->filter()
             ->values()
             ->toArray();
@@ -763,7 +764,8 @@ public function verifyWalletTopupPayment(Request $request)
             'profile_photo' => $user->profile_photo,
             'status'       => $user->status ?? 'inactive',
             'has_plan'     => !empty($user->current_plan_id),
-            'direct_referrals' => UserTree::where('upline_id', $user->id)->where('level', 1)->count(),
+            'direct_referrals' => User::query()->where('parent_id', $user->id)->count(),
+            'sponsor_name' => $user->sponsor?->name ?? '-',
             'ref_code'     => $user->reference_code ?? '-',
             'plan_name'    => $user->currentPlan?->name ?? 'No Plan',
             'plan_price'   => $user->currentPlan?->price ?? 0,
@@ -910,7 +912,7 @@ public function saveBank(Request $request)
             ->take(10)
             ->get();
 
-        $recentTransactions = $recentIncomeTransactions
+        $allRecentTransactions = $recentIncomeTransactions
             ->map(function ($income) {
                 return [
                     'kind'        => 'credit',
@@ -986,8 +988,24 @@ public function saveBank(Request $request)
                 })
             )
             ->sortByDesc('date')
-            ->take(30)
             ->values();
+
+        $perPage = 10;
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+        $total = $allRecentTransactions->count();
+        $items = $allRecentTransactions
+            ->slice(($currentPage - 1) * $perPage, $perPage)
+            ->values();
+        $recentTransactions = new LengthAwarePaginator(
+            $items,
+            $total,
+            $perPage,
+            $currentPage,
+            [
+                'path' => request()->url(),
+                'query' => request()->query(),
+            ]
+        );
 
         return view('frontend.member.wallet.index', compact(
             'walletBalance',
@@ -1114,7 +1132,11 @@ public function saveBank(Request $request)
      */
     public function profile()
     {
-        return view('frontend.member.profile.index');
+        $user = auth()->user();
+        $totalReferrals = $user->getDirectReferralCount();
+        $teamSize = count($this->getDescendantUserIds($user->id));
+
+        return view('frontend.member.profile.index', compact('user', 'totalReferrals', 'teamSize'));
     }
 
 public function updateProfile(Request $request)
@@ -1191,15 +1213,16 @@ return back()->with('success', 'Profile photo updated');
      */
     public function credentials()
     {
-        return view('frontend.member.credentials.index');
+        $user = auth()->user();
+        $directCount = $user->getDirectReferralCount();
+        $teamCount = count($this->getDescendantUserIds($user->id));
+
+        return view('frontend.member.credentials.index', compact('user', 'directCount', 'teamCount'));
     }
 
     private function withdrawalsHavePayoutColumns(): bool
     {
-        return !empty(DB::select(
-            "select 1 from information_schema.columns where table_schema = database() and table_name = ? and column_name = ? limit 1",
-            ['withdrawal_requests', 'razorpay_payout_id']
-        ));
+        return Schema::hasColumn('withdrawal_requests', 'razorpay_payout_id');
     }
 
     private function buildCommissionQuery(int $userId): Builder

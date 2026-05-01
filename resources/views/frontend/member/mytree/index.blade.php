@@ -391,6 +391,16 @@
             white-space: nowrap;
         }
 
+        .geo-sponsor {
+            margin-top: 4px;
+            font-size: 11px;
+            color: #728094;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .depth-0 .geo-level {
             background: #e8f5e9;
             color: #2e7d32;
@@ -686,7 +696,7 @@
         </a>
         <div class="nav-label">My Team</div>
         <a href="{{ route('member.team') }}" id="sidebarTreeLink"
-            class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            class="{{ request()->routeIs('member.team') ? 'active' : '' }}">
             <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
         </a>
         <a href="{{ route('member.credentials') }}"
@@ -709,10 +719,6 @@
 
         <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
             <i class="fas fa-headset nav-icon"></i> Support
-        </a>
-        <a href="#" data-toggle="modal" data-target="#inviteModal"
-            class="{{ $isInactive ? 'disabled' : '' }}">
-            <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
         </a>
         <a href="{{ route('member.commissions.history') }}" id="sidebarCommissionLink"
             class="{{ $isInactive ? 'disabled' : '' }}">
@@ -1015,6 +1021,11 @@
             levelEl.className = 'geo-level';
             levelEl.textContent = depth === 0 ? 'You' : 'Level ' + depth;
 
+            const sponsorEl = document.createElement('div');
+            sponsorEl.className = 'geo-sponsor';
+            sponsorEl.title = 'Sponsored by: ' + (node.sponsor_name || '-');
+            sponsorEl.textContent = 'Sponsored by: ' + (node.sponsor_name || '-');
+
             // Hover tooltip
             const tooltip = document.createElement('div');
             tooltip.className = 'geo-tooltip';
@@ -1033,6 +1044,8 @@
                 // '</div>'
                 '<div class="tt-row"><span class="tt-label">Status</span><span class="tt-val"><span class="tt-badge ' +
                 statusCls + '">' + statusTxt + '</span></span></div>' +
+                '<div class="tt-row"><span class="tt-label">Sponsored By</span><span class="tt-val">' +
+                (node.sponsor_name || '-') + '</span></div>' +
                 '<div class="tt-row"><span class="tt-label">Plan</span><span class="tt-val"><span class="tt-badge ' +
                 planCls + '">' + planTxt + '</span></span></div>' +
                 (node.plan_price > 0 ?
@@ -1048,6 +1061,7 @@
             geoNode.appendChild(avatar);
             geoNode.appendChild(nameEl);
             geoNode.appendChild(levelEl);
+            geoNode.appendChild(sponsorEl);
             geoNode.appendChild(tooltip);
             geoNode.style.cursor = 'default';
 

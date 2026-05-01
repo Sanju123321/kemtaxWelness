@@ -3,13 +3,18 @@
 
 <div class="kw-product-card">
     <div class="kw-product-img-wrap">
-        <img src="{{ $product['image'] ?? asset('frontend/images/blog/1.jpg') }}"
-            alt="{{ $product['name'] ?? 'Product' }}" loading="lazy">
+        @php
+            $productImage = $product['image'] ?? asset('frontend/images/product-placeholder.png');
+            $productName = $product['name'] ?? 'Product';
+            $productUrl = $product['url'] ?? route('products');
+        @endphp
+        <img src="{{ $productImage }}" alt="{{ $productName }}" loading="lazy">
+
         @if (!empty($product['badge']))
             <span class="kw-product-badge">{{ $product['badge'] }}</span>
         @endif
         <div class="kw-product-overlay">
-            <a href="{{ $product['url'] ?? route('products') }}" class="kw-overlay-btn">
+            <a href="{{ $productUrl }}" class="kw-overlay-btn">
                 <i class="fas fa-eye"></i> Quick View
             </a>
         </div>
@@ -25,7 +30,7 @@
             @if (!empty($product['mrp']) && $product['mrp'] > $product['price'])
                 <span class="kw-product-mrp">₹{{ $product['mrp'] }}</span>
             @endif
-            <a href="{{ $product['url'] ?? route('products') }}" class="kw-add-cart-btn">
+            <a href="{{ $productUrl }}" class="kw-add-cart-btn">
                 <i class="fas fa-shopping-bag"></i> Add to Bag
             </a>
         </div>

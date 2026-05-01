@@ -750,20 +750,26 @@
 
                 <div class="d-flex align-items-center" style="gap:10px;">
 
-                    <span class="badge-plan"
-                        style="
                     @auth
-{{ Auth::user()->status == 'active' ? 'background:#28a745;color:white;' : 'background:red;color:white;' }}
-                    @else
-                        background:gray;color:white; @endauth
-                    ">
-
-                        @auth
-                            {{ ucfirst(Auth::user()->status) }}
+                        @if (Auth::user()->status == 'inactive' || !Auth::user()->has_plan)
+                            <button type="button" class="badge-plan border-0"
+                                style="background:#dc3545;color:#fff;cursor:pointer;"
+                                data-toggle="modal" data-target="#planModal">
+                                Inactive Member - Activate Plan
+                            </button>
                         @else
-                            Inactive
-                        @endauth Member
-                    </span>
+                            <button type="button" class="badge-plan border-0"
+                                style="background:#28a745;color:#fff;cursor:default;">
+                                Active Member
+                            </button>
+                        @endif
+                    @else
+                        <button type="button" class="badge-plan border-0"
+                            style="background:gray;color:#fff;cursor:pointer;"
+                            data-toggle="modal" data-target="#planModal">
+                            Inactive Member - Activate Plan
+                        </button>
+                    @endauth
 
                     <button class="btn btn-sm"
                         style="background:white;color:#28a745;font-weight:700;border-radius:20px;border:2px solid white;"
@@ -845,7 +851,7 @@
                 </a>
                 <div class="nav-label">My Team</div>
                 <a href="{{ route('member.team') }}" id="sidebarTreeLink"
-                    class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+                    class="{{ request()->routeIs('member.team') ? 'active' : '' }}">
                     <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
                 </a>
                 <a href="{{ route('member.credentials') }}"
@@ -868,10 +874,6 @@
 
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
-                </a>
-                <a href="#" data-bs-toggle="modal" data-bs-target="#inviteModal"
-                    class="{{ $isInactive ? 'disabled' : '' }}">
-                    <i class="fas fa-share-alt nav-icon"></i> Invite &amp; Earn
                 </a>
                 <a href="#" id="sidebarCommissionLink"
                     onclick="showSection('recentCommissionsSection'); return false;"
@@ -1183,17 +1185,24 @@
 
                             {{-- EMAIL --}}
                             <p class="text-muted small mb-2">
-                                @auth {{ Auth::user()->email }}
+                                @auth {{ Auth::user()->user_id }}
                                 @else
                                     member@example.com
                                 @endauth
                             </p>
 
                             {{-- STATUS BADGE --}}
-                            <span class="badge-plan mb-3 d-inline-block"
-                                style="background-color: {{ $plan ? '#28a745' : ($user->status == 'inactive' ? '#dc3545' : '#28a745') }}; color:#fff;">
-                                {{ $plan ? $plan->name : ucfirst($user->status) }}
-                            </span>
+                            @if ($user->status == 'inactive' || !$user->has_plan)
+                                <button type="button" class="badge-plan mb-3 d-inline-block border-0"
+                                    style="background:#dc3545;color:#fff;cursor:pointer;"
+                                    data-toggle="modal" data-target="#planModal">
+                                    Inactive - Buy Bronze Plan
+                                </button>
+                            @else
+                                <span class="badge-plan mb-3 d-inline-block" style="background:#28a745;color:#fff;">
+                                    {{ $plan ? $plan->name : 'Active' }}
+                                </span>
+                            @endif
 
                             {{-- BUTTON (UNCHANGED) --}}
                             <div>

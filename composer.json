@@ -51,6 +51,18 @@
             "@php artisan config:clear --ansi",
             "@php artisan test"
         ],
+        "test:critical": [
+            "@php artisan config:clear --ansi",
+            "@php artisan test --filter=CriticalRouteSmokeTest",
+            "@php artisan test --filter=AuthFlowTest",
+            "@php artisan test --filter=PaymentPurchaseTest",
+            "@php artisan test --filter=CommissionDistributionTest",
+            "@php artisan test --filter=CartWishlistTest",
+            "@php artisan test --filter=PlacementControlTest"
+        ],
+        "predeploy:check": [
+            "@php artisan ops:predeploy-checks"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"
