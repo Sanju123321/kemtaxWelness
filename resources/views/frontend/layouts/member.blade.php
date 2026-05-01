@@ -479,24 +479,10 @@
     <!-- Razorpay Checkout Script -->
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    {{-- Inactivity Detection and Modal Trigger (Dashboard only, first time) --}}
+    {{-- Plan purchase flow for inactive/no-plan members (manual open only) --}}
     @if (request()->routeIs('member.dashboard') && !auth()->user()->has_plan)
     <script>
         $(document).ready(function() {
-
-            console.log('Modal script loaded');
-
-            $('#planModal').modal({
-                backdrop: 'static',
-                keyboard: false
-            }).modal('show');
-
-            $('#planModal').on('hide.bs.modal', function(e) {
-                if (!window.planPurchased) {
-                    e.preventDefault();
-                }
-            });
-
             $(document).on('click', '.purchase-plan', function(e) {
                 e.preventDefault();
 

@@ -875,9 +875,8 @@
                 <a href="{{ route('contact') }}" class="{{ request()->routeIs('contact') ? 'active' : '' }}">
                     <i class="fas fa-headset nav-icon"></i> Support
                 </a>
-                <a href="#" id="sidebarCommissionLink"
-                    onclick="showSection('recentCommissionsSection'); return false;"
-                    class="{{ $isInactive ? 'disabled' : '' }}">
+                <a href="{{ route('member.commissions.history') }}" id="sidebarCommissionLink"
+                    class="{{ request()->routeIs('member.commissions.history') ? 'active' : '' }}">
                     <i class="fas fa-hand-holding-usd nav-icon"></i> Referral Commission
                 </a>
                 <div class="nav-label">My Shopping</div>
@@ -1088,7 +1087,7 @@
                     <div class="section-card" id="recentCommissionsSection">
                         <div class="section-card-header d-flex justify-content-between align-items-center">
                             <span><i class="fas fa-history mr-2 text-color"></i>Recent Commissions</span>
-                            <a href="#" class="btn btn-sm btn-main btn-round-full"
+                            <a href="{{ route('member.commissions.history') }}" class="btn btn-sm btn-main btn-round-full"
                                 style="font-size:11px;padding:4px 14px;">View All</a>
                         </div>
                         <div class="section-card-body p-0">

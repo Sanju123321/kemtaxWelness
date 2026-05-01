@@ -694,6 +694,28 @@ class MemberController extends Controller
     {
         $query = $this->buildCommissionQuery(auth()->id());
 
+        $commissionType = (string) $request->query('commission_type', '');
+        if (in_array($commissionType, ['referral', 'plan_upgrade'], true)) {
+            if ($commissionType === 'referral') {
+                $query->where(function (Builder $inner) {
+                    $inner->whereNull('commission_source')
+                        ->orWhere('commission_source', 'referral');
+                });
+            } else {
+                $query->where('commission_source', 'plan_upgrade');
+            }
+        }
+
+        $dateFrom = trim((string) $request->query('date_from', ''));
+        if ($dateFrom !== '') {
+            $query->whereDate('created_at', '>=', $dateFrom);
+        }
+
+        $dateTo = trim((string) $request->query('date_to', ''));
+        if ($dateTo !== '') {
+            $query->whereDate('created_at', '<=', $dateTo);
+        }
+
         $search = trim((string) $request->query('search', ''));
         if ($search !== '') {
             $query->where(function (Builder $inner) use ($search) {
@@ -730,6 +752,9 @@ class MemberController extends Controller
             'search' => $search,
             'sortBy' => $sortBy,
             'sortDir' => $sortDir,
+            'commissionType' => $commissionType,
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
         ]);
     }
 
