@@ -34,12 +34,12 @@ class AppServiceProvider extends ServiceProvider
             }
             $view->with('cartCount', $cartCount);
 
-             // ✅ Fetch active plan
-            $plan = Plan::where('is_active', true)->first();
+            // Cheapest active plan (starter / Bronze) for modals and payment amount
+            $plan = Plan::where('is_active', true)->orderBy('price')->first();
 
             $view->with([
                 'cartCount' => $cartCount,
-                'plan' => $plan, // ✅ NOW AVAILABLE EVERYWHERE
+                'plan' => $plan,
             ]);
         });
     }

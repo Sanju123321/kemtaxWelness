@@ -268,6 +268,10 @@
                                         <a class="nav-link" href="{{ route('member.wallet') }}"><i
                                                 class="fas fa-wallet mr-1"></i>Wallet</a>
                                     </li>
+                                    <li class="nav-item {{ request()->routeIs('member.commissions.history') ? 'active' : '' }}">
+                                        <a class="nav-link" href="{{ route('member.commissions.history') }}"><i
+                                                class="fas fa-hand-holding-usd mr-1"></i>Referral Commission</a>
+                                    </li>
                                     <li
                                         class="nav-item {{ request()->routeIs('member.credentials') ? 'active' : '' }}">
                                         <a class="nav-link" href="{{ route('member.credentials') }}"><i
@@ -353,20 +357,23 @@
    
     {{-- Plan Purchase Modal (hidden by default) --}}
    <div class="modal fade" id="planModal" tabindex="-1" role="dialog"
-     aria-labelledby="planModalLabel" aria-hidden="true"
-     data-backdrop="static" data-keyboard="false">
+     aria-labelledby="planModalLabel" aria-hidden="true">
 
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content"
              style="border-radius:18px; overflow:hidden; box-shadow:0 8px 32px rgba(0,0,0,0.18);">
 
             <!-- Header -->
-            <div class="modal-header"
+            <div class="modal-header align-items-center"
                  style="background: linear-gradient(90deg, #1e7e34 0%, #28a745 100%);
                         color:#fff; border-bottom:none;">
-                <h4 class="modal-title font-weight-bold w-100 text-center" id="planModalLabel">
+                <h4 class="modal-title font-weight-bold w-100 text-center mb-0 pr-4" id="planModalLabel">
                     Welcome! Please Choose a Plan to Continue
                 </h4>
+                <button type="button" class="close text-white position-absolute" data-dismiss="modal" aria-label="Close"
+                    style="opacity:1;text-shadow:none;font-size:1.75rem;line-height:1;top:12px;right:16px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
 
             <!-- Body -->
@@ -381,12 +388,12 @@
                                 <!-- Plan Name -->
                                 <div class="plan-badge">
                                     <i class="fas fa-star mr-1"></i>
-                                    {{ $plan->name ?? 'Essential Care' }}
+                                    {{ optional($plan)->name ?? 'Bronze' }}
                                 </div>
 
                                 <!-- Price -->
                                 <div class="plan-price">
-                                    ₹{{ $plan->price ?? '1500' }}
+                                    ₹{{ optional($plan)->price ?? 1500 }}
                                 </div>
 
                                 <p class="plan-sub">
@@ -435,10 +442,10 @@
                                 </div>
 
                                 <!-- Button -->
-                                <a href="{{ route('contact') }}"
-                                   class="btn plan-btn purchase-plan">
-                                    Join Now <i class="fas fa-arrow-right ml-1"></i>
-                                </a>
+                                <button type="button"
+                                   class="btn plan-btn purchase-plan w-100 border-0">
+                                    Upgrade <i class="fas fa-arrow-up ml-1"></i>
+                                </button>
 
                             </div>
                         </div>
@@ -486,7 +493,7 @@
             $(document).on('click', '.purchase-plan', function(e) {
                 e.preventDefault();
 
-               var planAmount = {{ $plan->price ?? 1500 }};
+               var planAmount = {{ optional($plan)->price ?? 1500 }};
 
                 $.post('/member/create-order', {
                     _token: $('meta[name="csrf-token"]').attr('content'),

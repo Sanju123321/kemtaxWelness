@@ -210,13 +210,22 @@ class MemberController extends Controller
                     return;
                 }
 
-                $amount = $paymentData->amount / 100;
+                if (($paymentData->status ?? '') !== 'captured') {
+                    throw new \Exception('Payment is not completed yet (status: ' . ($paymentData->status ?? 'unknown') . ').');
+                }
 
-                // ✅ Get Plan
-                $plan = Plan::where('price', $amount)->first();
+                $amount = round($paymentData->amount / 100, 2);
+
+                // ✅ Get Plan (tolerate float/decimal mismatch vs Razorpay)
+                $plan = Plan::query()
+                    ->where('is_active', 1)
+                    ->get()
+                    ->first(function (Plan $p) use ($amount) {
+                        return abs((float) $p->price - $amount) < 0.02;
+                    });
 
                 if (!$plan) {
-                    throw new \Exception("Invalid Plan");
+                    throw new \Exception("Invalid Plan (amount ₹{$amount} did not match an active plan).");
                 }
 
                 // 🔴 RULE 1: New users must start with the cheapest active plan
@@ -290,12 +299,11 @@ class MemberController extends Controller
                     'activated_at' => now()
                 ]);
 
-                //  MLM TRIGGER — upgrade vs first plan purchase
+                //  MLM TRIGGER — upgrade vs first plan purchase (skip when no sponsor / referred_by)
                 $member = User::find($user->id);
-                $parent = User::find($member->referred_by);
-                $directReferrals = $parent->getDirectReferralCount();
-                if ($directReferrals <= 10) {
-
+                $parent = $member->referred_by ? User::find($member->referred_by) : null;
+                $directReferrals = $parent ? $parent->getDirectReferralCount() : 0;
+                if ($parent && $directReferrals <= 10) {
                     dispatch(new DistributeIncomeJob(
                         $user->id,
                         $oldPlanId ? 'plan_upgrade' : 'referral'
@@ -718,11 +726,17 @@ class MemberController extends Controller
 
         $search = trim((string) $request->query('search', ''));
         if ($search !== '') {
-            $query->where(function (Builder $inner) use ($search) {
-                $inner->whereHas('fromUser', fn(Builder $q) => $q->where('name', 'like', '%' . $search . '%'))
-                    ->orWhere('type', 'like', '%' . $search . '%')
-                    ->orWhere('status', 'like', '%' . $search . '%')
-                    ->orWhere('level', 'like', '%' . $search . '%');
+            $escaped = addcslashes($search, '%_\\');
+            $like = '%' . $escaped . '%';
+            $query->where(function (Builder $inner) use ($like) {
+                $inner->whereHas('fromUser', function (Builder $q) use ($like) {
+                    $q->where('name', 'like', $like)
+                        ->orWhere('user_id', 'like', $like);
+                })
+                    ->orWhere('incomes.type', 'like', $like)
+                    ->orWhere('incomes.status', 'like', $like)
+                    ->orWhere('incomes.commission_source', 'like', $like)
+                    ->orWhereRaw('CAST(`incomes`.`level` AS CHAR) LIKE ?', [$like]);
             });
         }
 
