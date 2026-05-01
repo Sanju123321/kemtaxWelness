@@ -675,7 +675,7 @@
 
         <div class="nav-label">My Team</div>
         <a href="{{ route('member.team') }}"
-            class="{{ request()->routeIs('member.team') ? 'active' : '' }}{{ $isInactive ? ' disabled' : '' }}">
+            class="{{ request()->routeIs('member.team') ? 'active' : '' }}">
             <i class="fas fa-sitemap nav-icon"></i> Genealogy Tree
         </a>
         <a href="{{ route('member.credentials') }}"

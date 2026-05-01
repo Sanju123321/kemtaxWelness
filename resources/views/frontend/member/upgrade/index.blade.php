@@ -336,7 +336,7 @@
             Upgrade Plan</a>
         <a href="{{ route('contact') }}"><i class="fas fa-headset nav-icon"></i> Support</a>
         <div class="nav-label">My Team</div>
-        <a href="{{ route('member.team') }}" class="{{ $isInactive ? 'disabled' : '' }}"><i
+        <a href="{{ route('member.team') }}"><i
                 class="fas fa-sitemap nav-icon"></i> Genealogy Tree</a>
     </nav>
 

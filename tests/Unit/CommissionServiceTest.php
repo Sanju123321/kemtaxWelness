@@ -36,10 +36,12 @@ class CommissionServiceTest extends TestCase
 
         $upline = $this->makeUser('Cap Upline', [
             'current_plan_id' => $cappedPlan->id,
+            'has_plan' => true,
         ]);
         $sourceUser = $this->makeUser('Source User', [
             'parent_id' => $upline->id,
             'current_plan_id' => $sourcePlan->id,
+            'has_plan' => true,
         ]);
 
         app(CommissionService::class)->distributeIncome($sourceUser->id, 'referral');
@@ -65,6 +67,60 @@ class CommissionServiceTest extends TestCase
         $this->assertSame(85.0, (float) $upline->wallet_balance);
         $this->assertSame(2, Income::count());
         $this->assertGreaterThanOrEqual(2, AdminEarning::count());
+    }
+
+    public function test_unslotted_direct_referral_still_pays_upline_commission_via_sponsor_chain(): void
+    {
+        $plan = Plan::create([
+            'name' => 'Starter',
+            'price' => 1500,
+            'base_value' => 1000,
+            'daily_cap' => 20000,
+            'total_cap' => 200000,
+            'is_active' => true,
+        ]);
+
+        $topUpline = $this->makeUser('Top Upline', [
+            'current_plan_id' => $plan->id,
+            'has_plan' => true,
+        ]);
+
+        $sponsor = $this->makeUser('Sponsor', [
+            'parent_id' => $topUpline->id,
+            'current_plan_id' => $plan->id,
+            'has_plan' => true,
+        ]);
+
+        // Simulates 11th+ direct: no parent placement yet, but sponsor exists.
+        $sourceUser = $this->makeUser('Unslotted Direct', [
+            'parent_id' => null,
+            'sponsor_id' => $sponsor->id,
+            'referred_by' => $sponsor->id,
+            'current_plan_id' => $plan->id,
+            'has_plan' => true,
+        ]);
+
+        app(CommissionService::class)->distributeIncome($sourceUser->id, 'plan');
+
+        $this->assertDatabaseHas('incomes', [
+            'user_id' => $sponsor->id,
+            'from_user_id' => $sourceUser->id,
+            'level' => 1,
+            'status' => 'credited',
+            'type' => 'direct',
+            'commission_source' => 'plan',
+            'amount' => 150,
+        ]);
+
+        $this->assertDatabaseHas('incomes', [
+            'user_id' => $topUpline->id,
+            'from_user_id' => $sourceUser->id,
+            'level' => 2,
+            'status' => 'credited',
+            'type' => 'level',
+            'commission_source' => 'plan',
+            'amount' => 100,
+        ]);
     }
 
     private function makeUser(string $name, array $overrides = []): User

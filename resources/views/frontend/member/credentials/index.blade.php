@@ -168,7 +168,7 @@
             <a href="{{ route('member.dashboard') }}"><i class="fas fa-tachometer-alt nav-icon"></i> Dashboard</a>
             <a href="{{ route('member.wallet') }}" class="{{ $isInactive ? 'disabled' : '' }}"><i class="fas fa-wallet nav-icon"></i> Wallet</a>
             <div class="nav-label">My Team</div>
-            <a href="{{ route('member.team') }}" class="{{ $isInactive ? 'disabled' : '' }}"><i class="fas fa-sitemap nav-icon"></i> Genealogy Tree</a>
+            <a href="{{ route('member.team') }}"><i class="fas fa-sitemap nav-icon"></i> Genealogy Tree</a>
             <a href="{{ route('member.credentials') }}" class="active"><i class="fas fa-award nav-icon"></i> My Achievements</a>
             <div class="nav-label">Account</div>
             <a href="{{ route('member.kyc.index') }}"><i class="fas fa-id-card nav-icon"></i> KYC Documents</a>

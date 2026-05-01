@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\PhoneVerification;
 use App\Models\User;
+use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,6 +14,8 @@ class AuthFlowTest extends TestCase
 
     public function test_registration_sends_otp_and_verification_flow(): void
     {
+        $this->withoutMiddleware([ValidateCsrfToken::class]);
+
         PhoneVerification::create([
             'phone' => '9999999999',
             'otp' => '123456',
@@ -22,7 +25,7 @@ class AuthFlowTest extends TestCase
 
         $response = $this
             ->withSession(['verified_registration_phone' => '9999999999'])
-            ->post(route('register.post'), [
+            ->post('/register', [
                 'name' => 'Test Member',
                 'email' => 'member@example.com',
                 'phone' => '9999999999',
@@ -40,6 +43,8 @@ class AuthFlowTest extends TestCase
 
     public function test_login_with_credentials_and_logout(): void
     {
+        $this->withoutMiddleware([ValidateCsrfToken::class]);
+
         $user = User::create([
             'name' => 'Login User',
             'email' => 'login@example.com',
@@ -49,7 +54,7 @@ class AuthFlowTest extends TestCase
             'status' => 'active',
         ]);
 
-        $login = $this->post(route('login.post'), [
+        $login = $this->post('/login', [
             'user_id' => $user->user_id,
             'password' => 'Password@123',
         ]);
@@ -57,7 +62,7 @@ class AuthFlowTest extends TestCase
         $login->assertRedirect(route('member.dashboard'));
         $this->assertAuthenticatedAs($user);
 
-        $logout = $this->post(route('logout'));
+        $logout = $this->post('/logout');
         $logout->assertRedirect(route('home'));
         $this->assertGuest();
     }
