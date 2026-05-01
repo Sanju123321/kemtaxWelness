@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Wishlist;
 use Illuminate\Http\Request;
- use Razorpay\Api\Api;
+use Razorpay\Api\Api;
 use Razorpay\Api\Errors\SignatureVerificationError;
 use App\Models\Payment;
 use Illuminate\Support\Facades\Auth;
@@ -37,66 +37,66 @@ class MemberController extends Controller
 
 
 
-public function createOrder(Request $request)
-{
-    $request->validate([
-        'amount' => 'required|numeric|min:1'
-    ]);
+    public function createOrder(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:1'
+        ]);
 
-    // 🔒 FIXED PLAN AMOUNT (always verify)
-   
+        // 🔒 FIXED PLAN AMOUNT (always verify)
 
-    // $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
-    $api = new \Razorpay\Api\Api(
-        config('services.razorpay.key'),
-        config('services.razorpay.secret')
-    );
 
-    $order = $api->order->create([
-        'receipt' => 'order_' . time(),
-        'amount' => $request->amount * 100,
-        'currency' => 'INR'
-    ]);
+        // $api = new \Razorpay\Api\Api(env('RAZORPAY_KEY_ID'), env('RAZORPAY_KEY_SECRET'));
+        $api = new \Razorpay\Api\Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
 
-    return response()->json([
-        'order_id' => $order['id'],
-        'amount' => $request->amount * 100
-    ]);
-}
+        $order = $api->order->create([
+            'receipt' => 'order_' . time(),
+            'amount' => $request->amount * 100,
+            'currency' => 'INR'
+        ]);
 
-public function createWalletTopupOrder(Request $request)
-{
-    $request->validate([
-        'amount' => 'required|numeric|min:100'
-    ]);
+        return response()->json([
+            'order_id' => $order['id'],
+            'amount' => $request->amount * 100
+        ]);
+    }
 
-    $user = auth()->user();
+    public function createWalletTopupOrder(Request $request)
+    {
+        $request->validate([
+            'amount' => 'required|numeric|min:100'
+        ]);
 
-    $api = new Api(
-        config('services.razorpay.key'),
-        config('services.razorpay.secret')
-    );
+        $user = auth()->user();
 
-    $amount = round((float) $request->amount, 2);
-    $order = $api->order->create([
-        'receipt' => 'wallet_topup_' . $user->id . '_' . time(),
-        'amount' => (int) round($amount * 100),
-        'currency' => 'INR',
-        'notes' => [
-            'purpose' => 'wallet_topup',
-            'user_id' => (string) $user->id,
-        ],
-    ]);
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
 
-    return response()->json([
-        'order_id' => $order['id'],
-        'amount' => (int) round($amount * 100),
-        'display_amount' => $amount,
-        'name' => $user->name,
-        'email' => $user->email,
-        'contact' => $user->phone,
-    ]);
-}
+        $amount = round((float) $request->amount, 2);
+        $order = $api->order->create([
+            'receipt' => 'wallet_topup_' . $user->id . '_' . time(),
+            'amount' => (int) round($amount * 100),
+            'currency' => 'INR',
+            'notes' => [
+                'purpose' => 'wallet_topup',
+                'user_id' => (string) $user->id,
+            ],
+        ]);
+
+        return response()->json([
+            'order_id' => $order['id'],
+            'amount' => (int) round($amount * 100),
+            'display_amount' => $amount,
+            'name' => $user->name,
+            'email' => $user->email,
+            'contact' => $user->phone,
+        ]);
+    }
 
     public function createRepurchaseWalletTopupOrder(Request $request)
     {
@@ -132,239 +132,243 @@ public function createWalletTopupOrder(Request $request)
         ]);
     }
 
-// public function verifyPayment(Request $request)
-// {
-//     $api = new Api(
-//         config('services.razorpay.key'),
-//         config('services.razorpay.secret')
-//     );
+    // public function verifyPayment(Request $request)
+    // {
+    //     $api = new Api(
+    //         config('services.razorpay.key'),
+    //         config('services.razorpay.secret')
+    //     );
 
-//     try {
-//         $attributes = [
-//             'razorpay_order_id' => $request->razorpay_order_id,
-//             'razorpay_payment_id' => $request->razorpay_payment_id,
-//             'razorpay_signature' => $request->razorpay_signature
-//         ];
+    //     try {
+    //         $attributes = [
+    //             'razorpay_order_id' => $request->razorpay_order_id,
+    //             'razorpay_payment_id' => $request->razorpay_payment_id,
+    //             'razorpay_signature' => $request->razorpay_signature
+    //         ];
 
-//         // ✅ Verify signature
-//         $api->utility->verifyPaymentSignature($attributes);
+    //         // ✅ Verify signature
+    //         $api->utility->verifyPaymentSignature($attributes);
 
-//         // ✅ FETCH PAYMENT DATA (MISSING STEP 🔥)
-//         $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+    //         // ✅ FETCH PAYMENT DATA (MISSING STEP 🔥)
+    //         $paymentData = $api->payment->fetch($request->razorpay_payment_id);
 
-//         $user = auth()->user();
+    //         $user = auth()->user();
 
-//         // ✅ Prevent duplicate entry
-//         if (Payment::where('payment_id', $paymentData->id)->exists()) {
-//             return response()->json(['success' => true]);
-//         }
+    //         // ✅ Prevent duplicate entry
+    //         if (Payment::where('payment_id', $paymentData->id)->exists()) {
+    //             return response()->json(['success' => true]);
+    //         }
 
-//         // ✅ Save payment
-//         Payment::create([
-//             'user_id' => $user->id,
-//             'payment_id' => $paymentData->id,
-//             'order_id' => $paymentData->order_id,
-//             'amount' => $paymentData->amount / 100, // paise → rupees
-//             'status' => $paymentData->status,
-//             'method' => $paymentData->method,
-//             'email' => $paymentData->email,
-//             'contact' => $paymentData->contact
-//         ]);
+    //         // ✅ Save payment
+    //         Payment::create([
+    //             'user_id' => $user->id,
+    //             'payment_id' => $paymentData->id,
+    //             'order_id' => $paymentData->order_id,
+    //             'amount' => $paymentData->amount / 100, // paise → rupees
+    //             'status' => $paymentData->status,
+    //             'method' => $paymentData->method,
+    //             'email' => $paymentData->email,
+    //             'contact' => $paymentData->contact
+    //         ]);
 
-//         // ✅ Activate user
-       
-//        $user->status = 'active';
-//         $user->has_plan = true;
-//         $user->save();
+    //         // ✅ Activate user
 
-//         return response()->json(['success' => true]);
+    //        $user->status = 'active';
+    //         $user->has_plan = true;
+    //         $user->save();
 
-//     } catch (SignatureVerificationError $e) {
-//         return response()->json(['success' => false]);
-//     }
-// }
-public function verifyPayment(Request $request)
-{
-    $api = new Api(
-        config('services.razorpay.key'),
-        config('services.razorpay.secret')
-    );
+    //         return response()->json(['success' => true]);
 
-    try {
-        DB::transaction(function () use ($request, $api) {
+    //     } catch (SignatureVerificationError $e) {
+    //         return response()->json(['success' => false]);
+    //     }
+    // }
+    public function verifyPayment(Request $request)
+    {
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
 
-            // ✅ Verify signature
-            $api->utility->verifyPaymentSignature([
-                'razorpay_order_id' => $request->razorpay_order_id,
-                'razorpay_payment_id' => $request->razorpay_payment_id,
-                'razorpay_signature' => $request->razorpay_signature
-            ]);
+        try {
+            DB::transaction(function () use ($request, $api) {
 
-            // ✅ Fetch payment
-            $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+                // ✅ Verify signature
+                $api->utility->verifyPaymentSignature([
+                    'razorpay_order_id' => $request->razorpay_order_id,
+                    'razorpay_payment_id' => $request->razorpay_payment_id,
+                    'razorpay_signature' => $request->razorpay_signature
+                ]);
 
-            $user = auth()->user();
+                // ✅ Fetch payment
+                $paymentData = $api->payment->fetch($request->razorpay_payment_id);
 
-            // ✅ Prevent duplicate
-            if (Payment::where('payment_id', $paymentData->id)->exists()) {
-                return;
-            }
+                $user = auth()->user();
 
-            $amount = $paymentData->amount / 100;
-
-            // ✅ Get Plan
-            $plan = Plan::where('price', $amount)->first();
-
-            if (!$plan) {
-                throw new \Exception("Invalid Plan");
-            }
-
-            // 🔴 RULE 1: New users must start with the cheapest active plan
-            if (!$user->current_plan_id) {
-                $starterPlan = Plan::where('is_active', 1)->orderBy('price')->first();
-                if (!$starterPlan || $plan->id !== $starterPlan->id) {
-                    throw new \Exception("New members must start with the Starter Package (₹" . ($starterPlan->price ?? '') . ")");
-                }
-            }
-
-            // 🔴 RULE 2: Only sequential upgrades
-            if ($user->current_plan_id) {
-                $currentPlan = $user->currentPlan;
-
-                if ($plan->price <= $currentPlan->price) {
-                    throw new \Exception("Only plan upgrades are allowed. Please choose a higher plan.");
+                // ✅ Prevent duplicate
+                if (Payment::where('payment_id', $paymentData->id)->exists()) {
+                    return;
                 }
 
-                $nextPlan = Plan::where('is_active', 1)
-                    ->where('price', '>', $currentPlan->price)
-                    ->orderBy('price')
-                    ->first();
+                $amount = $paymentData->amount / 100;
 
-                    
-                if (!$nextPlan) {
-                    throw new \Exception("You already have the highest available plan.");
+                // ✅ Get Plan
+                $plan = Plan::where('price', $amount)->first();
+
+                if (!$plan) {
+                    throw new \Exception("Invalid Plan");
                 }
 
-                if ($plan->id !== $nextPlan->id) {
-                    throw new \Exception("Please upgrade step-by-step. Your next eligible plan is " . $nextPlan->name . " (₹" . $nextPlan->price . ").");
+                // 🔴 RULE 1: New users must start with the cheapest active plan
+                if (!$user->current_plan_id) {
+                    $starterPlan = Plan::where('is_active', 1)->orderBy('price')->first();
+                    if (!$starterPlan || $plan->id !== $starterPlan->id) {
+                        throw new \Exception("New members must start with the Starter Package (₹" . ($starterPlan->price ?? '') . ")");
+                    }
                 }
-            }
 
-            // ✅ Save Payment
-            Payment::create([
-                'user_id' => $user->id,
-                'payment_id' => $paymentData->id,
-                'order_id' => $paymentData->order_id,
-                'amount' => $amount,
-                'status' => $paymentData->status,
-                'method' => $paymentData->method,
-                'email' => $paymentData->email,
-                'contact' => $paymentData->contact,
-                'purpose' => 'plan',
-            ]);
+                // 🔴 RULE 2: Only sequential upgrades
+                if ($user->current_plan_id) {
+                    $currentPlan = $user->currentPlan;
 
-            // ✅ Update user (ACTIVE PLAN)
-            $oldPlanId = $user->current_plan_id;
+                    if ($plan->price <= $currentPlan->price) {
+                        throw new \Exception("Only plan upgrades are allowed. Please choose a higher plan.");
+                    }
 
-            // $user->update([
-            //     'status' => 'active',
-            //     'current_plan_id' => $plan->id
-            // ]);
-            $user->current_plan_id = $plan->id;
-             $user->status = 'active';
-             $user->has_plan = true;
+                    $nextPlan = Plan::where('is_active', 1)
+                        ->where('price', '>', $currentPlan->price)
+                        ->orderBy('price')
+                        ->first();
+
+
+                    if (!$nextPlan) {
+                        throw new \Exception("You already have the highest available plan.");
+                    }
+
+                    if ($plan->id !== $nextPlan->id) {
+                        throw new \Exception("Please upgrade step-by-step. Your next eligible plan is " . $nextPlan->name . " (₹" . $nextPlan->price . ").");
+                    }
+                }
+
+                // ✅ Save Payment
+                Payment::create([
+                    'user_id' => $user->id,
+                    'payment_id' => $paymentData->id,
+                    'order_id' => $paymentData->order_id,
+                    'amount' => $amount,
+                    'status' => $paymentData->status,
+                    'method' => $paymentData->method,
+                    'email' => $paymentData->email,
+                    'contact' => $paymentData->contact,
+                    'purpose' => 'plan',
+                ]);
+
+                // ✅ Update user (ACTIVE PLAN)
+                $oldPlanId = $user->current_plan_id;
+
+                // $user->update([
+                //     'status' => 'active',
+                //     'current_plan_id' => $plan->id
+                // ]);
+                $user->current_plan_id = $plan->id;
+                $user->status = 'active';
+                $user->has_plan = true;
                 $user->save();
-            // ✅ Update old plan → upgraded
-            if ($oldPlanId) {
-                UserPlan::where('user_id', $user->id)
-                    ->where('plan_id', $oldPlanId)
-                    ->update(['status' => 'upgraded']);
-            }
+                // ✅ Update old plan → upgraded
+                if ($oldPlanId) {
+                    UserPlan::where('user_id', $user->id)
+                        ->where('plan_id', $oldPlanId)
+                        ->update(['status' => 'upgraded']);
+                }
 
-            // ✅ Save new plan
-            UserPlan::create([
-                'user_id' => $user->id,
-                'plan_id' => $plan->id,
-                'amount_paid' => $plan->price,
-                'status' => 'active',
-                'activated_at' => now()
+                // ✅ Save new plan
+                UserPlan::create([
+                    'user_id' => $user->id,
+                    'plan_id' => $plan->id,
+                    'amount_paid' => $plan->price,
+                    'status' => 'active',
+                    'activated_at' => now()
+                ]);
+
+                //  MLM TRIGGER — upgrade vs first plan purchase
+                $member = User::find($user->id);
+                $parent = User::find($member->referred_by);
+                $directReferrals = $parent->getDirectReferralCount();
+                if ($directReferrals <= 10) {
+
+                    dispatch(new DistributeIncomeJob(
+                        $user->id,
+                        $oldPlanId ? 'plan_upgrade' : 'referral'
+                    ));
+                }
+            });
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
             ]);
+        }
+    }
 
-            //  MLM TRIGGER — upgrade vs first plan purchase
-            dispatch(new DistributeIncomeJob(
-                $user->id,
-                $oldPlanId ? 'plan_upgrade' : 'referral'
-            ));
-
-        });
-
-        return response()->json(['success' => true]);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage()
+    public function verifyWalletTopupPayment(Request $request)
+    {
+        $request->validate([
+            'razorpay_order_id' => 'required|string',
+            'razorpay_payment_id' => 'required|string',
+            'razorpay_signature' => 'required|string',
         ]);
+
+        $api = new Api(
+            config('services.razorpay.key'),
+            config('services.razorpay.secret')
+        );
+
+        try {
+            DB::transaction(function () use ($request, $api) {
+                $api->utility->verifyPaymentSignature([
+                    'razorpay_order_id' => $request->razorpay_order_id,
+                    'razorpay_payment_id' => $request->razorpay_payment_id,
+                    'razorpay_signature' => $request->razorpay_signature
+                ]);
+
+                $paymentData = $api->payment->fetch($request->razorpay_payment_id);
+                $user = auth()->user();
+
+                if (Payment::where('payment_id', $paymentData->id)->exists()) {
+                    return;
+                }
+
+                $amount = round($paymentData->amount / 100, 2);
+
+                Payment::create([
+                    'user_id' => $user->id,
+                    'payment_id' => $paymentData->id,
+                    'order_id' => $paymentData->order_id,
+                    'amount' => $amount,
+                    'status' => $paymentData->status,
+                    'method' => $paymentData->method,
+                    'email' => $paymentData->email,
+                    'contact' => $paymentData->contact,
+                    'purpose' => 'wallet_topup',
+                ]);
+
+                if ($paymentData->status === 'captured') {
+                    $user->increment('wallet_balance', $amount);
+                } else {
+                    throw new \Exception('Wallet top-up payment is not captured.');
+                }
+            });
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
-}
-
-public function verifyWalletTopupPayment(Request $request)
-{
-    $request->validate([
-        'razorpay_order_id' => 'required|string',
-        'razorpay_payment_id' => 'required|string',
-        'razorpay_signature' => 'required|string',
-    ]);
-
-    $api = new Api(
-        config('services.razorpay.key'),
-        config('services.razorpay.secret')
-    );
-
-    try {
-        DB::transaction(function () use ($request, $api) {
-            $api->utility->verifyPaymentSignature([
-                'razorpay_order_id' => $request->razorpay_order_id,
-                'razorpay_payment_id' => $request->razorpay_payment_id,
-                'razorpay_signature' => $request->razorpay_signature
-            ]);
-
-            $paymentData = $api->payment->fetch($request->razorpay_payment_id);
-            $user = auth()->user();
-
-            if (Payment::where('payment_id', $paymentData->id)->exists()) {
-                return;
-            }
-
-            $amount = round($paymentData->amount / 100, 2);
-
-            Payment::create([
-                'user_id' => $user->id,
-                'payment_id' => $paymentData->id,
-                'order_id' => $paymentData->order_id,
-                'amount' => $amount,
-                'status' => $paymentData->status,
-                'method' => $paymentData->method,
-                'email' => $paymentData->email,
-                'contact' => $paymentData->contact,
-                'purpose' => 'wallet_topup',
-            ]);
-
-            if ($paymentData->status === 'captured') {
-                $user->increment('wallet_balance', $amount);
-            } else {
-                throw new \Exception('Wallet top-up payment is not captured.');
-            }
-        });
-
-        return response()->json(['success' => true]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => $e->getMessage(),
-        ], 422);
-    }
-}
 
     public function verifyRepurchaseWalletTopupPayment(Request $request)
     {
@@ -430,35 +434,35 @@ public function verifyWalletTopupPayment(Request $request)
         }
     }
 
-public function webhook(Request $request)
-{
-    $payload = $request->getContent();
-    $signature = $request->header('X-Razorpay-Signature');
-    $secret = (string) env('RAZORPAY_WEBHOOK_SECRET', '');
+    public function webhook(Request $request)
+    {
+        $payload = $request->getContent();
+        $signature = $request->header('X-Razorpay-Signature');
+        $secret = (string) env('RAZORPAY_WEBHOOK_SECRET', '');
 
-    if ($secret !== '') {
-        try {
-            $api = new Api(
-                config('services.razorpay.key'),
-                config('services.razorpay.secret')
-            );
-            $api->utility->verifyWebhookSignature($payload, $signature, $secret);
-        } catch (\Throwable $e) {
-            Log::warning('Razorpay webhook signature verification failed', [
-                'error' => $e->getMessage(),
-            ]);
+        if ($secret !== '') {
+            try {
+                $api = new Api(
+                    config('services.razorpay.key'),
+                    config('services.razorpay.secret')
+                );
+                $api->utility->verifyWebhookSignature($payload, $signature, $secret);
+            } catch (\Throwable $e) {
+                Log::warning('Razorpay webhook signature verification failed', [
+                    'error' => $e->getMessage(),
+                ]);
 
-            return response()->json(['error' => 'Invalid webhook signature'], 400);
+                return response()->json(['error' => 'Invalid webhook signature'], 400);
+            }
         }
+
+        $decoded = json_decode($payload, true);
+        Log::info('Razorpay webhook received', [
+            'event' => $decoded['event'] ?? 'unknown',
+        ]);
+
+        return response()->json(['status' => 'ok']);
     }
-
-    $decoded = json_decode($payload, true);
-    Log::info('Razorpay webhook received', [
-        'event' => $decoded['event'] ?? 'unknown',
-    ]);
-
-    return response()->json(['status' => 'ok']);
-}
     /**
      * Show member dashboard.
      */
@@ -487,10 +491,10 @@ public function webhook(Request $request)
         $downlineUsers = empty($downlineUserIds)
             ? collect()
             : User::query()
-                ->select('id', 'name', 'user_id')
-                ->whereIn('id', $downlineUserIds)
-                ->orderBy('name')
-                ->get();
+            ->select('id', 'name', 'user_id')
+            ->whereIn('id', $downlineUserIds)
+            ->orderBy('name')
+            ->get();
 
         $royaltyLevel = $user->getRoyaltyLevel();
         $royaltyPercentage = $user->getRoyaltyPercentage();
@@ -524,9 +528,9 @@ public function webhook(Request $request)
         // Next (upgrade) plan
         $nextPlan = $plan
             ? \App\Models\Plan::where('price', '>', $plan->price)
-                ->where('is_active', true)
-                ->orderBy('price')
-                ->first()
+            ->where('is_active', true)
+            ->orderBy('price')
+            ->first()
             : null;
 
         $dashStats = [
@@ -649,7 +653,12 @@ public function webhook(Request $request)
         if (!$placed) {
             return back()->with('error', 'Selected user is already placed and cannot be changed.');
         }
-
+        $placeduser = User::find( $request->integer('place_user_id'));
+        $oldPlanId = $placeduser->current_plan_id;
+        dispatch(new DistributeIncomeJob(
+            $request->integer('place_user_id'),
+            $oldPlanId ? 'plan_upgrade' : 'referral'
+        ));
         return back()->with('success', 'Placement updated successfully.');
     }
 
@@ -670,7 +679,7 @@ public function webhook(Request $request)
             ->latest()
             ->paginate(10);
 
-        $items = $paginator->getCollection()->map(fn ($income) => $this->formatCommissionRow($income));
+        $items = $paginator->getCollection()->map(fn($income) => $this->formatCommissionRow($income));
 
         return response()->json([
             'data'         => $items,
@@ -688,7 +697,7 @@ public function webhook(Request $request)
         $search = trim((string) $request->query('search', ''));
         if ($search !== '') {
             $query->where(function (Builder $inner) use ($search) {
-                $inner->whereHas('fromUser', fn (Builder $q) => $q->where('name', 'like', '%' . $search . '%'))
+                $inner->whereHas('fromUser', fn(Builder $q) => $q->where('name', 'like', '%' . $search . '%'))
                     ->orWhere('type', 'like', '%' . $search . '%')
                     ->orWhere('status', 'like', '%' . $search . '%')
                     ->orWhere('level', 'like', '%' . $search . '%');
@@ -752,7 +761,7 @@ public function webhook(Request $request)
             ->where('parent_id', $userId)
             ->orderBy('id')
             ->pluck('id')
-            ->map(fn ($id) => $this->buildMemberTree((int) $id, $depth + 1))
+            ->map(fn($id) => $this->buildMemberTree((int) $id, $depth + 1))
             ->filter()
             ->values()
             ->toArray();
@@ -774,7 +783,7 @@ public function webhook(Request $request)
             'total_cap'    => $user->currentPlan?->total_cap ?? 0,
             'total_earned' => $user->total_earned ?? 0,
             'wallet'       => $user->wallet_balance ?? 0,
-               'children'     => $children,
+            'children'     => $children,
         ];
     }
 
@@ -787,7 +796,7 @@ public function webhook(Request $request)
             $children = User::query()
                 ->whereIn('parent_id', $frontier)
                 ->pluck('id')
-                ->map(fn ($id) => (int) $id)
+                ->map(fn($id) => (int) $id)
                 ->toArray();
 
             $newChildren = array_values(array_diff($children, $descendants));
@@ -802,31 +811,31 @@ public function webhook(Request $request)
         return $descendants;
     }
 
-public function saveBank(Request $request)
-{
-    $request->validate([
-        'account_holder' => 'required|string|max:255',
-        'account_number' => 'required',
-        'ifsc' => 'required',
-        'bank_name' => 'required',
-        'upi_id' => 'nullable',
-    ]);
+    public function saveBank(Request $request)
+    {
+        $request->validate([
+            'account_holder' => 'required|string|max:255',
+            'account_number' => 'required',
+            'ifsc' => 'required',
+            'bank_name' => 'required',
+            'upi_id' => 'nullable',
+        ]);
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    UserBankDetail::updateOrCreate(
-        ['user_id' => $user->id], // check existing
-        [
-            'account_holder' => $request->account_holder,
-            'account_number' => $request->account_number,
-            'ifsc' => $request->ifsc,
-            'bank_name' => $request->bank_name,
-            'upi_id' => $request->upi_id,
-        ]
-    );
+        UserBankDetail::updateOrCreate(
+            ['user_id' => $user->id], // check existing
+            [
+                'account_holder' => $request->account_holder,
+                'account_number' => $request->account_number,
+                'ifsc' => $request->ifsc,
+                'bank_name' => $request->bank_name,
+                'upi_id' => $request->upi_id,
+            ]
+        );
 
-    return back()->with('success', 'Bank details saved successfully');
-}
+        return back()->with('success', 'Bank details saved successfully');
+    }
     /**
      * Show wallet page.
      */
@@ -868,7 +877,7 @@ public function saveBank(Request $request)
             ->where('status', 'pending')
             ->when(
                 $this->withdrawalsHavePayoutColumns(),
-                fn ($query) => $query->whereNull('razorpay_payout_id')
+                fn($query) => $query->whereNull('razorpay_payout_id')
             )
             ->sum('amount');
 
@@ -1087,7 +1096,7 @@ public function saveBank(Request $request)
             ->where('status', 'pending')
             ->when(
                 $this->withdrawalsHavePayoutColumns(),
-                fn ($query) => $query->whereNull('razorpay_payout_id')
+                fn($query) => $query->whereNull('razorpay_payout_id')
             )
             ->sum('amount');
         $availableWithdrawalBalance = max(0, (float) $user->wallet_balance - $openWithdrawalRequestAmount);
@@ -1139,21 +1148,21 @@ public function saveBank(Request $request)
         return view('frontend.member.profile.index', compact('user', 'totalReferrals', 'teamSize'));
     }
 
-public function updateProfile(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email',
-        'phone' => 'nullable|digits:10',
-        'city' => 'nullable|string|max:100',
-        'state' => 'nullable|string|max:100',
-        'pincode' => 'nullable|digits:6',
-        'address' => 'nullable|string|max:2000',
-    ]);
+    public function updateProfile(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'nullable|digits:10',
+            'city' => 'nullable|string|max:100',
+            'state' => 'nullable|string|max:100',
+            'pincode' => 'nullable|digits:6',
+            'address' => 'nullable|string|max:2000',
+        ]);
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    
+
         $user->name = $request->name;
         $user->email = $request->email;
         $user->phone = $request->phone;
@@ -1163,51 +1172,51 @@ public function updateProfile(Request $request)
         $user->address = $request->address;
         $user->save();
 
-    return back()->with('success', 'Profile updated successfully');
-}
-
-
-public function changePassword(Request $request)
-{
-    $request->validate([
-        'current_password' => 'required',
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-    $user = auth()->user();
-
-    // Check current password
-    if (!Hash::check($request->current_password, $user->password)) {
-        return back()->with('error', 'Current password is incorrect');
+        return back()->with('success', 'Profile updated successfully');
     }
 
-    // Update password
-    $user->password = Hash::make($request->password);
-    $user->save();
 
-    return back()->with('success', 'Password updated successfully');
-}
-public function updatePhoto(Request $request)
-{
-    $request->validate([
-        'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-    ]);
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
 
-    $user = auth()->user();
+        $user = auth()->user();
 
-    // Delete old image
-    if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
-        Storage::disk('public')->delete($user->profile_photo);
+        // Check current password
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->with('error', 'Current password is incorrect');
+        }
+
+        // Update password
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Password updated successfully');
     }
+    public function updatePhoto(Request $request)
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-    // Upload new image
-    $path = $request->file('photo')->store('profile_photos', 'public');
+        $user = auth()->user();
+
+        // Delete old image
+        if ($user->profile_photo && Storage::disk('public')->exists($user->profile_photo)) {
+            Storage::disk('public')->delete($user->profile_photo);
+        }
+
+        // Upload new image
+        $path = $request->file('photo')->store('profile_photos', 'public');
 
 
-    $user->profile_photo = $path;
-    $user->save();
-return back()->with('success', 'Profile photo updated');
-}
+        $user->profile_photo = $path;
+        $user->save();
+        return back()->with('success', 'Profile photo updated');
+    }
     /**
      * Show credentials page.
      */
