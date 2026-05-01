@@ -224,52 +224,7 @@ class AuthController extends Controller
         return redirect()->route('home')->with('success', 'You have been logged out successfully.');
     }
 
-    /**
-     * Send OTP to phone number.
-     */
-    // public function sendOtp(Request $request, SmsService $sms)
-    // {
-    //     $request->validate([
-    //         'phone' => ['required', 'regex:/^(91\d{10}|\d{10})$/'],
-    //     ]);
 
-    //     try {
-    //         $otp = (string) random_int(1000, 9999);
-
-    //         PhoneVerification::updateOrCreate(
-    //             ['phone' => $request->phone],
-    //             [
-    //                 'otp' => (string) $otp,
-    //                 'is_verified' => false,
-    //                 'expires_at' => now()->addMinutes(5),
-    //             ]
-    //         );
-    //         $providerResponse = $sms->sendOTP((string) $request->phone, $otp);
-
-    //         return response()->json([
-    //             'success' => true,
-    //             'message' => 'OTP sent successfully',
-    //             'phone' => $request->phone,
-    //             'provider_debug' => $providerResponse,
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         Log::error('OTP dispatch failed', [
-    //             'phone' => $request->phone,
-    //             'error' => $e->getMessage(),
-    //         ]);
-
-    //         $message = 'Failed to send OTP. Please try again in a moment.';
-    //         if (str_contains($e->getMessage(), 'website verification')) {
-    //             $message = 'SMS provider account is not verified for OTP API yet. Please complete Fast2SMS OTP website verification.';
-    //         }
-
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $message,
-    //             'error' => $e->getMessage(),
-    //         ], 500);
-    //     }
-    // }
     public function sendOtp(Request $request, SmsService $sms)
     {
         $request->validate([
@@ -376,42 +331,6 @@ class AuthController extends Controller
         }
     }
 
-    // public function verifyOtp(Request $request)
-    // {
-    //     $request->validate([
-    //         'phone' => ['required', 'digits:10'],
-    //         'otp' => ['required', 'digits:4'],
-    //     ]);
-
-    //     $record = PhoneVerification::where('phone', $request->phone)
-    //         ->where('otp', $request->otp)
-    //         ->where('expires_at', '>', now())
-    //         ->first();
-
-    //     if (!$record) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => 'Invalid or expired OTP',
-    //         ]);
-    //     }
-
-    //     $record->update([
-    //         'is_verified' => true,
-    //     ]);
-
-    //     if ($purpose === 'password_reset') {
-    //         Session::put('verified_password_reset', [
-    //             'user_id' => $request->user_id,
-    //             'phone' => $request->phone,
-    //         ]);
-    //     } else {
-    //         Session::put('verified_registration_phone', $request->phone);
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //     ]);
-    // }
     public function verifyOtp(Request $request)
     {
         $request->validate([
@@ -465,55 +384,7 @@ class AuthController extends Controller
             'success' => true,
         ]);
     }
-    // public function resetPassword(Request $request)
-    // {
-    //     $request->validate([
-    //         'user_id' => ['required', 'string', 'max:255'],
-    //         'phone' => ['required', 'digits:10'],
-    //         'password' => ['required', 'confirmed', Rules\Password::defaults()],
-    //     ]);
 
-    //     $verifiedReset = Session::get('verified_password_reset');
-
-    //     if (
-    //         !$verifiedReset ||
-    //         ($verifiedReset['user_id'] ?? null) !== $request->user_id ||
-    //         ($verifiedReset['phone'] ?? null) !== $request->phone
-    //     ) {
-    //         return back()->withErrors([
-    //             'otp' => 'Please verify OTP for this user ID and phone number first.',
-    //         ])->withInput($request->except('password', 'password_confirmation'));
-    //     }
-
-    //     $record = PhoneVerification::where('phone', $request->phone)
-    //         ->where('is_verified', true)
-    //         ->where('expires_at', '>', now())
-    //         ->first();
-
-    //     if (!$record) {
-    //         return back()->withErrors([
-    //             'otp' => 'OTP not verified or expired.',
-    //         ])->withInput($request->except('password', 'password_confirmation'));
-    //     }
-
-    //     $user = User::where('user_id', $request->user_id)
-    //         ->where('phone', $request->phone)
-    //         ->first();
-
-    //     if (!$user) {
-    //         return back()->withErrors([
-    //             'user_id' => 'User ID and phone number do not match our records.',
-    //         ])->withInput($request->except('password', 'password_confirmation'));
-    //     }
-
-    //     $user->password = Hash::make($request->password);
-    //     $user->save();
-
-    //     $record->delete();
-    //     Session::forget('verified_password_reset');
-
-    //     return redirect()->route('login')->with('success', 'Password reset successful');
-    // }
 
     public function resetPassword(Request $request)
     {
