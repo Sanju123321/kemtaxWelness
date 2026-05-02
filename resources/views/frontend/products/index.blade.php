@@ -52,6 +52,11 @@
 .product-rating i{color:#ffc107;font-size:12px}
 .product-rating span{font-size:12px;color:#888}
 .product-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid #f0f0f0}
+.product-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.product-qty{display:flex;align-items:center;border:1.5px solid #e9ecef;border-radius:6px;overflow:hidden;height:32px;background:#fff}
+.product-qty button{width:28px;height:30px;border:0;background:#f8f9fa;color:#444;font-weight:800;cursor:pointer;line-height:1}
+.product-qty input{width:38px;height:30px;border:0;border-left:1px solid #e9ecef;border-right:1px solid #e9ecef;text-align:center;font-size:12px;font-weight:700;color:#28a745;padding:0}
+.product-qty input::-webkit-outer-spin-button,.product-qty input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .price-current{font-size:1.2rem;font-weight:800;color:#28a745}
 .price-original{font-size:12px;color:#bbb;text-decoration:line-through;margin-left:4px}
 .price-discount{font-size:11px;font-weight:700;color:#dc3545;margin-left:4px}
@@ -253,16 +258,25 @@
                                                 @endif
                                             @endif
                                         </div>
-                                        @auth
-                                            <button type="button" class="btn-add-cart"
-                                                    data-product-id="{{ $product->id }}"
-                                                    data-product-name="{{ $product->name }}"
-                                                    onclick="addToCart(this)">
-                                                <i class="fas fa-shopping-bag mr-1"></i> Add
-                                            </button>
-                                        @else
-                                            <a href="{{ route('login') }}" class="btn-add-cart"><i class="fas fa-shopping-bag mr-1"></i> Add</a>
-                                        @endauth
+                                        <div class="product-actions">
+                                            @auth
+                                                <div class="product-qty" data-stock="{{ $product->stock }}">
+                                                    <button type="button" onclick="changeListQty(this, -1)" aria-label="Decrease quantity">-</button>
+                                                    <input type="number" value="1" min="1" max="{{ max(1, $product->stock) }}" aria-label="Quantity">
+                                                    <button type="button" onclick="changeListQty(this, 1)" aria-label="Increase quantity">+</button>
+                                                </div>
+                                                <button type="button" class="btn-add-cart"
+                                                        data-product-id="{{ $product->id }}"
+                                                        data-product-name="{{ $product->name }}"
+                                                        data-stock="{{ $product->stock }}"
+                                                        onclick="addToCart(this)"
+                                                        {{ $product->stock < 1 ? 'disabled' : '' }}>
+                                                    <i class="fas fa-shopping-bag mr-1"></i> {{ $product->stock < 1 ? 'Out' : 'Add' }}
+                                                </button>
+                                            @else
+                                                <a href="{{ route('login') }}" class="btn-add-cart"><i class="fas fa-shopping-bag mr-1"></i> Add</a>
+                                            @endauth
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -322,22 +336,37 @@ function updateCartBadge(count) {
     });
 }
 
+function changeListQty(btn, delta) {
+    var wrap = btn.closest('.product-qty');
+    var input = wrap.querySelector('input');
+    var stock = parseInt(wrap.dataset.stock) || 1;
+    var value = parseInt(input.value) || 1;
+
+    value = Math.max(1, Math.min(stock, value + delta));
+    input.value = value;
+}
+
 function addToCart(btn) {
     if (!IS_AUTH) { window.location.href = '{{ route("login") }}'; return; }
     var productId   = btn.dataset.productId;
     var productName = btn.dataset.productName;
+    var qtyInput    = btn.closest('.product-actions').querySelector('.product-qty input');
+    var stock       = parseInt(btn.dataset.stock) || 1;
+    var quantity    = Math.max(1, Math.min(stock, parseInt(qtyInput.value) || 1));
+
+    qtyInput.value = quantity;
     btn.classList.add('loading');
     btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>';
     fetch('{{ route("cart.add") }}', {
         method: 'POST',
         headers: {'Content-Type':'application/json','X-CSRF-TOKEN':CSRF,'Accept':'application/json'},
-        body: JSON.stringify({product_id: parseInt(productId), quantity: 1})
+        body: JSON.stringify({product_id: parseInt(productId), quantity: quantity})
     })
     .then(function(r){ return r.json(); })
     .then(function(data){
         if (data.success) {
             toast(data.message || '"' + productName + '" added to cart!', 'success');
-            updateCartBadge(data.cart_count || cartCount + 1);
+            updateCartBadge(data.cart_count || cartCount + quantity);
             btn.innerHTML = '<i class="fas fa-check mr-1"></i> Added';
             setTimeout(function(){
                 btn.innerHTML = '<i class="fas fa-shopping-bag mr-1"></i> Add';

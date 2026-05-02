@@ -562,6 +562,9 @@ class MemberController extends Controller
             ->get();
 
         $cartTotal = $cartItems->sum(fn($i) => $i->quantity * ($i->product->price ?? 0));
+        $repurchaseWallet = RepurchaseWalletTopup::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->sum('amount');
 
         // Starter plan amount for the purchase modal (cheapest active plan)
         $starterPlan = Plan::where('is_active', 1)->orderBy('price')->first();
@@ -573,6 +576,7 @@ class MemberController extends Controller
             'wishlistItems',
             'cartItems',
             'cartTotal',
+            'repurchaseWallet',
             'planAmount',
             'plan',
             'nextPlan',
@@ -1036,18 +1040,23 @@ class MemberController extends Controller
             ->merge(
                 $recentRepurchaseTopups->map(function ($entry) {
                     $isMainWalletTransfer = $entry->bank_reference === 'main_wallet_transfer';
+                    $isProductPurchase = str_starts_with((string) $entry->bank_reference, 'product_order_');
 
                     return [
-                        'kind'        => $isMainWalletTransfer ? 'debit' : 'credit',
-                        'icon'        => $isMainWalletTransfer ? 'fa-random' : 'fa-coins',
-                        'title'       => $isMainWalletTransfer ? 'Transfer to Repurchase Wallet' : 'Repurchase Wallet Top Up',
-                        'subtitle'    => $isMainWalletTransfer
+                        'kind'        => ($isMainWalletTransfer || $isProductPurchase) ? 'debit' : 'credit',
+                        'icon'        => $isProductPurchase ? 'fa-shopping-bag' : ($isMainWalletTransfer ? 'fa-random' : 'fa-coins'),
+                        'title'       => $isProductPurchase
+                            ? 'Product Purchase'
+                            : ($isMainWalletTransfer ? 'Transfer to Repurchase Wallet' : 'Repurchase Wallet Top Up'),
+                        'subtitle'    => $isProductPurchase
+                            ? 'Paid from repurchase wallet'
+                            : ($isMainWalletTransfer
                             ? 'Moved from main wallet'
-                            : 'Added via ' . ucfirst((string) ($entry->bank_reference ?: 'Razorpay')),
+                            : 'Added via ' . ucfirst((string) ($entry->bank_reference ?: 'Razorpay'))),
                         'date'        => $entry->created_at,
-                        'amount'      => (float) $entry->amount,
+                        'amount'      => abs((float) $entry->amount),
                         'status'      => 'approved',
-                        'status_text' => $isMainWalletTransfer ? 'Transferred' : 'Added',
+                        'status_text' => $isProductPurchase ? 'Paid' : ($isMainWalletTransfer ? 'Transferred' : 'Added'),
                     ];
                 })
             )

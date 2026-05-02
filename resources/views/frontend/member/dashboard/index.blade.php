@@ -883,18 +883,14 @@
                 <a href="#wishlist" onclick="scrollToSection('wishlist'); return false;"
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-heart nav-icon" style="color:#e74c3c;"></i> My Favorites
-                    @if (isset($wishlistItems) && $wishlistItems->count())
-                        <span class="ml-auto"
-                            style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $wishlistItems->count() }}</span>
-                    @endif
+                    <span class="ml-auto dash-wishlist-count"
+                        style="background:#e74c3c;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;{{ isset($wishlistItems) && $wishlistItems->count() ? '' : 'display:none;' }}">{{ $wishlistItems->count() ?? 0 }}</span>
                 </a>
                 <a href="#cart" onclick="scrollToSection('cart'); return false;"
                     class="{{ $isInactive ? 'disabled' : '' }}">
                     <i class="fas fa-shopping-bag nav-icon" style="color:#28a745;"></i> My Cart
-                    @if (isset($cartItems) && $cartItems->count())
-                        <span class="ml-auto"
-                            style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;">{{ $cartItems->count() }}</span>
-                    @endif
+                    <span class="ml-auto dash-cart-count"
+                        style="background:#28a745;color:white;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;{{ isset($cartItems) && $cartItems->count() ? '' : 'display:none;' }}">{{ isset($cartItems) ? $cartItems->sum('quantity') : 0 }}</span>
                 </a>
 
             </nav>
@@ -1365,10 +1361,8 @@
             <div class="section-card" id="wishlist">
                 <div class="section-card-header d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-heart mr-2" style="color:#e74c3c;"></i>My Favorites
-                        @if (isset($wishlistItems) && $wishlistItems->count())
-                            <span class="ml-2"
-                                style="background:#e74c3c;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;">{{ $wishlistItems->count() }}</span>
-                        @endif
+                        <span class="ml-2 dash-wishlist-count"
+                            style="background:#e74c3c;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;{{ isset($wishlistItems) && $wishlistItems->count() ? '' : 'display:none;' }}">{{ $wishlistItems->count() ?? 0 }}</span>
                     </span>
                     <a href="{{ route('products') }}" class="btn btn-sm btn-main btn-round-full"
                         style="font-size:11px;padding:4px 14px;">
@@ -1488,10 +1482,8 @@
             <div class="section-card" id="cart">
                 <div class="section-card-header d-flex justify-content-between align-items-center">
                     <span><i class="fas fa-shopping-bag mr-2 text-color"></i>My Cart
-                        @if (isset($cartItems) && $cartItems->count())
-                            <span class="ml-2"
-                                style="background:#28a745;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;">{{ $cartItems->count() }}</span>
-                        @endif
+                        <span class="ml-2 dash-cart-count"
+                            style="background:#28a745;color:white;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;{{ isset($cartItems) && $cartItems->count() ? '' : 'display:none;' }}">{{ isset($cartItems) ? $cartItems->sum('quantity') : 0 }}</span>
                     </span>
                     <a href="{{ route('products') }}" class="btn btn-sm btn-main btn-round-full"
                         style="font-size:11px;padding:4px 14px;">
@@ -1581,10 +1573,21 @@
                         <div class="d-flex justify-content-between align-items-center p-3"
                             style="background:#f8f9fa;border-top:1px solid #e9ecef;">
                             <div style="font-size:14px;color:#555;">
-                                <strong>{{ $cartItems->count() }}</strong> item(s)
+                                <strong id="cart-item-count">{{ $cartItems->sum('quantity') }}</strong> item(s)
+                                <div class="small text-muted mt-1">
+                                    Repurchase Wallet: ₹<span id="repurchase-wallet-balance">{{ number_format($repurchaseWallet ?? 0, 2) }}</span>
+                                </div>
                             </div>
-                            <div style="font-size:16px;font-weight:800;color:#28a745;">
-                                Total: ₹{{ number_format($cartTotal ?? 0, 2) }}
+                            <div class="text-right">
+                                <div id="cart-total-label" style="font-size:16px;font-weight:800;color:#28a745;">
+                                    Total: ₹{{ number_format($cartTotal ?? 0, 2) }}
+                                </div>
+                                <button type="button" id="cart-buy-btn" class="btn btn-main btn-round-full btn-sm mt-2"
+                                    onclick="checkoutCart(this)"
+                                    style="font-size:12px;padding:6px 18px;"
+                                    {{ ($cartTotal ?? 0) <= 0 ? 'disabled' : '' }}>
+                                    <i class="fas fa-credit-card mr-1"></i>Buy Now
+                                </button>
                             </div>
                         </div>
                         <p id="cart-empty" class="text-muted text-center py-3 m-0" style="display:none;">
@@ -2289,6 +2292,41 @@
             }, 3000);
         }
 
+        function setBadgeText(selector, count, displayMode = 'inline-block') {
+            const value = parseInt(count) || 0;
+            document.querySelectorAll(selector).forEach(el => {
+                el.textContent = value;
+                el.style.display = value > 0 ? displayMode : 'none';
+            });
+        }
+
+        function updateCartBadges(count) {
+            const value = parseInt(count) || 0;
+            setBadgeText('.cart-badge, #cart-count, .member-badge', value, 'inline-flex');
+            setBadgeText('.dash-cart-count', value);
+
+            const itemCount = document.getElementById('cart-item-count');
+            if (itemCount) itemCount.textContent = value;
+        }
+
+        function updateWishlistBadges(count) {
+            setBadgeText('.dash-wishlist-count', count);
+        }
+
+        function updateCartTotal(total) {
+            const label = document.getElementById('cart-total-label');
+            const value = parseFloat(total || 0);
+            if (label) label.textContent = 'Total: ₹' + value.toFixed(2);
+
+            const buyBtn = document.getElementById('cart-buy-btn');
+            if (buyBtn) buyBtn.disabled = value <= 0;
+        }
+
+        function updateRepurchaseWalletBalance(balance) {
+            const label = document.getElementById('repurchase-wallet-balance');
+            if (label) label.textContent = parseFloat(balance || 0).toFixed(2);
+        }
+
         // ── Remove from Wishlist ─────────────────────────────────────
         function removeFromWishlist(productId, btn) {
             btn.disabled = true;
@@ -2313,6 +2351,7 @@
                         showDashToast('Removed from wishlist.', true);
                         // Show empty state if grid is now empty
                         const grid = document.getElementById('wishlist-grid');
+                        updateWishlistBadges(grid ? grid.children.length : 0);
                         if (grid && grid.children.length === 0) {
                             grid.style.display = 'none';
                             const empty = document.getElementById('wishlist-empty');
@@ -2356,9 +2395,8 @@
                         btn.innerHTML = '<i class="fas fa-check mr-1"></i>Added!';
                         showDashToast('Added to cart!', true);
                         // Update cart badge in header
-                        document.querySelectorAll('.cart-badge, #cart-count, .member-badge').forEach(el => {
-                            if (data.cart_count !== undefined) el.textContent = data.cart_count;
-                        });
+                        if (data.cart_count !== undefined) updateCartBadges(data.cart_count);
+                        if (data.cart_total !== undefined) updateCartTotal(data.cart_total);
                         setTimeout(() => {
                             btn.innerHTML = orig;
                         }, 2000);
@@ -2447,17 +2485,21 @@
                                 });
                         }
                         // Update header badge
-                        if (data.cart_count !== undefined) {
-                            document.querySelectorAll('.cart-badge, #cart-count, .member-badge').forEach(el => {
-                                el.textContent = data.cart_count;
-                            });
-                        }
+                        if (data.cart_total !== undefined) updateCartTotal(data.cart_total);
+                        if (data.cart_count !== undefined) updateCartBadges(data.cart_count);
                     } else {
                         showDashToast(data.message || 'Could not update quantity.', false);
-                        // Revert the input to the last confirmed server value
                         const input = document.getElementById('qty-' + productId);
-                        if (input) {
-                            // data.quantity may be returned on validation failure; otherwise keep old value
+                        if (input && data.quantity !== undefined) {
+                            const confirmed = parseInt(data.quantity) || 1;
+                            input.value = confirmed;
+                            const row = document.getElementById('cart-row-' + productId);
+                            if (row) {
+                                const lineTotal = row.querySelector('td:nth-child(5)');
+                                if (lineTotal) lineTotal.textContent = 'â‚¹' + (price * confirmed).toFixed(2);
+                            }
+                            if (data.cart_count !== undefined) updateCartBadges(data.cart_count);
+                            if (data.cart_total !== undefined) updateCartTotal(data.cart_total);
                         }
                     }
                 })
@@ -2492,6 +2534,8 @@
                         document.querySelectorAll('.cart-badge, #cart-count, .member-badge').forEach(el => {
                             if (data.cart_count !== undefined) el.textContent = data.cart_count;
                         });
+                        if (data.cart_count !== undefined) updateCartBadges(data.cart_count);
+                        if (data.cart_total !== undefined) updateCartTotal(data.cart_total);
                         // Show empty state if table has no rows left
                         const tbody = document.querySelector('#cart-table tbody');
                         if (tbody && tbody.children.length === 0) {
@@ -2509,6 +2553,56 @@
                     showDashToast('An error occurred. Please try again.', false);
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fas fa-trash"></i>';
+                });
+        }
+
+        function checkoutCart(btn) {
+            btn.disabled = true;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i>Buying...';
+
+            fetch('{{ route('cart.checkout') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': getCsrf(),
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        showDashToast(data.message || 'Order placed successfully.', true);
+
+                        const table = document.getElementById('cart-table');
+                        if (table) table.closest('[style*="overflow"]').style.display = 'none';
+
+                        const tbody = document.querySelector('#cart-table tbody');
+                        if (tbody) tbody.innerHTML = '';
+
+                        const empty = document.getElementById('cart-empty');
+                        if (empty) {
+                            empty.style.display = 'block';
+                            empty.innerHTML = '<i class="fas fa-check-circle fa-2x mb-2 d-block" style="color:#28a745;"></i>' +
+                                'Order placed successfully. Order No: <strong>' + data.order_number + '</strong>';
+                        }
+
+                        updateCartBadges(0);
+                        updateCartTotal(0);
+                        if (data.wallet_balance !== undefined) updateRepurchaseWalletBalance(data.wallet_balance);
+                        btn.innerHTML = original;
+                        btn.disabled = true;
+                    } else {
+                        showDashToast(data.message || 'Could not place order.', false);
+                        btn.innerHTML = original;
+                        btn.disabled = false;
+                    }
+                })
+                .catch(() => {
+                    showDashToast('An error occurred. Please try again.', false);
+                    btn.innerHTML = original;
+                    btn.disabled = false;
                 });
         }
     </script>

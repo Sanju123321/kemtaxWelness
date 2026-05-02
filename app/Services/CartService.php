@@ -38,11 +38,27 @@ class CartService
             return ['success' => false, 'message' => 'Product is out of stock.'];
         }
 
+        $currentQty = Cart::where('user_id', $userId)
+            ->where('product_id', $productId)
+            ->value('quantity') ?? 0;
+
+        if (($currentQty + $qty) > $product->stock) {
+            return [
+                'success' => false,
+                'message' => "Only {$product->stock} unit(s) available in stock.",
+                'quantity' => (int) $currentQty,
+                'cart_count' => $this->cartRepo->count($userId),
+                'cart_total' => $this->cartRepo->itemTotal($userId),
+            ];
+        }
+
         $cart = $this->cartRepo->addOrIncrement($userId, $productId, $qty);
 
         return [
             'success'    => true,
             'message'    => "'{$product->name}' added to your cart.",
+            'quantity'   => $cart->quantity,
+            'line_total' => round($cart->quantity * $product->price, 2),
             'cart_count' => $this->cartRepo->count($userId),
             'cart_total' => $this->cartRepo->itemTotal($userId),
         ];
@@ -73,9 +89,16 @@ class CartService
         }
 
         if ($qty > $product->stock) {
+            $currentQty = Cart::where('user_id', $userId)
+                ->where('product_id', $productId)
+                ->value('quantity') ?? 1;
+
             return [
                 'success' => false,
                 'message' => "Only {$product->stock} unit(s) available in stock.",
+                'quantity' => (int) $currentQty,
+                'cart_count' => $this->cartRepo->count($userId),
+                'cart_total' => $this->cartRepo->itemTotal($userId),
             ];
         }
 

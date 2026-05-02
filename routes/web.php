@@ -54,6 +54,7 @@ Route::middleware(['maintenance'])->group(function () {
         Route::post('/cart/add',      [CartController::class, 'add'])->name('cart.add');
         Route::post('/cart/update',   [CartController::class, 'update'])->name('cart.update');
         Route::post('/cart/remove',   [CartController::class, 'remove'])->name('cart.remove');
+        Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
         Route::get('/wishlist',           [WishlistController::class, 'index'])->name('wishlist.index');
         Route::post('/wishlist/toggle',   [WishlistController::class, 'toggle'])->name('wishlist.toggle');
