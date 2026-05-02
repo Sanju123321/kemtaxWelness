@@ -343,13 +343,14 @@
                     @auth
                         <div class="qty-control">
                             <button type="button" onclick="changeQty(-1)">−</button>
-                            <input type="number" id="qtyInput" value="1" min="1" max="99">
+                            <input type="number" id="qtyInput" value="1" min="1" max="{{ max(1, $product->stock) }}">
                             <button type="button" onclick="changeQty(1)">+</button>
                         </div>
                         <div class="d-flex flex-wrap gap-2">
                             <button type="button" class="btn-cart-main" id="cartBtn" data-product-id="{{ $product->id }}"
-                                data-product-name="{{ $product->name }}" onclick="addToCartDetail()">
-                                <i class="fas fa-shopping-bag mr-2"></i>Add to Bag
+                                data-product-name="{{ $product->name }}" data-stock="{{ $product->stock }}"
+                                onclick="addToCartDetail()" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                                <i class="fas fa-shopping-bag mr-2"></i>{{ $product->stock < 1 ? 'Out of Stock' : 'Add to Bag' }}
                             </button>
                             <button type="button"
                                 class="btn-wishlist-main {{ in_array($product->id, $favorited) ? 'active' : '' }}"
@@ -452,16 +453,27 @@
 
         function changeQty(delta) {
             var input = document.getElementById('qtyInput');
+            var stock = parseInt(document.getElementById('cartBtn').dataset.stock) || 1;
             var val = parseInt(input.value) + delta;
             if (val < 1) val = 1;
-            if (val > 99) val = 99;
+            if (val > stock) val = stock;
             input.value = val;
+        }
+
+        function updateCartBadge(count) {
+            document.querySelectorAll('.cart-badge, #cart-count, .member-badge').forEach(function(b) {
+                b.textContent = count;
+                b.style.display = count > 0 ? 'inline-flex' : 'none';
+            });
         }
 
         function addToCartDetail() {
             var btn = document.getElementById('cartBtn');
             var productId = btn.dataset.productId;
-            var qty = parseInt(document.getElementById('qtyInput').value) || 1;
+            var stock = parseInt(btn.dataset.stock) || 1;
+            var input = document.getElementById('qtyInput');
+            var qty = Math.max(1, Math.min(stock, parseInt(input.value) || 1));
+            input.value = qty;
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Adding...';
             fetch('{{ route('cart.add') }}', {
@@ -482,6 +494,7 @@
                 .then(function(data) {
                     if (data.success) {
                         toast(data.message || 'Added to bag!', 'success');
+                        if (data.cart_count !== undefined) updateCartBadge(data.cart_count);
                         btn.innerHTML = '<i class="fas fa-check mr-2"></i>Added to Bag';
                         setTimeout(function() {
                             btn.innerHTML = '<i class="fas fa-shopping-bag mr-2"></i>Add to Bag';

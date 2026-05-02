@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Services\CartService;
+use App\Services\ProductOrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
 {
     public function __construct(
-        private readonly CartService $cartService
+        private readonly CartService $cartService,
+        private readonly ProductOrderService $productOrderService,
     ) {}
 
     /**
@@ -84,5 +86,12 @@ class CartController extends Controller
         );
 
         return response()->json($result, $result['success'] ? 200 : 404);
+    }
+
+    public function checkout(Request $request): JsonResponse
+    {
+        $result = $this->productOrderService->checkout($request->user()->id);
+
+        return response()->json($result, $result['success'] ? 200 : 422);
     }
 }

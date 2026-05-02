@@ -57,6 +57,7 @@
     @yield('scripts')
 
     <script src="{{ asset('frontend/js/script.js') }}"></script>
+    @stack('scripts')
     @livewireScripts
 </body>
 
