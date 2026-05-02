@@ -17,6 +17,7 @@
 <body class="sb-nav-fixed">
 
     @include('backend.layouts.partials.topnav')
+    @include('layouts.partials.toast')
 
     <div id="layoutSidenav">
         @include('backend.layouts.partials.sidebar')
