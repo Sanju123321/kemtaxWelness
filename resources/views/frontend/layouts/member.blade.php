@@ -352,6 +352,8 @@
         </div>
     </header>
 
+    @include('layouts.partials.toast')
+
     {{-- Page Content --}}
     @yield('content')
    

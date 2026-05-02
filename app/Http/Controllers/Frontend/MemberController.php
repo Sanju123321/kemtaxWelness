@@ -481,6 +481,7 @@ class MemberController extends Controller
         // Real dashboard stats
         $directReferrals = $user->getDirectReferralCount();
         $downlineUserIds = $this->getDescendantUserIds($user->id);
+        $allUserIds = array_unique(array_merge($downlineUserIds, [$user->id]));
         $teamSize        = count($downlineUserIds);
 
         $unplacedReferredUsers = User::query()
@@ -496,11 +497,11 @@ class MemberController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        $downlineUsers = empty($downlineUserIds)
+        $downlineUsers = empty($allUserIds)
             ? collect()
             : User::query()
             ->select('id', 'name', 'user_id')
-            ->whereIn('id', $downlineUserIds)
+            ->whereIn('id', $allUserIds)
             ->orderBy('name')
             ->get();
 
@@ -608,10 +609,25 @@ class MemberController extends Controller
             return back()->with('error', 'Placement is available only after 10 direct referrals.');
         }
 
+        // $userToPlace = User::query()
+        //     ->where('id', $request->integer('place_user_id'))
+        //     ->where(function ($query) use ($member) {
+        //         $query->where('sponsor_id', $member->id)
+        //             ->orWhere(function ($legacy) use ($member) {
+        //                 $legacy->whereNull('sponsor_id')
+        //                     ->where('referred_by', $member->id);
+        //             });
+        //     })
+        //     ->first();
         $userToPlace = User::query()
             ->where('id', $request->integer('place_user_id'))
             ->where(function ($query) use ($member) {
-                $query->where('sponsor_id', $member->id)
+
+                // ✅ NEW: allow self placement
+                $query->where('id', $member->id)
+
+                    // existing referral logic
+                    ->orWhere('sponsor_id', $member->id)
                     ->orWhere(function ($legacy) use ($member) {
                         $legacy->whereNull('sponsor_id')
                             ->where('referred_by', $member->id);
@@ -625,19 +641,32 @@ class MemberController extends Controller
 
         $placementParentId = $request->integer('placement_parent_id');
         $downlineIds = $this->getDescendantUserIds($member->id);
-        if (!in_array($placementParentId, $downlineIds, true)) {
-            return back()->with('error', 'Placement is allowed only under your downline members.');
-        }
 
-        if ($placementParentId === $userToPlace->id) {
-            return back()->with('error', 'A user cannot be placed under themselves.');
+        if (
+            $placementParentId !== $member->id && // self allowed              
+            !in_array($placementParentId, $downlineIds, true) // downline allowed
+        ) {
+            return back()->with('error', 'Placement is allowed only under yourself or your downline members.');
         }
+        // if (!in_array($placementParentId, $downlineIds, true)) {
+        //     return back()->with('error', 'Placement is allowed only under your downline members.');
+        // }
 
-        $userToPlaceDescendants = $this->getDescendantUserIds($userToPlace->id);
-        if (in_array($placementParentId, $userToPlaceDescendants, true)) {
-            return back()->with('error', 'Circular placement is not allowed.');
+        // if ($placementParentId === $userToPlace->id) {
+        //     return back()->with('error', 'A user cannot be placed under themselves.');
+        // }
+
+        // $userToPlaceDescendants = $this->getDescendantUserIds($userToPlace->id);
+        // if (in_array($placementParentId, $userToPlaceDescendants, true)) {
+        //     return back()->with('error', 'Circular placement is not allowed.');
+        // }
+        if ($placementParentId !== $userToPlace->id) {
+            $userToPlaceDescendants = $this->getDescendantUserIds($userToPlace->id);
+
+            if (in_array($placementParentId, $userToPlaceDescendants, true)) {
+                return back()->with('error', 'Circular placement is not allowed.');
+            }
         }
-
         $placed = false;
         DB::transaction(function () use ($userToPlace, $placementParentId, &$placed) {
             $locked = User::query()
@@ -661,7 +690,8 @@ class MemberController extends Controller
         if (!$placed) {
             return back()->with('error', 'Selected user is already placed and cannot be changed.');
         }
-        $placeduser = User::find( $request->integer('place_user_id'));
+        $placeduser = User::find($request->integer('place_user_id'));
+
         $oldPlanId = $placeduser->current_plan_id;
         dispatch(new DistributeIncomeJob(
             $request->integer('place_user_id'),

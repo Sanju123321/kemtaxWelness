@@ -31,6 +31,7 @@
 <body>
 
     @include('frontend.layouts.partials.header')
+    @include('layouts.partials.toast')
 
     @yield('content')
 

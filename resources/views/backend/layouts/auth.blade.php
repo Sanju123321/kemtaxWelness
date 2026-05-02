@@ -321,6 +321,7 @@
 </head>
 
 <body class="admin-auth">
+    @include('layouts.partials.toast')
     <div class="auth-wrapper">
         @yield('content')
     </div>
